@@ -1,0 +1,49 @@
+{% raw %}
+<h1>Entries</h1>
+<div class="panel panel-default panel-body" ng-repeat="entry in entries">
+    <h2>{{ entry.id }} | {{ entry.date | date : shortDate }}</h2>
+</div>
+
+<h1>Fields</h1>
+<div class="panel panel-default panel-body" ng-repeat="field in fields">
+    <h2>{{ field.id }} | {{ field.name }} | {{ field.type }}</h2>
+</div>
+
+<div class="panel panel-default panel-body">
+    <form class="form" novalidate>
+        <legend>Add Field</legend>
+        <div class="form-group">
+            <label>Name</label>
+            <input class="form-control" name="name" type="text" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label>Type</label>
+            <select class="form-control" name="type">
+                <option value="1">String</option>
+                <option value="2">Range</option>
+                <option value="3">Integer</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Add</button>
+    </form>
+</div>
+<div class="panel panel-default panel-body">
+    <form action="/add_entry" method="POST" class="form">
+        <legend>Add Entry</legend>
+        <div class="form-group">
+            <label>Name</label>
+            <input class="form-control" name="name" type="text" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label>Type</label>
+            <select class="form-control" name="type">
+                <option value="1">String</option>
+                <option value="2">Range</option>
+                <option value="3">Integer</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Add</button>
+    </form>
+</div>
+
+{% endraw %}

@@ -1,0 +1,5 @@
+flask
+
+flask-restless==0.16.0
+flask-script
+flask-sqlalchemy
