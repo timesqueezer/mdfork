@@ -1,0 +1,34 @@
+{% raw %}
+
+<h1>Settings</h1>
+<h3>Fields ({{ fields.num_results }})</h3>
+
+<div class="row row-spaced" ng-repeat="row in (fields.objects.length/3 | array)">
+    <div class="col-sm-4" ng-repeat="field in fields.objects.slice(3*$index, 3*$index + 3)">
+        <div class="panel panel-default panel-body">
+            <h4>{{ field.name }} <small>{{ field.type | fieldTypeToString }}</small></h4></h6>
+            <a class="btn btn-lg btn-link" ng-click="deleteField(field)"><i class="fa fa-trash-o"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default panel-body">
+    <form name="fieldAddForm" class="form" novalidate>
+        <legend>Add Field</legend>
+        <div class="form-group">
+            <label>Name</label>
+            <input class="form-control" name="name" type="text" placeholder="Name" ng-model="newField.name">
+        </div>
+        <div class="form-group">
+            <label>Type</label>
+            <select class="form-control" name="type" ng-model="newField.type">
+                <option value="1">String</option>
+                <option value="2" selected="selected">Range</option>
+                <option value="3">Integer</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit" ng-click="addField()">Add</button>
+    </form>
+</div>
+
+{% endraw %}

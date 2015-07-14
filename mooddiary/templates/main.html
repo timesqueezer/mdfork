@@ -1,49 +1,63 @@
 {% raw %}
-<h1>Entries</h1>
-<div class="panel panel-default panel-body" ng-repeat="entry in entries">
-    <h2>{{ entry.id }} | {{ entry.date | date : shortDate }}</h2>
-</div>
 
-<h1>Fields</h1>
-<div class="panel panel-default panel-body" ng-repeat="field in fields">
-    <h2>{{ field.id }} | {{ field.name }} | {{ field.type }}</h2>
-</div>
-
-<div class="panel panel-default panel-body">
-    <form class="form" novalidate>
-        <legend>Add Field</legend>
-        <div class="form-group">
-            <label>Name</label>
-            <input class="form-control" name="name" type="text" placeholder="Name">
+<div class="panel panel-default panel-body" ng-show="entryAdding">
+    <form class="form">
+        <legend>Add Entry <small>{{ today | date : mediumDate }}</small></legend>
+        <div class="row" ng-repeat="row in (fields.objects.length/2 | array)">
+            <div class="col-md-6" ng-repeat="field in fields.objects.slice(2*$index, 2*$index + 2)">
+                <div class="form-group" ng-switch="field.type">
+                    <label>{{ field.name }}</label>
+                    <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]"></textarea>
+                    <div class="input-group" ng-switch-when="2">
+                        <div class="input-group-addon">{{ newEntryAnswers[field.id] }}</div>
+                        <input class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]" ng-init="newEntryAnswers[field.id] = 0">
+                    </div>
+                    <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]">
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Type</label>
-            <select class="form-control" name="type">
-                <option value="1">String</option>
-                <option value="2">Range</option>
-                <option value="3">Integer</option>
-            </select>
-        </div>
-        <button class="btn btn-primary" type="submit">Add</button>
+        <button class="btn btn-primary" type="submit" ng-click="addEntry()">Add</button>
     </form>
 </div>
-<div class="panel panel-default panel-body">
-    <form action="/add_entry" method="POST" class="form">
-        <legend>Add Entry</legend>
-        <div class="form-group">
-            <label>Name</label>
-            <input class="form-control" name="name" type="text" placeholder="Name">
+<a class="btn btn-primary" ng-click="entryAdding=true" ng-hide="entryAdding"><i class="fa fa-file-text-o"></i> Add Entry</a>
+
+<hr>
+
+<div class="btn-group" ng-init="view = 'charts'" style="margin-bottom: 2em">
+    <button class="btn btn-default" ng-class="{active: view == 'charts'}" ng-click="view = 'charts'">Charts</button>
+    <button class="btn btn-default" ng-class="{active: view == 'table'}" ng-click="view = 'table'">Table</button>
+</div>
+
+<div ng-show="view == 'charts'">
+    <div class="row" ng-repeat="row in (chartableFields.length/2 | array)">
+        <div class="col-md-6" ng-repeat="field in chartableFields.slice(2*$index, 2*$index + 2)">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>{{ field.name }} <small>{{ field.type | fieldTypeToString }}</small></h4>
+                </div>
+                <div class="panel-body">
+                    <canvas class="chart chart-line" data="chartData[field.id]" labels="labels" series="['series']"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Type</label>
-            <select class="form-control" name="type">
-                <option value="1">String</option>
-                <option value="2">Range</option>
-                <option value="3">Integer</option>
-            </select>
-        </div>
-        <button class="btn btn-primary" type="submit">Add</button>
-    </form>
+    </div>
+</div>
+
+<div class="panel panel-default" ng-show="view == 'table'">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th ng-repeat="field in fields.objects">{{ field.name }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="entry in entries.objects">
+                <td>{{ entry.date | date : 'dd/MM' }}</td>
+                <td ng-repeat="field in fields.objects">{{ getAnswerForField(entry, field) }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 {% endraw %}

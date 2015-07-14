@@ -14,8 +14,9 @@ def create_app():
     db.init_app(app)
     manager.init_app(app)
 
-    manager.create_api(Entry, methods=['GET', 'POST', 'DELETE'], collection_name='entry', app=app)
-    manager.create_api(EntryField, methods=['GET', 'POST', 'DELETE'], collection_name='entry_fields', app=app)
+    manager.create_api(Entry, methods=['GET', 'POST', 'DELETE'], collection_name='entry', app=app, results_per_page=0)
+    manager.create_api(EntryField, methods=['GET', 'POST', 'DELETE'], collection_name='entry_field', app=app, results_per_page=0)
+    manager.create_api(EntryFieldAnswer, methods=['POST'], collection_name='entry_field_answer', app=app, results_per_page=0)
 
     app.add_url_rule('/templates/<path:partial>', 'render_partial', render_partial)
     app.add_url_rule('/', 'index', index)
