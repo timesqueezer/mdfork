@@ -1,4 +1,4 @@
-angular.module('mooddiary', ['ui.router', 'chart.js'])
+angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap'])
 
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
@@ -51,9 +51,11 @@ angular.module('mooddiary', ['ui.router', 'chart.js'])
 
     var reloadCharts = function() {
         $scope.chartData = {};
+        $scope.actualChartData = [];
+        $scope.series = [];
 
         $scope.labels = _.map($scope.entries.objects, function(entry) {
-            return $filter('date')(entry.date, 'dd/MM', 'UTC');
+            return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
         });
 
         angular.forEach($scope.chartableFields, function(field) {
@@ -65,8 +67,18 @@ angular.module('mooddiary', ['ui.router', 'chart.js'])
                     return 0;
                 }
             })
-            $scope.chartData[field.id] = [data];
+            $scope.chartData[field.id] = data;
         });
+    };
+
+    $scope.toggleChartField = function(field) {
+        if ($scope.series.indexOf(field.name) == -1) {
+            $scope.series.push(field.name);
+            $scope.actualChartData.push($scope.chartData[field.id]);
+        } else {
+            $scope.series.splice($scope.series.indexOf(field.name), 1);
+            $scope.actualChartData.splice($scope.actualChartData.indexOf($scope.chartData[field.id]), 1);
+        }
     };
 
     $scope.getAnswerForField = function(entry, field) {
@@ -95,6 +107,22 @@ angular.module('mooddiary', ['ui.router', 'chart.js'])
             }, errorCallback);
         }).error(errorCallback);
     };
+
+    /*$scope.$watch('timeLimit', function() {
+        var number = parseInt($scope.timeLimit.split('.')[0]);
+        var timeSpan = $scope.timeLimit.split('.')[1];
+        var today = var endDate = new Date.UTC();
+        var startDate = new Date();w
+        if (timeSpan == 'w') {
+            startDate.day -=
+        }
+
+        var filters = {'or': [{'name': 'date', 'op': '>', startDate}, {'name': 'date', 'op': '<=', endDate}]};
+        $http.get('/api/entry', {'q': filters}).success(function(data) {
+            $scope.entries = data;
+            reloadCharts();
+        });
+    });*/
 
     // Init
     $scope.entries = entriesResolved.data;

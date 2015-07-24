@@ -3,4 +3,9 @@ flask
 flask-restless==0.16.0
 flask-script
 flask-sqlalchemy
+flask-jwt
+flask-migrate
+flask-assets
+
 fake-factory
+cssmin

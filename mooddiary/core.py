@@ -1,5 +1,9 @@
-from flask.ext import restless
+from flask.ext.restless import APIManager
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.migrate import Migrate
+from flask.ext.assets import Environment
 
 db = SQLAlchemy()
-manager = restless.APIManager(flask_sqlalchemy_db=db)
+migrate = Migrate()
+manager = APIManager(flask_sqlalchemy_db=db)
+assets = Environment()

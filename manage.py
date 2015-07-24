@@ -4,12 +4,14 @@ from datetime import datetime, timedelta
 from faker import Faker
 
 from flask.ext.script import Manager
+from flask.ext.migrate import MigrateCommand
 
 from mooddiary import create_app
-from mooddiary.core import db
+from mooddiary.core import db, migrate
 from mooddiary.models import *
 
 manager = Manager(create_app)
+manager.add_command('migrate', MigrateCommand)
 
 
 @manager.shell

@@ -1,0 +1,10 @@
+{
+  "name": "mooddiary",
+  "version": "1.0.0",
+  "description": "Diary for moods and more",
+  "dependencies": {
+    "bower": "latest",
+    "less": "latest"
+  },
+  "license": "tba"
+}
