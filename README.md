@@ -1,0 +1,7 @@
+# MoodDiary
+
+License
+----
+
+MIT
+

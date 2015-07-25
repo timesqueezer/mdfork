@@ -29,6 +29,8 @@ def initdb(random_data=False):
     print("Creating tables")
     db.create_all()
 
+    stamp(revision='head')
+
     if random_data:
         print("Creating random data")
         faker = Faker()
