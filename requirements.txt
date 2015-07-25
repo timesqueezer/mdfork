@@ -1,6 +1,6 @@
 flask
 
-flask-restless==0.16.0
+flask-restful
 flask-script
 flask-sqlalchemy
 flask-scrypt
@@ -8,5 +8,6 @@ flask-jwt
 flask-migrate
 flask-assets
 
+marshmallow
 fake-factory
 cssmin

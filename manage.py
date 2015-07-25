@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from faker import Faker
 
 from flask.ext.script import Manager
-from flask.ext.migrate import MigrateCommand
+from flask.ext.migrate import MigrateCommand, stamp
 
 from mooddiary import create_app
 from mooddiary.core import db, migrate

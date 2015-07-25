@@ -1,4 +1,8 @@
-angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap'])
+angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.ngStrap.modal', 'mooddiary.utils'])
+
+.config(['$httpProvider', function($httpProvider) {
+    //$httpProvider.interceptors.push('authInterceptor');
+}])
 
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
@@ -188,5 +192,18 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap'])
         }
     }
 })
+
+.controller('LoginCtrl', ['$scope', 'AuthService', '$modal', function($scope, AuthService, $modal) {
+    var loginModal = $modal({title: 'Login or Register', show: false, contentTemplate: '/templates/loginModal', scope: $scope});
+
+    $scope.login = function(email, password) {
+        console.log(email, password);
+        AuthService.login(email, password);
+    };
+
+    $scope.showLoginModal = function() {
+        loginModal.show();
+    };
+}])
 
 ;

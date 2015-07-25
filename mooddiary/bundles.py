@@ -13,6 +13,7 @@ js = Bundle(
     'bower_components/Chart.js/Chart.js',
     'bower_components/angular-chart.js/dist/angular-chart.js',
 
+    'js/utils.js',
     'js/app.js',
 
     output='gen/app.js',
@@ -23,6 +24,7 @@ css = Bundle(
     'css/styles.less',
 
     'bower_components/angular-chart.js/dist/angular-chart.css',
+    'bower_components/fontawesome/css/font-awesome.min.css',
 
     output='gen/styles.css',
     filters='less,cssmin'

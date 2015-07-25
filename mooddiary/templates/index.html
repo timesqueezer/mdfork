@@ -4,7 +4,6 @@
         <meta content="">
         <base href="{{ request.url_root }}">
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/fontawesome/css/font-awesome.min.css') }}">
         {% assets "css" %}
         <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
         {% endassets %}
@@ -15,7 +14,7 @@
     </head>
     <body>
         <div class="container">
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-default" ng-controller="LoginCtrl">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <a class="navbar-brand" href="/">
@@ -26,6 +25,9 @@
                         <ul class="nav navbar-nav">
                             <li ng-class="{active: $state.includes('index')}"><a ui-sref="index">Diary</a></li>
                             <li ng-class="{active: $state.includes('settings')}"><a ui-sref="settings">Settings</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a ng-click="showLoginModal()">Login</a></li>
                         </ul>
                     </div>
                 </div>
