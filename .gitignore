@@ -27,6 +27,8 @@ var/
 pip-log.txt
 pip-delete-this-directory.txt
 
-mooddiary/static/
+mooddiary/static/bower_components
+mooddiary/static/gen
 node_modules/
 .directory
+.webassets-cache
