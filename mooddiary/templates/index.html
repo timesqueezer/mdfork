@@ -1,6 +1,6 @@
 <html ng-app="mooddiary" ng-cloak>
     <head>
-        <title>MoodDiary</title>
+        <title>MoodDiary - {{ 'Debug' if config['DEBUG'] else 'Production' }}</title>
         <meta content="">
         <base href="{{ request.url_root }}">
 

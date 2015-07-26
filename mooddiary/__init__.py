@@ -12,10 +12,11 @@ from mooddiary.auth import auth
 from mooddiary.models import Entry, EntryField, EntryFieldAnswer
 
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = '129iv3n91283nv9812n3v89q2nnv9iaszv978n98qwe7z897d'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/mooddiaryDb'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/mooddiary.db'
 
     app.config['DEBUG'] = True
@@ -24,6 +25,9 @@ def create_app():
 
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(days=28)
     app.config['JWT_ALGORITHM'] = 'HS512'
+
+    if config:
+        app.config.from_object(config)
 
     db.init_app(app)
     migrate.init_app(app, db)

@@ -11,3 +11,4 @@ flask-assets
 marshmallow
 fake-factory
 cssmin
+psycopg2
