@@ -53,11 +53,11 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     email = db.Column(db.String(100), nullable=True, unique=True)
 
-    password_salt = db.Column(db.LargeBinary)
-    password_hash = db.Column(db.LargeBinary)
+    password_salt = db.Column(db.LargeBinary, nullable=False)
+    password_hash = db.Column(db.LargeBinary, nullable=False)
 
     # This gets set to true once user has been verified by email
-    email_verified = db.Column(db.Boolean, default=False)
+    #email_verified = db.Column(db.Boolean, default=False)
 
     # Personal data
     first_name = db.Column(db.String(40))
