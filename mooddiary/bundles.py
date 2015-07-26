@@ -6,6 +6,7 @@ js = Bundle(
     'bower_components/angular/angular.js',
     'bower_components/angular-animate/angular-animate.js',
     'bower_components/angular-ui-router/release/angular-ui-router.js',
+    'bower_components/angular-resource/angular-resource.js',
     'bower_components/angular-grecaptcha/grecaptcha.js',
     'bower_components/underscore/underscore.js',
     'bower_components/angular-strap/dist/angular-strap.js',
@@ -16,6 +17,7 @@ js = Bundle(
     'bower_components/bootstrap/js/modal.js',
 
     'js/utils.js',
+    'js/diary.js',
     'js/app.js',
 
     output='gen/app.js',

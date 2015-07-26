@@ -19,19 +19,19 @@
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <a class="navbar-brand" ui-sref="about">
-                            MoodDiary
+                            MoodDiary <span class="label label-primary">Alpha</span>
                         </a>
                     </div>
                     <div class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
-                            <li ng-class="{active: $state.includes('about')}"><a ui-sref="about">About</a></li>
-                            <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('diary')}"><a ui-sref="diary">Diary</a></li>
-                            <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('settings')}"><a ui-sref="settings">Settings</a></li>
+                            <li ng-class="{active: $state.includes('about')}"><a ui-sref="about"><i class="fa fa-info"></i> About</a></li>
+                            <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('diary')}"><a ui-sref="diary.list"><i class="fa fa-book"></i> Diary</a></li>
+                            <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('settings')}"><a ui-sref="settings"><i class="fa fa-cogs"></i> Settings</a></li>
                         </ul>
                         <div class="navbar-right">
-                            <button ng-hide="$root.loggedIn" class="btn btn-default navbar-btn" ng-click="showLoginModal()">Login</button>
-                            <p class="navbar-text" ng-show="$root.loggedIn">Logged in as <strong>{{ me.name }}</strong></p>
-                            <button ng-show="$root.loggedIn" class="btn btn-default navbar-btn" ng-click="logout()">Logout</button>
+                            <button ng-hide="$root.loggedIn" class="btn btn-link navbar-btn" ng-click="showLoginModal()"><i class="fa fa-sign-in"></i> Login</button>
+                            <p class="navbar-text" ng-show="$root.loggedIn">Logged in as <i class="fa fa-user"></i> <strong>{{ me.name }}</strong></p>
+                            <button ng-show="$root.loggedIn" class="btn btn-link navbar-btn" ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</button>
                         </div>
                     </div>
                 </div>

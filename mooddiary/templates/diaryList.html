@@ -1,0 +1,28 @@
+{% raw %}
+<div class="panel panel-default panel-body" ng-repeat="entry in entries">
+    <div class="row spaced-bottom">
+        <div class="col-md-3">
+            <h4><span class="label label-primary">{{ entry.date | date: 'fullDate' }}</span></h4>
+        </div>
+        <div class="col-md-9">
+            <div class="row" ng-repeat="row in (fields.length/3 | array)" style="border-bottom: 1px solid #ccc;">
+                <div class="col-sm-4" ng-repeat="field in fields.slice(3*$index, 3*$index + 3)">
+                    <h5>{{ field.name }}</h5>
+                    <div style="font-size: 16pt">
+                        <p ng-show="field.type == 1">{{ getAnswerForField(entry, field) }}</p>
+                        <div ng-show="field.type == 2">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-info" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
+                            </div>
+                            {{ getAnswerForField(entry, field) }}
+                        </div>
+                        <div ng-show="field.type == 3" class="filled-circle">
+                            {{ getAnswerForField(entry, field) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endraw %}

@@ -1,0 +1,39 @@
+{% raw %}
+
+<div class="panel panel-default panel-body">
+    <div class="alert alert-danger alert-dismissible" role="alert" ng-show="errorMessage" style="width:50%">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ errorMessage }}
+    </div>
+    <form class="form" ng-show="entryAdding">
+        <legend>Add Entry <small>{{ today | date : 'dd.MM HH:mm:ss' }}</small></legend>
+        <div class="row" ng-repeat="row in (fields.length/2 | array)">
+            <div class="col-md-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)">
+                <div class="form-group" ng-switch="field.type">
+                    <label>{{ field.name }}</label>
+                    <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]"></textarea>
+                    <div class="input-group" ng-switch-when="2">
+                        <div class="input-group-addon">{{ newEntryAnswers[field.id] }}</div>
+                        <input class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]" ng-init="newEntryAnswers[field.id] = 0">
+                    </div>
+                    <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]">
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit" ng-click="addEntry()">Add</button>
+    </form>
+
+    <a class="btn btn-primary" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i> Add Entry</a>
+
+    <hr>
+
+    <ul class="nav nav-tabs spaced-bottom">
+        <li role="presentation" ng-class="{active: $state.includes('diary.list')}"><a ui-sref="diary.list"><i class="fa fa-list"></i> List</a></li>
+        <li role="presentation" ng-class="{active: $state.includes('diary.table')}"><a ui-sref="diary.table"><i class="fa fa-table"></i> Table</a></li>
+        <li role="presentation" ng-class="{active: $state.includes('diary.chart')}"><a ui-sref="diary.chart"><i class="fa fa-line-chart"></i> Chart</a></li>
+    </ul>
+</div>
+
+<div ui-view></div>
+
+{% endraw %}

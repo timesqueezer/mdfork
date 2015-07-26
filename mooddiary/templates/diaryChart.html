@@ -1,0 +1,26 @@
+{% raw %}
+<div class="row spaced-bottom" ng-repeat="row in (chartableFields.length/4 | array)">
+    <div class="col-sm-3" ng-repeat="field in chartableFields.slice(4*$index, 4*$index + 4)">
+        <button class="btn btn-block btn-default" ng-click="toggleChartField(field)" ng-model="rofl" bs-checkbox>{{ field.name }}</small></button>
+    </div>
+</div>
+<div class="row spaced-bottom">
+    <div class="col-sm-12">
+        <div class="btn-group" ng-model="timeLimit" bs-radio-group>
+            <label class="btn btn-success"><input type="radio" value="1.w"><strong>1</strong> Week</label>
+            <label class="btn btn-success"><input type="radio" value="2.w"><strong>2</strong> Week</label>
+            <label class="btn btn-success"><input type="radio" value="1.m"><strong>1</strong> Month</label>
+            <label class="btn btn-success"><input type="radio" value="2.m"><strong>2</strong> Month</label>
+            <label class="btn btn-success"><input type="radio" value="4.m"><strong>4</strong> Month</label>
+            <label class="btn btn-success"><input type="radio" value="6.m"><strong>6</strong> Month</label>
+            <label class="btn btn-success"><input type="radio" value="0.a">All</label>
+        </div>
+        {{ timeLimit }}
+    </div>
+</div>
+<div class="row" ng-if="series.length>0">
+    <div class="col-md-12">
+        <canvas class="chart chart-line" data="actualChartData" labels="labels" series="series" legend="true"></canvas>
+    </div>
+</div>
+{% endraw %}

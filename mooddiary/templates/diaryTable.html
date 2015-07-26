@@ -1,0 +1,16 @@
+{% raw %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th ng-repeat="field in fields">{{ field.name }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="entry in entries">
+            <td>{{ entry.date | date : 'dd/MM' }}</td>
+            <td ng-repeat="field in fields">{{ getAnswerForField(entry, field) }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endraw %}

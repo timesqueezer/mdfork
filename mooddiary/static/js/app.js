@@ -1,4 +1,13 @@
-angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.ngStrap.modal', 'mooddiary.utils'])
+angular.module('mooddiary', [
+    'ngResource',
+    'ui.router',
+    'chart.js',
+    'mgcrea.ngStrap',
+    'mgcrea.ngStrap.modal',
+    'mgcrea.ngStrap.alert',
+    'mooddiary.diary',
+    'mooddiary.utils'
+])
 
 .config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('authInterceptor');
@@ -20,27 +29,13 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
 
     $stateProvider
 
-    .state('diary', {
-        url: '/diary',
-        templateUrl: '/templates/main',
-        controller: 'MainCtrl',
-        resolve: {
-            fieldsResolved: ['$http', function($http) {
-                return $http.get('/api/fields');
-            }],
-            entriesResolved: ['$http', function($http) {
-                return $http.get('/api/entries');
-            }]
-        }
-    })
-
     .state('settings', {
         url: '/settings',
         templateUrl: '/templates/settings',
         controller: 'SettingsCtrl',
         resolve: {
-            fieldsResolved: ['$http', function($http) {
-                return $http.get('/api/fields');
+            fieldsResolved: ['Field', function(Field) {
+                return Field.query().$promise;
             }]
         }
     })
@@ -55,132 +50,33 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
 
 }])
 
-.controller('MainCtrl', ['$scope', '$http', '$filter', '$q', 'fieldsResolved', 'entriesResolved', function($scope, $http, $filter, $q, fieldsResolved, entriesResolved) {
-
-    var errorCallback = function(data) {
-        console.error(data);
-    };
-
-    var reloadEntries = function() {
-        $http.get('/api/entries').success(function(data) {
-            $scope.entries = data;
-            reloadCharts();
-        }).error(errorCallback);
-    };
-
-    var reloadCharts = function() {
-        $scope.chartData = {};
-        $scope.actualChartData = [];
-        $scope.series = [];
-
-        $scope.labels = _.map($scope.entries, function(entry) {
-            return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
-        });
-
-        angular.forEach($scope.chartableFields, function(field) {
-            var data = _.map($scope.entries, function(entry) {
-                var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-                if (answer) {
-                    return answer.content;
-                } else {
-                    return 0;
-                }
-            })
-            $scope.chartData[field.id] = data;
-        });
-    };
-
-    $scope.toggleChartField = function(field) {
-        if ($scope.series.indexOf(field.name) == -1) {
-            $scope.series.push(field.name);
-            $scope.actualChartData.push($scope.chartData[field.id]);
-        } else {
-            $scope.series.splice($scope.series.indexOf(field.name), 1);
-            $scope.actualChartData.splice($scope.actualChartData.indexOf($scope.chartData[field.id]), 1);
-        }
-    };
-
-    $scope.getAnswerForField = function(entry, field) {
-        var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        if (answer) {
-            return answer.content;
-        } else {
-            return '-';
-        }
-    };
-
-    $scope.addEntry = function() {
-        $http.post('/api/entries', $scope.newEntry).success(function(created_entry) {
-            var promises = [];
-            angular.forEach($scope.fields, function(field) {
-                var answer = {};
-                answer.entry_field_id = field.id;
-                answer.entry_id = created_entry.id;
-                answer.content = $scope.newEntryAnswers[field.id];
-                promises.push($http.post('/api/entry_field_answer', answer));
-            });
-            $q.all(promises).then(function() {
-                $scope.newEntry = {};
-                $scope.newEntryAnswers = {};
-                reloadEntries();
-            }, errorCallback);
-        }).error(errorCallback);
-    };
-
-    /*$scope.$watch('timeLimit', function() {
-        var number = parseInt($scope.timeLimit.split('.')[0]);
-        var timeSpan = $scope.timeLimit.split('.')[1];
-        var today = var endDate = new Date.UTC();
-        var startDate = new Date();w
-        if (timeSpan == 'w') {
-            startDate.day -=
-        }
-
-        var filters = {'or': [{'name': 'date', 'op': '>', startDate}, {'name': 'date', 'op': '<=', endDate}]};
-        $http.get('/api/entry', {'q': filters}).success(function(data) {
-            $scope.entries = data;
-            reloadCharts();
-        });
-    });*/
-
-    // Init
-    $scope.entries = entriesResolved.data;
-    $scope.fields = fieldsResolved.data;
-    $scope.chartableFields = _.filter($scope.fields, function(field) {
-        return field.type != 1;
-    });
-
-    $scope.newEntry = {};
-    $scope.newEntryAnswers = {};
-    $scope.today = new Date();
-
-    reloadCharts();
-}])
-
-.controller('SettingsCtrl', ['$scope', '$http', 'fieldsResolved', function($scope, $http, fieldsResolved) {
+.controller('SettingsCtrl', ['$scope', 'fieldsResolved', 'Field', function($scope, fieldsResolved, Field) {
 
     var errorCallback = function(data) {
         console.log(data);
     };
 
     var reloadFields = function() {
-        $http.get('/api/fields').success(function(data) {
+        Field.query(function(data) {
             $scope.fields = data;
-        }).error(errorCallback);
+        }, errorCallback);
     };
 
-    $scope.fields = fieldsResolved.data;
-    $scope.newField = {type: 2};
+    $scope.fields = fieldsResolved;
+    $scope.newField = new Field({type: 2});
 
     $scope.addField = function() {
-        $http.post('/api/fields', $scope.newField).success(function() {
+        if (angular.isString($scope.newField.type)) {
+            $scope.newField.type = parseInt($scope.newField.type);
+        }
+        $scope.newField.$save(function() {
             reloadFields();
-            $scope.newField = {type: 2};
-        }).error(errorCallback);
+            $scope.newField = new Field({type: 2});
+        }, errorCallback);
     };
 
     $scope.deleteField = function(field) {
-        $http.delete('/api/fields/' + field.id).success(reloadFields);
+        field.$delete(reloadFields);
     };
 
 }])
@@ -208,7 +104,7 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     }
 })
 
-.controller('LoginCtrl', ['$scope', 'AuthService', '$modal', '$http', '$rootScope', function($scope, AuthService, $modal, $http, $rootScope) {
+.controller('LoginCtrl', ['$scope', 'AuthService', '$modal', '$http', '$rootScope', '$state', function($scope, AuthService, $modal, $http, $rootScope, $state) {
     var loginModal = $modal({title: 'Login or Register', show: false, contentTemplate: '/templates/loginModal', scope: $scope});
 
     $scope.login = function(email, password) {
@@ -228,7 +124,10 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
 
     $scope.logout = function() {
         AuthService.logout();
+        $state.go('about');
     }
+
+    $scope.$state = $state;
 }])
 
 .controller('AboutCtrl', function() {})
