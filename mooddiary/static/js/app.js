@@ -1,26 +1,35 @@
 angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.ngStrap.modal', 'mooddiary.utils'])
 
 .config(['$httpProvider', function($httpProvider) {
-    //$httpProvider.interceptors.push('authInterceptor');
+    $httpProvider.interceptors.push('authInterceptor');
+}])
+
+.run(['AuthService', '$rootScope', '$http', function(AuthService, $rootScope, $http) {
+    AuthService.checkAndSetLogin();
+    if ($rootScope.loggedIn) {
+        $http.get('/api/me').success(function(data) {
+            $rootScope.me = data;
+        });
+    }
 }])
 
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $urlMatcherFactoryProvider.strictMode(false);
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/about');
 
     $stateProvider
 
-    .state('index', {
-        url: '/',
+    .state('diary', {
+        url: '/diary',
         templateUrl: '/templates/main',
         controller: 'MainCtrl',
         resolve: {
             fieldsResolved: ['$http', function($http) {
-                return $http.get('/api/entry_field');
+                return $http.get('/api/fields');
             }],
             entriesResolved: ['$http', function($http) {
-                return $http.get('/api/entry');
+                return $http.get('/api/entries');
             }]
         }
     })
@@ -31,9 +40,15 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
         controller: 'SettingsCtrl',
         resolve: {
             fieldsResolved: ['$http', function($http) {
-                return $http.get('/api/entry_field');
+                return $http.get('/api/fields');
             }]
         }
+    })
+
+    .state('about', {
+        url: '/about',
+        templateUrl: '/templates/about',
+        controller: 'AboutCtrl'
     })
 
     ;
@@ -47,7 +62,7 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     };
 
     var reloadEntries = function() {
-        $http.get('/api/entry').success(function(data) {
+        $http.get('/api/entries').success(function(data) {
             $scope.entries = data;
             reloadCharts();
         }).error(errorCallback);
@@ -58,12 +73,12 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
         $scope.actualChartData = [];
         $scope.series = [];
 
-        $scope.labels = _.map($scope.entries.objects, function(entry) {
+        $scope.labels = _.map($scope.entries, function(entry) {
             return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
         });
 
         angular.forEach($scope.chartableFields, function(field) {
-            var data = _.map($scope.entries.objects, function(entry) {
+            var data = _.map($scope.entries, function(entry) {
                 var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
                 if (answer) {
                     return answer.content;
@@ -95,9 +110,9 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     };
 
     $scope.addEntry = function() {
-        $http.post('/api/entry', $scope.newEntry).success(function(created_entry) {
+        $http.post('/api/entries', $scope.newEntry).success(function(created_entry) {
             var promises = [];
-            angular.forEach($scope.fields.objects, function(field) {
+            angular.forEach($scope.fields, function(field) {
                 var answer = {};
                 answer.entry_field_id = field.id;
                 answer.entry_id = created_entry.id;
@@ -131,7 +146,7 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     // Init
     $scope.entries = entriesResolved.data;
     $scope.fields = fieldsResolved.data;
-    $scope.chartableFields = _.filter($scope.fields.objects, function(field) {
+    $scope.chartableFields = _.filter($scope.fields, function(field) {
         return field.type != 1;
     });
 
@@ -149,7 +164,7 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     };
 
     var reloadFields = function() {
-        $http.get('/api/entry_field').success(function(data) {
+        $http.get('/api/fields').success(function(data) {
             $scope.fields = data;
         }).error(errorCallback);
     };
@@ -158,14 +173,14 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     $scope.newField = {type: 2};
 
     $scope.addField = function() {
-        $http.post('/api/entry_field', $scope.newField).success(function() {
+        $http.post('/api/fields', $scope.newField).success(function() {
             reloadFields();
             $scope.newField = {type: 2};
         }).error(errorCallback);
     };
 
     $scope.deleteField = function(field) {
-        $http.delete('/api/entry_field/' + field.id).success(reloadFields);
+        $http.delete('/api/fields/' + field.id).success(reloadFields);
     };
 
 }])
@@ -193,17 +208,29 @@ angular.module('mooddiary', ['ui.router', 'chart.js', 'mgcrea.ngStrap', 'mgcrea.
     }
 })
 
-.controller('LoginCtrl', ['$scope', 'AuthService', '$modal', function($scope, AuthService, $modal) {
+.controller('LoginCtrl', ['$scope', 'AuthService', '$modal', '$http', '$rootScope', function($scope, AuthService, $modal, $http, $rootScope) {
     var loginModal = $modal({title: 'Login or Register', show: false, contentTemplate: '/templates/loginModal', scope: $scope});
 
     $scope.login = function(email, password) {
-        console.log(email, password);
-        AuthService.login(email, password);
+        AuthService.login(email, password).then(function() {
+            loginModal.hide();
+            $http.get('/api/me').success(function(data) {
+                $rootScope.me = data;
+            });
+        }, function() {
+            $scope.loginError = true;
+        });
     };
 
     $scope.showLoginModal = function() {
         loginModal.show();
     };
+
+    $scope.logout = function() {
+        AuthService.logout();
+    }
 }])
+
+.controller('AboutCtrl', function() {})
 
 ;

@@ -33,6 +33,12 @@ def initdb(random_data=False):
 
     if random_data:
         print("Creating random data")
+
+        matz = User(email='matzradloff@gmail.com', first_name='Matz', last_name='Radloff')
+        matz.set_password('Mohquah3')
+        db.session.add(matz)
+        db.session.commit()
+
         faker = Faker()
         random_fields = [
             {'name': 'Overall Mood', 'type': EntryFieldType.RANGE.value},
@@ -45,12 +51,12 @@ def initdb(random_data=False):
             {'name': 'Stray Thougts Intensity', 'type': EntryFieldType.RANGE.value}
         ]
         for field in random_fields:
-            new_entry_field = EntryField(name=field['name'], type=field['type'])
+            new_entry_field = EntryField(name=field['name'], type=field['type'], user_id=matz.id)
             db.session.add(new_entry_field)
         db.session.commit()
 
         for i in range(50, 0, -1):
-            new_entry = Entry(date=datetime.utcnow() - timedelta(days=i))
+            new_entry = Entry(date=datetime.utcnow() - timedelta(days=i), user_id=matz.id)
             db.session.add(new_entry)
             for field in EntryField.query:
                 if field.type == EntryFieldType.STRING.value:

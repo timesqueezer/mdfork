@@ -13,7 +13,7 @@ class IdDateMixin(IdMixin):
 
 class EntryFieldAnswerSchema(IdMixin):
     class Meta:
-        additional = ['content']
+        additional = ['content', 'entry_field_id']
 
 
 class EntryFieldSchema(IdMixin):

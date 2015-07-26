@@ -18,6 +18,8 @@ class Entry(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('User', backref='entries')
 
 
 class EntryField(db.Model):
@@ -26,6 +28,8 @@ class EntryField(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     type = db.Column(db.Integer, default=EntryFieldType.RANGE.value)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('User', backref='fields')
 
 
 class EntryFieldAnswer(db.Model):

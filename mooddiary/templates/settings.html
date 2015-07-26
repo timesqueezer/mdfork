@@ -1,10 +1,10 @@
 {% raw %}
 
 <h1>Settings</h1>
-<h3>Fields ({{ fields.num_results }})</h3>
+<h3>Fields ({{ fields.length }})</h3>
 
-<div class="row row-spaced" ng-repeat="row in (fields.objects.length/3 | array)">
-    <div class="col-sm-4" ng-repeat="field in fields.objects.slice(3*$index, 3*$index + 3)">
+<div class="row row-spaced" ng-repeat="row in (fields.length/3 | array)">
+    <div class="col-sm-4" ng-repeat="field in fields.slice(3*$index, 3*$index + 3)">
         <div class="panel panel-default panel-body">
             <h4>{{ field.name }} <small>{{ field.type | fieldTypeToString }}</small></h4></h6>
             <a class="btn btn-lg btn-link" ng-click="deleteField(field)"><i class="fa fa-trash-o"></i></a>

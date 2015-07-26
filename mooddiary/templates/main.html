@@ -3,8 +3,8 @@
 <div class="panel panel-default panel-body">
     <form class="form" ng-show="entryAdding">
         <legend>Add Entry <small>{{ today | date : mediumDate }}</small></legend>
-        <div class="row" ng-repeat="row in (fields.objects.length/2 | array)">
-            <div class="col-md-6" ng-repeat="field in fields.objects.slice(2*$index, 2*$index + 2)">
+        <div class="row" ng-repeat="row in (fields.length/2 | array)">
+            <div class="col-md-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)">
                 <div class="form-group" ng-switch="field.type">
                     <label>{{ field.name }}</label>
                     <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]"></textarea>
@@ -60,13 +60,13 @@
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th ng-repeat="field in fields.objects">{{ field.name }}</th>
+                    <th ng-repeat="field in fields">{{ field.name }}</th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="entry in entries.objects">
+                <tr ng-repeat="entry in entries">
                     <td>{{ entry.date | date : 'dd/MM' }}</td>
-                    <td ng-repeat="field in fields.objects">{{ getAnswerForField(entry, field) }}</td>
+                    <td ng-repeat="field in fields">{{ getAnswerForField(entry, field) }}</td>
                 </tr>
             </tbody>
         </table>

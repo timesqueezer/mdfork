@@ -12,6 +12,8 @@ js = Bundle(
     'bower_components/angular-strap/dist/angular-strap.tpl.js',
     'bower_components/Chart.js/Chart.js',
     'bower_components/angular-chart.js/dist/angular-chart.js',
+    'bower_components/bootstrap/js/alert.js',
+    'bower_components/bootstrap/js/modal.js',
 
     'js/utils.js',
     'js/app.js',
