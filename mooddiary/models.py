@@ -68,10 +68,6 @@ class User(db.Model):
     #google_id = db.Column(db.String(50))
     #google_token = db.Column(db.String(300))
 
-    @property
-    def name(self):
-        return "{} {}".format(self.first_name, self.last_name)
-
     def set_password(self, password_string):
         self.password_salt = generate_random_salt()
         self.password_hash = generate_password_hash(password_string, self.password_salt, 1 << 15)

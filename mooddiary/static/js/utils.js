@@ -10,7 +10,7 @@ angular.module('mooddiary.utils', [])
                     $rootScope.loggedIn = true;
                     resolve();
                 }).error(function(data, status, headers, config) {
-                    reject();
+                    reject(data);
                 });
             });
         },
@@ -29,6 +29,17 @@ angular.module('mooddiary.utils', [])
                     $rootScope.loggedIn = true;
                 }
             }
+        },
+        register: function(email, pw) {
+            var login = this.login;
+            return $q(function(resolve, reject) {
+                $http.post('/api/users', {email: email, password: pw}).success(function(data) {
+                    console.log(login);
+                    login(email, pw).then(resolve);
+                }).error(function(data) {
+                    reject(data);
+                })
+            });
         }
     };
 }])

@@ -121,3 +121,29 @@ class UserMe(Resource):
 
         return resp(user, schema)
 restful.add_resource(UserMe, '/me')
+
+
+class UserList(Resource):
+    def post(self):
+        # captcha stuff
+        class UserInputSchema(Schema):
+            email = fields.String(required=True)
+            password = fields.String(required=True)
+        schema = UserInputSchema()
+        result, errors = schema.load(request.json)
+
+        if errors:
+            return resp({'message': 'form error'}, status_code=400)
+
+        if User.query.filter_by(email=result['email']).count() >= 1:
+            return resp({'message': 'email already in use'}, status_code=400)
+
+        user = User(email=result['email'])
+        user.set_password(result['password'])
+
+        db.session.add(user)
+        db.session.commit()
+
+        schema = UserSchema()
+        return resp(user, schema)
+restful.add_resource(UserList, '/users')

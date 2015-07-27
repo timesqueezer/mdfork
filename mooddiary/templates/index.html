@@ -30,7 +30,7 @@
                         </ul>
                         <div class="navbar-right">
                             <button ng-hide="$root.loggedIn" class="btn btn-link navbar-btn" ng-click="showLoginModal()"><i class="fa fa-sign-in"></i> Login</button>
-                            <p class="navbar-text" ng-show="$root.loggedIn">Logged in as <i class="fa fa-user"></i> <strong>{{ me.name }}</strong></p>
+                            <p class="navbar-text" ng-show="$root.loggedIn">Logged in as <i class="fa fa-user"></i> {{ me.email }}<br><strong ng-show="me.first_name && me.last_name">{{ me.first_name }} {{ me.last_name }}</strong></p>
                             <button ng-show="$root.loggedIn" class="btn btn-link navbar-btn" ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</button>
                         </div>
                     </div>

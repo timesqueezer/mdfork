@@ -28,4 +28,4 @@ class EntrySchema(IdMixin):
 
 class UserSchema(IdDateMixin):
     class Meta:
-        additional = ['email', 'first_name', 'last_name', 'name']
+        additional = ['email', 'first_name', 'last_name']

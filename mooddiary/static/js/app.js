@@ -113,8 +113,17 @@ angular.module('mooddiary', [
             $http.get('/api/me').success(function(data) {
                 $rootScope.me = data;
             });
-        }, function() {
-            $scope.loginError = true;
+        }, function(resp) {
+            $scope.errorMessage = resp.description;
+        });
+    };
+
+    $scope.register = function(email, password) {
+        AuthService.register(email, password).then(function() {
+            loginModal.hide();
+            $state.go('settings', {newUser: true});
+        }, function(resp) {
+            $scope.errorMessage = resp.message;
         });
     };
 
