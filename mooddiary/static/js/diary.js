@@ -45,22 +45,26 @@ angular.module('mooddiary.diary', [])
 
 .controller('DiaryCtrl', ['$scope', '$q', '$state', '$alert', 'fieldsResolved', 'entriesResolved', 'Field', 'Entry', 'Answer', function($scope, $q, $state, $alert, fieldsResolved, entriesResolved, Field, Entry, Answer) {
 
-    var errorCallback = function(data) {
+    var errorCallback = $scope.errorCallback = function(data) {
         console.error(data);
     };
 
     var checkIfEntryAddedToday = function(entries) {
         var today = new Date();
-        
+
         var entry = _.filter(entries, function(entry) {
 
         })
     };
 
-    var reloadEntries = function() {
-        Entry.query(function(data) {
-            $scope.entries = data;
-        }, errorCallback);
+    var reloadEntries = $scope.reloadEntries = function() {
+        return $q(function(resolve, reject) {
+            Entry.query(function(data) {
+                $scope.entries = data;
+                resolve();
+            }, reject);
+
+        });
     };
 
     $scope.getAnswerForField = function(entry, field) {
@@ -108,13 +112,17 @@ angular.module('mooddiary.diary', [])
 
 .controller('DiaryChartCtrl', ['$scope', '$filter', 'Entry', function($scope, $filter, Entry) {
     var reloadCharts = function() {
-        $scope.chartData = {};
-        $scope.actualChartData = [];
-        $scope.series = [];
-
         $scope.labels = _.map($scope.entries, function(entry) {
-            return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+            if ($scope.timeLimit == '1.w') {
+                return $filter('date')(entry.date, 'dd', 'UTC');
+/*            } else if ($scope.timeLimit == '2.w') {*/
+
+            } else {
+                return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+            }
         });
+
+        $scope.actualChartData = [];
 
         angular.forEach($scope.chartableFields, function(field) {
             var data = _.map($scope.entries, function(entry) {
@@ -126,6 +134,10 @@ angular.module('mooddiary.diary', [])
                 }
             })
             $scope.chartData[field.id] = data;
+            angular.forEach($scope.series, function(field_name) {
+                if (field.name == field.name)
+                    $scope.actualChartData.push($scope.chartData[field.id]);
+            });
         });
     };
 
@@ -139,28 +151,52 @@ angular.module('mooddiary.diary', [])
         }
     };
 
-    /*$scope.$watch('timeLimit', function() {
-        var number = parseInt($scope.timeLimit.split('.')[0]);
-        var timeSpan = $scope.timeLimit.split('.')[1];
-        var today = var endDate = new Date.UTC();
-        var startDate = new Date();w
-        if (timeSpan == 'w') {
-            startDate.day -=
+    $scope.$watch('timeLimit', function(old_values, new_values) {
+        if (old_values == new_values)
+            return;
+        if ($scope.timeLimit == '0.a') {
+            $scope.reloadEntries().then(reloadCharts, $scope.errorCallback);
+        } else {
+            Entry.query({timespan: $scope.timeLimit}, function(data) {
+                $scope.entries = data;
+                reloadCharts();
+            }, $scope.errorCallback);
         }
-
-        var filters = {'or': [{'name': 'date', 'op': '>', startDate}, {'name': 'date', 'op': '<=', endDate}]};
-        $http.get('/api/entry', {'q': filters}).success(function(data) {
+        /*
             $scope.entries = data;
             reloadCharts();
-        });
-    });*/
+        });*/
+    });
 
     $scope.chartableFields = _.filter($scope.fields, function(field) {
         return field.type != 1;
     });
+
+    $scope.activeFields = {};
+    $scope.chartData = {};
+    $scope.actualChartData = [];
+    $scope.series = [];
+
     reloadCharts();
 }])
 
-.controller('DiaryListCtrl', function() {})
+.controller('DiaryListCtrl', ['$scope', function($scope) {
+    $scope.editField = {};
+
+    $scope.startEditField = function(entry, field) {
+        $scope.editField[entry.id][field.id] = true;
+        $scope.editValue = $scope.getAnswerForField(entry, field);
+    };
+
+    $scope.editField = function(entry, field) {
+        var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
+        console.log(answer);
+        answer.content = $scope.editValue;
+        answer.$save().$then(function() {
+            $scope.editField[entry.id][field.id] = false;
+            $scope.editValue = undefined;
+        });
+    };
+}])
 
 ;

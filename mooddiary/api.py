@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from flask import Blueprint, current_app, request, json, abort
 from flask.ext.restful import Api, Resource
 from flask.ext.jwt import current_user, jwt_required
@@ -31,7 +31,16 @@ def resp(data, schema=None, status_code=200):
 class UserEntryList(Resource):
     @jwt_required()
     def get(self):
-        entries = Entry.query.filter_by(user_id=current_user.id).order_by('date DESC').all()
+        if 'timespan' in request.args:
+            count, length = request.args.get('timespan').split('.')
+            count = int(count)
+            if length == 'w':
+                delta = timedelta(weeks=count)
+            elif length == 'm':
+                delta = timedelta(weeks=count*4)
+            entries = Entry.query.filter(db.func.date(Entry.date) >= date.today() - delta).order_by('date DESC').all()
+        else:
+            entries = Entry.query.filter_by(user_id=current_user.id).order_by('date DESC').all()
         schema = EntrySchema(many=True)
 
         return resp(entries, schema)

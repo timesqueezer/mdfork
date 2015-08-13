@@ -1,14 +1,16 @@
 {% raw %}
-<div class="panel panel-default panel-body" ng-repeat="entry in entries">
+<div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
     <div class="row spaced-bottom">
-        <div class="col-md-3">
-            <h4><span class="label label-primary">{{ entry.date | date: 'fullDate' }}</span></h4>
+        <div class="col-md-2">
+            <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
+            <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
         </div>
-        <div class="col-md-9">
-            <div class="row" ng-repeat="row in (fields.length/3 | array)" style="border-bottom: 1px solid #ccc;">
-                <div class="col-sm-4" ng-repeat="field in fields.slice(3*$index, 3*$index + 3)">
+        <div class="col-md-10">
+            <div class="row row-border-bottom" ng-repeat="row in (fields.length/2 | array)">
+                <div class="col-md-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)" ng-init="editField[entry.id][field.id] = false">
                     <h5>{{ field.name }}</h5>
-                    <div style="font-size: 16pt">
+                    <button class="btn btn-lg btn-link pull-right" ng-click="startEditField(entry, field)" ng-hide="editField[entry.id][field.id]"><i class="fa fa-pencil-square-o"></i></button>
+                    <div style="font-size: 16pt" ng-hide="editField[entry.id][field.id]">
                         <p ng-show="field.type == 1">{{ getAnswerForField(entry, field) }}</p>
                         <div ng-show="field.type == 2">
                             <div class="progress">
@@ -19,6 +21,17 @@
                         <div ng-show="field.type == 3" class="filled-circle">
                             {{ getAnswerForField(entry, field) }}
                         </div>
+                    </div>
+                    <div ng-show="editField[entry.id][field.id]" class="spaced-bottom">
+                        <div class="form-group" ng-switch="field.type">
+                            <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="editValue"></textarea>
+                            <div class="input-group" ng-switch-when="2">
+                                <div class="input-group-addon">{{ editValue }}</div>
+                                <input class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="editValue" ng-init="editValue = 0">
+                            </div>
+                            <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="editValue">
+                        </div>
+                        <button class="btn btn-sm btn-primary" ng-click="editField(entry, field)">Save</button>
                     </div>
                 </div>
             </div>
