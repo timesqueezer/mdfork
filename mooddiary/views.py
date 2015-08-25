@@ -15,6 +15,14 @@ def send_lang_json(lang=None):
         abort(404)
     return send_file('languages/' + lang)
 
+
+@main.route('/static/flags/<path:flag>')
+def send_flag(flag=None):
+    if '..' in flag or flag.startswith('/'):
+        abort(404)
+    return send_file('static/bower_components/flag-icon-css/flags/' + flag)
+
+
 @main.route('/')
 @main.route('/<path:path>')
 def index(path=None):

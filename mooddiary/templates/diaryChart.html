@@ -17,9 +17,7 @@
         </div>
     </div>
 </div>
-<div class="row" ng-if="series.length>0">
-    <div class="col-md-12">
-        <canvas class="chart chart-line" data="actualChartData" labels="labels" series="series" legend="true"></canvas>
-    </div>
+<div class="panel panel-default panel-body" ng-if="series.length>0">
+    <canvas class="chart chart-line" data="actualChartData" labels="labels" series="series" legend="true"></canvas>
 </div>
 {% endraw %}

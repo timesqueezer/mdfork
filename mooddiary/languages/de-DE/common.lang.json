@@ -9,11 +9,19 @@
     "save": "Speichern",
     "password": "Passwort",
     "password_change": "Passwort ändern",
+    "password_repeat": "Passwort wiederholen",
     "fields": "Kategorien",
     "field_add": "Kategorie hinzufügen",
     "field_string": "Text",
     "field_integer": "Zahl",
     "field_range": "Zahl (1-10)",
     "add": "Hinzufügen",
-    "register": "Registrieren"
+    "register": "Registrieren",
+    "register_info": "Die Registrierungs-Funktion ist zurzeit nicht verfügbar.",
+    "about_h1": "Demnächst wird hier mehr stehen",
+    "about_p1": "Hatte keine Zeit für lange Texte.",
+    "about_warning": "Diese App hat gerade so den BETA-Status erreicht. Bei Problemen meldet euch bitte.",
+    "about_hsmall": "Dein Stimmungstagebuch",
+    "language": "Sprache",
+    "password_differ": "Die Passwörter stimmen nicht überein"
 }

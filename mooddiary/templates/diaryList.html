@@ -1,9 +1,13 @@
 {% raw %}
 <div class="panel panel-default panel-body">
-    <h5 class="spaced-bottom" i18n="diary.select_fields"></h5>
-    <div class="row spaced-bottom" ng-repeat="row in (fields.length/6 | array)">
+    <h5 i18n="diary.select_fields"></h5>
+    <div class="row" ng-repeat="row in (fields.length/6 | array)">
         <div class="col-sm-2" ng-repeat="field in fields.slice(6*$index, 6*$index + 6)">
-            <div class="form-group"><label><input type="checkbox" class="form-control" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]"> {{ field.name }}</label></div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]"> {{ field.name }}
+                </label>
+            </div>
         </div>
     </div>
 </div>

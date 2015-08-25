@@ -1,33 +1,54 @@
 {% raw %}
-
-<h1 i18n="common.menu_settings"></h1>
 <div class="panel panel-default panel-body">
     <h3>Account</h3>
     <p class="help-text" ng-show="$stateParams.newUser" i18n="common.new_user"></p>
     <form name="profileEditForm" class="form" novalidate>
-        <legend i18n="common.user_information"></legend>
-        <div class="form-group">
-            <label>Email</label>
-            <input class="form-control" name="email" type="email" placeholder="Email" ng-model="me.email">
-        </div>
-        <div class="form-group">
-            <label i18n="common.user_firstname"></label>
-            <input class="form-control" name="first_name" type="text" i18n-attr="{placeholder: 'common.user_firstname'}" ng-model="me.first_name">
-        </div>
-        <div class="form-group">
-            <label i18n="common.user_lastname"></label>
-            <input class="form-control" name="last_name" type="text" i18n-attr="{placeholder: 'common.user_lastname'}" ng-model="me.last_name">
+        <div class="row">
+            <div class="col-md-6">
+                <legend i18n="common.user_information"></legend>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input class="form-control" name="email" type="email" placeholder="Email" ng-model="me.email">
+                </div>
+                <div class="form-group">
+                    <label i18n="common.user_firstname"></label>
+                    <input class="form-control" name="first_name" type="text" i18n-attr="{placeholder: 'common.user_firstname'}" ng-model="me.first_name">
+                </div>
+                <div class="form-group">
+                    <label i18n="common.user_lastname"></label>
+                    <input class="form-control" name="last_name" type="text" i18n-attr="{placeholder: 'common.user_lastname'}" ng-model="me.last_name">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <legend i18n="common.password"></legend>
+                <div class="form-group">
+                    <label i18n="common.password"></label>
+                    <input class="form-control" name="password" type="password" i18n-attr="{placeholder: 'common.password'}" ng-model="me.password">
+                </div>
+                <div class="form-group">
+                    <label i18n="common.password_repeat"></label>
+                    <input class="form-control" name="password2" type="password" i18n-attr="{placeholder: 'common.password_repeat'}" ng-model="password2">
+                </div>
+
+                <legend i18n="common.language"></legend>
+                <div class="form-group">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="flag-icon" ng-class="flagClass"></span> {{ langDisplayText }} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="lang in supportedLang">
+                                <a href="" ng-click="setLocale(lang)">
+                                    <span class="flag-icon" ng-class="localeData[lang].flagClass"></span>
+                                    <span>{{ localeData[lang].langDisplayText }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
         <button class="btn btn-primary" type="submit" ng-click="saveProfile()" i18n="common.save"></button>
-    </form>
-    <hr>
-    <form name="passwordChangeForm" class="form" novalidate>
-        <legend i18n="common.password"></legend>
-        <div class="form-group">
-            <label i18n="common.password"></label>
-            <input class="form-control" name="password" type="password" i18n-attr="{placeholder: 'common.password'}" ng-model="me.password">
-        </div>
-        <button class="btn btn-primary" type="submit" ng-click="changePassword()" i18n="common.password_change"></button>
     </form>
 </div>
 <div class="panel panel-default panel-body">

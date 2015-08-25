@@ -15,37 +15,38 @@
 {% raw %}
     <body ng-controller="myAppControl">
         <div class="container">
-            <nav class="navbar navbar-inverse" ng-controller="NavCtrl">
+            <nav class="navbar navbar-default" ng-controller="NavCtrl">
                 <div class="container-fluid">
                     <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
                         <a class="navbar-brand" ui-sref="about">
-                            MoodDiary <span class="label label-info">Alpha</span>
+                            MoodDiary <span class="label label-success">Beta</span>
                         </a>
                     </div>
-                    <div class="collapse navbar-collapse">
+                    <div class="collapse navbar-collapse" id="navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li ng-class="{active: $state.includes('about')}"><a ui-sref="about"><i class="fa fa-info"></i> <span i18n="common.menu_about"></span></a></li>
                             <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('diary')}"><a ui-sref="diary.list"><i class="fa fa-book"></i> <span i18n="common.menu_diary"></span></a></li>
                             <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('settings')}"><a ui-sref="settings"><i class="fa fa-cogs"></i> <span i18n="common.menu_settings"></span></a></li>
                         </ul>
-                        <div class="navbar-right">
-                            <ul>
-                              <li data-ng-repeat="lang in supportedLang">
-                                  <button class="btn btn-sm btn-default" ng-click="setLocale(lang)">
-                                      <i ng-class="localeData[lang].flagClass"></i>
-                                      <span>{{ localeData[lang].langDisplayText }}</span>
-                                  </button>
-                              </li>
-                          </ul>
-                            <button ng-hide="$root.loggedIn" class="btn btn-link navbar-btn" ui-sref="login"><i class="fa fa-sign-in"></i> Login</button>
-                            <p class="navbar-text" ng-show="$root.loggedIn"><i class="fa fa-user"></i> {{ me.email }} | <strong ng-show="me.first_name && me.last_name">{{ me.first_name }} {{ me.last_name }}</strong></p>
-                            <button ng-show="$root.loggedIn" class="btn btn-link navbar-btn" ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</button>
-                        </div>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <button ng-hide="$root.loggedIn" class="btn btn-link navbar-btn" ui-sref="login"><i class="fa fa-sign-in"></i> Login</button>
+                                <p class="navbar-text" ng-show="$root.loggedIn"><i class="fa fa-user"></i> {{ me.email }} | <strong ng-show="me.first_name && me.last_name">{{ me.first_name }} {{ me.last_name }}</strong></p>
+                                <button ng-show="$root.loggedIn" class="btn btn-link navbar-btn" ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </nav>
             <div ui-view></div>
         </div>
+        <div id="alert-container"></div>
     </body>
 </html>
 {% endraw %}

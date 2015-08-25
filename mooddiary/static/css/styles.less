@@ -2,7 +2,12 @@
 @import "../bower_components/bootswatch/paper/variables.less";
 @import "../bower_components/bootswatch/paper/bootswatch.less";
 
-@brand-primary:         #006696;
+@import url(http://fonts.googleapis.com/css?family=Noto+Sans);
+@import url(http://fonts.googleapis.com/css?family=Josefin+Sans:400,600,700);
+
+@font-family-sans-serif: "Josefin Sans", "Noto Sans", "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+@brand-primary:         #0A80BA;
 @brand-success:         #9BC53D;
 @brand-info:            #0FAFFF;
 @brand-warning:         #FA7921;
@@ -12,6 +17,8 @@
 @border-radius-large:       1px;
 @border-radius-small:       1px;
 
+@navbar-default-color: @gray;
+
 .spaced-bottom {
     margin-bottom: 2em;
 }
@@ -20,7 +27,30 @@ body {
     background: #EAEAEA;
 }
 
+@navbar-default-brand-color: @brand-primary;
+@navbar-default-link-hover-color: @brand-primary;
+@navbar-default-link-active-color: @brand-primary;
+
+.navbar-brand {
+    font-size: 22pt;
+}
+
 @dark-info: darken(@brand-info, 10%);
+
+@font-size-base:          12pt;
+@font-size-large:         ceil((@font-size-base * 1.25)); // ~18px
+@font-size-small:         ceil((@font-size-base * 0.85)); // ~12px
+
+@font-size-h1:            56pt;
+@font-size-h2:            45pt;
+@font-size-h3:            34pt;
+@font-size-h4:            24pt;
+@font-size-h5:            20pt;
+@font-size-h6:            14pt;
+
+.navbar-text {
+    padding-left: 15px;
+}
 
 .filled-circle {
     text-align: center;
@@ -42,4 +72,42 @@ p {
 
 .row-border-bottom {
     border-bottom: 1px solid #eee;
+}
+
+.info-text {
+    border-radius: 3px;
+    border-left: 5px solid @brand-info;
+    padding: 1em;
+    box-shadow: 0 0 3px #ddd;
+    background: #fefefe;
+}
+
+h3 {
+    color: @brand-primary;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 0.2em;
+    margin-bottom: 0.5em;
+}
+
+#alert-container {
+    position: fixed; bottom: 25px; right: 25px;
+    font-size: 18pt;
+    box-shadow: 5px 5px 20px #ddd;
+}
+
+.am-fade {
+    opacity: 1;
+    transition: opacity .2s linear;
+    &.ng-enter {
+        opacity: 0;
+        &.ng-enter-active {
+            opacity: 1;
+        }
+    }
+    &.ng-leave {
+        opacity: 1;
+        &.ng-leave-active {
+            opacity: 0;
+        }
+    }
 }

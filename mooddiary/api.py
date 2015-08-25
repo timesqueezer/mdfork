@@ -3,7 +3,7 @@ from flask import Blueprint, current_app, request, json, abort
 from flask.ext.restful import Api, Resource
 from flask.ext.jwt import current_user, jwt_required
 from marshmallow import Schema, fields
-from marshmallow.validate import Length
+from marshmallow.validate import Length, Email
 
 from mooddiary.core import db
 from mooddiary.models import User, Entry, EntryField, EntryFieldAnswer, EntryFieldType
@@ -165,6 +165,39 @@ class UserMe(Resource):
         schema = UserSchema()
 
         return resp(user, schema)
+
+    @jwt_required()
+    def post(self):
+        class UserInputSchema(Schema):
+            email = fields.String(validate=Email())
+            first_name = fields.String(validate=Length(min=2, max=40))
+            last_name = fields.String(validate=Length(min=2, max=40))
+            password = fields.String(validate=Length(min=7))
+            language = fields.String(validate=Length(min=5, max=5))
+
+        schema = UserInputSchema()
+        result, errors = schema.load(request.json)
+
+        if errors:
+            return resp({'message': 'form error'}, status_code=400)
+
+        user = User.query.get(current_user.id)
+        if result.get('email'):
+            user.email = result['email']
+        if result.get('first_name'):
+            user.first_name = result['first_name']
+        if result.get('last_name'):
+            user.last_name = result['last_name']
+        if result.get('language'):
+            user.language = result['language']
+        if result.get('password'):
+            user.set_password(result['password'])
+
+        db.session.commit()
+
+        schema = UserSchema()
+        return resp(user, schema)
+
 restful.add_resource(UserMe, '/me')
 
 
@@ -172,7 +205,7 @@ class UserList(Resource):
     def post(self):
         # captcha stuff
         class UserInputSchema(Schema):
-            email = fields.String(required=True)
+            email = fields.String(required=True, validate=Email())
             password = fields.String(required=True)
         schema = UserInputSchema()
         result, errors = schema.load(request.json)

@@ -1,6 +1,6 @@
 angular.module('mooddiary.utils', [])
 
-.service('AuthService', ['$window', '$http', '$q', '$rootScope', function($window, $http, $q, $rootScope) {
+.service('AuthService', ['$window', '$http', '$q', '$rootScope', 'Me', function($window, $http, $q, $rootScope, Me) {
     return {
         login: function(email, pw) {
             return $q(function(resolve, reject) {
@@ -8,6 +8,7 @@ angular.module('mooddiary.utils', [])
                     $window.localStorage.token = data.token;
                     $window.localStorage.exp = JSON.parse(atob(data.token.split('.')[0])).exp;
                     $rootScope.loggedIn = true;
+                    $rootScope.me = Me.get();
                     resolve();
                 }).error(function(data, status, headers, config) {
                     reject(data);
@@ -17,6 +18,7 @@ angular.module('mooddiary.utils', [])
         logout: function() {
             $window.localStorage.removeItem('token');
             $rootScope.loggedIn = false;
+            $rootScope.me = undefined;
         },
         checkAndSetLogin: function() {
             var token = $window.localStorage.getItem('token');
@@ -27,6 +29,7 @@ angular.module('mooddiary.utils', [])
                 then.setUTCSeconds(exp);
                 if (now < then) {
                     $rootScope.loggedIn = true;
+                    $rootScope.me = Me.get();
                 }
             }
         },

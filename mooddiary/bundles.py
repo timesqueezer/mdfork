@@ -18,6 +18,8 @@ js = Bundle(
     'bower_components/angular-chart.js/dist/angular-chart.js',
     'bower_components/bootstrap/js/alert.js',
     'bower_components/bootstrap/js/modal.js',
+    'bower_components/bootstrap/js/dropdown.js',
+    'bower_components/bootstrap/js/collapse.js',
 
     'js/utils.js',
     'js/diary.js',
@@ -33,6 +35,7 @@ css = Bundle(
     'bower_components/angular-chart.js/dist/angular-chart.css',
     'bower_components/bca-flag-sprite/css/flags.css',
     'bower_components/fontawesome/css/font-awesome.min.css',
+    'bower_components/flag-icon-css/css/flag-icon.css',
 
     output='gen/styles.css',
     filters='less,cssmin'

@@ -21,6 +21,9 @@ class Entry(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', backref='entries')
 
+    def __repr__(self):
+        return 'Entry<{}, {}> of User<{}>'.format(self.id, self.date.strftime('%d.%m.%y'), self.user_id)
+
 
 class EntryField(db.Model):
     __tablename__ = "entry_fields"
@@ -30,6 +33,9 @@ class EntryField(db.Model):
     type = db.Column(db.Integer, default=EntryFieldType.RANGE.value)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', backref='fields')
+
+    def __repr__(self):
+        return 'EntryField<{}> of User<{}>'.format(self.id, self.user_id)
 
 
 class EntryFieldAnswer(db.Model):
@@ -43,6 +49,9 @@ class EntryFieldAnswer(db.Model):
 
     entry_field_id = db.Column(db.Integer, db.ForeignKey('entry_fields.id'))
     entry_field = db.relationship('EntryField', backref='answers')
+
+    def __repr__(self):
+        return 'EntryFieldAnswer<{}> of Field<{}> and User<{}>'.format(self.id, self.entry_field_id, self.entry.user_id)
 
 
 class User(db.Model):
@@ -63,6 +72,8 @@ class User(db.Model):
     first_name = db.Column(db.String(40))
     last_name = db.Column(db.String(40))
 
+    language = db.Column(db.String(5), default='de-DE', nullable=False)
+
     #facebook_id = db.Column(db.String(50))
     #facebook_token = db.Column(db.String(300))
     #google_id = db.Column(db.String(50))
@@ -76,3 +87,6 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(password, self.password_hash, self.password_salt, 1 << 15)
+
+    def __repr__(self):
+        return 'User<{}> {} {}'.format(self.id, self.first_name, self.last_name)

@@ -1,5 +1,6 @@
 angular.module('mooddiary', [
     'ngResource',
+    'ngAnimate',
     'ui.router',
     'chart.js',
     'mgcrea.ngStrap',
@@ -16,7 +17,7 @@ angular.module('mooddiary', [
 .controller('myAppControl', ['$scope', 'localeEvents',
     function ($scope, localeEvents) {
         $scope.$on(localeEvents.resourceUpdates, function () {
-            console.log('rofl');
+            console.log('locale resource update');
         });
         $scope.$on(localeEvents.localeChanges, function (event, data) {
             console.log('new locale chosen: ' + data);
@@ -26,7 +27,7 @@ angular.module('mooddiary', [
 
 .value('localeConf', {
     basePath: 'languages',
-    defaultLocale: 'en-US',
+    defaultLocale: 'de-DE',
     sharedDictionary: 'common',
     fileExtension: '.lang.json',
     persistSelection: true,
@@ -45,17 +46,23 @@ angular.module('mooddiary', [
     'de': 'de-DE'
 })
 
+.config(['$alertProvider', function($alertProvider) {
+    angular.extend($alertProvider.defaults, {
+        animation: 'am-fade',
+        container: '#alert-container',
+        dismissable: false,
+        duration: 4,
+        show: true,
+        type: 'danger'
+    });
+}])
+
 .config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('authInterceptor');
 }])
 
 .run(['AuthService', '$rootScope', '$http', function(AuthService, $rootScope, $http) {
     AuthService.checkAndSetLogin();
-    if ($rootScope.loggedIn) {
-        $http.get('/api/me').success(function(data) {
-            $rootScope.me = data;
-        });
-    }
 }])
 
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider) {
@@ -92,7 +99,8 @@ angular.module('mooddiary', [
 
 }])
 
-.controller('SettingsCtrl', ['$scope', 'fieldsResolved', 'Field', function($scope, fieldsResolved, Field) {
+.controller('SettingsCtrl', ['$scope', '$alert', '$rootScope', 'fieldsResolved', 'Field', 'locale', 'localeSupported', 'localeEvents',
+function($scope, $alert, $rootScope, fieldsResolved, Field, locale, localeSupported, localeEvents) {
 
     var errorCallback = function(data) {
         console.log(data);
@@ -119,6 +127,43 @@ angular.module('mooddiary', [
 
     $scope.deleteField = function(field) {
         field.$delete(reloadFields);
+    };
+
+    $scope.supportedLang = localeSupported;
+    $scope.localeData = {
+        'en-US': {
+            flagClass: 'flag-icon-us',
+            langDisplayText: 'English'
+        },
+        'de-DE': {
+            flagClass: 'flag-icon-de',
+            langDisplayText: 'Deutsch'
+        }
+    };
+
+    $scope.setLocale = function (loc) {
+        locale.setLocale(loc);
+    };
+
+    locale.ready('common').then(function () {
+        $scope.flagClass = $scope.localeData[locale.getLocale()].flagClass;
+        $scope.langDisplayText = $scope.localeData[locale.getLocale()].langDisplayText;
+    });
+
+    $scope.$on(localeEvents.localeChanges, function (event, data) {
+        $scope.flagClass = $scope.localeData[data].flagClass;
+        $scope.langDisplayText = $scope.localeData[data].langDisplayText;
+    });
+
+    $scope.saveProfile = function() {
+        if ($rootScope.me.password && $rootScope.me.password != $scope.password2) {
+            var password_differ_msg = locale.getString('common.password_differ');
+            $alert({content: password_differ_msg});
+            return;
+        }
+        $rootScope.me.$save(function() {
+            $alert({content: 'Saved'});
+        });
     };
 
 }])
@@ -148,49 +193,20 @@ angular.module('mooddiary', [
     }
 })
 
-.controller('NavCtrl', ['$scope', 'AuthService', '$http', '$state', 'locale', 'localeSupported', 'localeEvents',
-function($scope, AuthService, $http, $state, locale, localeSupported, localeEvents) {
+.controller('NavCtrl', ['$scope', 'AuthService', '$http', '$state',
+function($scope, AuthService, $http, $state) {
     $scope.logout = function() {
         AuthService.logout();
         $state.go('about');
     };
 
-    $scope.supportedLang = localeSupported;
-    $scope.localeData = {
-        'en-US': {
-            flagClass: 'flag-us',
-            langDisplayText: 'English'
-        },
-        'de-DE': {
-            flagClass: 'flag-de',
-            langDisplayText: 'Deutsch'
-        }
-    };
-
-    $scope.setLocale = function (loc) {
-        locale.setLocale(loc);
-    };
-
-    locale.ready('common').then(function () {
-        $scope.flagClass = $scope.localeData[locale.getLocale()].flagClass;
-        $scope.langDisplayText = $scope.localeData[locale.getLocale()].langDisplayText;
-    });
-
-    $scope.$on(localeEvents.localeChanges, function (event, data) {
-        $scope.flagClass = $scope.localeData[data].flagClass;
-        $scope.langDisplayText = $scope.localeData[data].langDisplayText;
-    });
-
     $scope.$state = $state;
 }])
 
-.controller('LoginCtrl', ['$scope', '$state', '$http', '$rootScope', 'AuthService', function($scope, $state, $http, $rootScope, AuthService) {
+.controller('LoginCtrl', ['$scope', '$state', 'Me', '$rootScope', 'AuthService', function($scope, $state, Me, $rootScope, AuthService) {
     $scope.login = function(email, password) {
         AuthService.login(email, password).then(function() {
-            $http.get('/api/me').success(function(data) {
-                $rootScope.me = data;
-                $state.go('diary.list');
-            });
+            $state.go('diary.list');
         }, function(resp) {
             $scope.errorMessage = resp.description;
         });
