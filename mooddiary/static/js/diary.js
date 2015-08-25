@@ -180,21 +180,26 @@ angular.module('mooddiary.diary', [])
     reloadCharts();
 }])
 
-.controller('DiaryListCtrl', ['$scope', function($scope) {
+.controller('DiaryListCtrl', ['$scope', 'Answer', function($scope, Answer) {
+    $scope.activeFields = {};
+    angular.forEach($scope.fields, function(field) { $scope.activeFields[field.id] = true; });
     $scope.editField = {};
 
     $scope.startEditField = function(entry, field) {
-        $scope.editField[entry.id][field.id] = true;
-        $scope.editValue = $scope.getAnswerForField(entry, field);
+        $scope.answer = _.findWhere(entry.answers, {entry_field_id: field.id});
+        $scope.editAnswer = Answer.get({answerId: $scope.answer.id}, function() {
+            $scope.editAnswer.tmpContent = $scope.getAnswerForField(entry, field);
+            console.log($scope.editAnswer);
+
+            $scope.editField[entry.id][field.id] = true;
+        });
     };
 
-    $scope.editField = function(entry, field) {
-        var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        console.log(answer);
-        answer.content = $scope.editValue;
-        answer.$save().$then(function() {
+    $scope.editFieldAnswer = function(entry, field) {
+        $scope.editAnswer.content = $scope.editAnswer.tmpContent;
+        $scope.answer.content = $scope.editAnswer.tmpContent;
+        $scope.editAnswer.$save().then(function() {
             $scope.editField[entry.id][field.id] = false;
-            $scope.editValue = undefined;
         });
     };
 }])

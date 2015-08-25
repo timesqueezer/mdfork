@@ -1,0 +1,19 @@
+{
+    "menu_about": "Info",
+    "menu_diary": "Tagebuch",
+    "menu_settings": "Einstellungen",
+    "new_user": "Neu hier? Bitte trag deinen Namen in dein Profil ein.",
+    "user_information": "Benutzerinformationen",
+    "user_firstname": "Vorname",
+    "user_lastname": "Nachname",
+    "save": "Speichern",
+    "password": "Passwort",
+    "password_change": "Passwort ändern",
+    "fields": "Kategorien",
+    "field_add": "Kategorie hinzufügen",
+    "field_string": "Text",
+    "field_integer": "Zahl",
+    "field_range": "Zahl (1-10)",
+    "add": "Hinzufügen",
+    "register": "Registrieren"
+}

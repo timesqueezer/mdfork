@@ -5,6 +5,9 @@ js = Bundle(
     'bower_components/jquery/dist/jquery.js',
     'bower_components/angular/angular.js',
     'bower_components/angular-animate/angular-animate.js',
+    'bower_components/angular-cookies/angular-cookies.js',
+    'bower_components/angular-sanitize/angular-sanitize.js',
+    'bower_components/angular-localization/angular-localization.js',
     'bower_components/angular-ui-router/release/angular-ui-router.js',
     'bower_components/angular-resource/angular-resource.js',
     'bower_components/angular-grecaptcha/grecaptcha.js',
@@ -28,6 +31,7 @@ css = Bundle(
     'css/styles.less',
 
     'bower_components/angular-chart.js/dist/angular-chart.css',
+    'bower_components/bca-flag-sprite/css/flags.css',
     'bower_components/fontawesome/css/font-awesome.min.css',
 
     output='gen/styles.css',

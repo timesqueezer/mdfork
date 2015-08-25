@@ -97,6 +97,41 @@ class EntryFieldDetail(Resource):
 restful.add_resource(EntryFieldDetail, '/fields/<int:field_id>')
 
 
+class EntryFieldAnswerDetail(Resource):
+    @jwt_required()
+    def get(self, id):
+        answer = EntryFieldAnswer.query.get_or_404(id)
+        if answer.entry.user_id != current_user.id:
+            abort(401)
+
+        schema = EntryFieldAnswerSchema()
+        return resp(answer, schema)
+
+    @jwt_required()
+    def post(self, id):
+        answer = EntryFieldAnswer.query.get_or_404(id)
+        if answer.entry.user_id != current_user.id:
+            abort(401)
+
+        class AnswerInputSchema(Schema):
+            content = fields.String(required=True, validate=Length(max=300))
+
+        schema = AnswerInputSchema()
+        result, errors = schema.load(request.json)
+
+        if errors:
+            return resp({'message': 'form error'}, status_code=400)
+
+        answer.content = result['content']
+        print(result['content'])
+        db.session.commit()
+
+        schema = EntryFieldAnswerSchema()
+        return resp(answer, schema)
+
+restful.add_resource(EntryFieldAnswerDetail, '/answers/<int:id>')
+
+
 class EntryFieldAnswerList(Resource):
     @jwt_required()
     def post(self):
@@ -119,6 +154,7 @@ class EntryFieldAnswerList(Resource):
 
         schema = EntryFieldAnswerSchema()
         return resp(answer, schema)
+
 restful.add_resource(EntryFieldAnswerList, '/answers')
 
 

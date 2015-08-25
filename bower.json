@@ -17,7 +17,11 @@
     "angular-chart.js": "latest",
     "jquery": "latest",
     "bootstrap": "latest",
-    "bootswatch": "latest"
+    "bootswatch": "latest",
+    "angular-localization": "~1.2.1",
+    "angular-cookies": "~1.4.4",
+    "angular-sanitize": "~1.4.4",
+    "bca-flag-sprite": "~1.0.0"
   },
   "ignore": [
     "**/.*",

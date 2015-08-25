@@ -20,17 +20,17 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary" type="submit" ng-click="addEntry()">Add</button>
+        <button class="btn btn-primary" type="submit" ng-click="addEntry()" i18n="common.add"></button>
     </form>
 
-    <a class="btn btn-primary" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i> Add Entry</a>
+    <a class="btn btn-primary" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i> <span i18n="diary.add_entry"></span></a>
 
     <hr>
 
     <ul class="nav nav-tabs spaced-bottom">
-        <li role="presentation" ng-class="{active: $state.includes('diary.list')}"><a ui-sref="diary.list"><i class="fa fa-list"></i> List</a></li>
-        <li role="presentation" ng-class="{active: $state.includes('diary.table')}"><a ui-sref="diary.table"><i class="fa fa-table"></i> Table</a></li>
-        <li role="presentation" ng-class="{active: $state.includes('diary.chart')}"><a ui-sref="diary.chart"><i class="fa fa-line-chart"></i> Chart</a></li>
+        <li role="presentation" ng-class="{active: $state.includes('diary.list')}"><a ui-sref="diary.list"><i class="fa fa-list"></i> <span i18n="diary.list"></span></a></li>
+        <li role="presentation" ng-class="{active: $state.includes('diary.table')}"><a ui-sref="diary.table"><i class="fa fa-table"></i> <span i18n="diary.table"></span></a></li>
+        <li role="presentation" ng-class="{active: $state.includes('diary.chart')}"><a ui-sref="diary.chart"><i class="fa fa-line-chart"></i> <span i18n="diary.chart"></span></a></li>
     </ul>
 </div>
 

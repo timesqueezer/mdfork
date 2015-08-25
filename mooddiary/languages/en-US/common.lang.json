@@ -1,0 +1,19 @@
+{
+    "menu_about": "About",
+    "menu_diary": "Diary",
+    "menu_settings": "Settings",
+    "new_user": "New here? Set first and last name please.",
+    "user_information": "User information",
+    "user_firstname": "First Name",
+    "user_lastname": "Last Name",
+    "save": "Save",
+    "password": "Password",
+    "password_change": "Change Password",
+    "fields": "Fields",
+    "field_add": "Add Field",
+    "field_string": "String",
+    "field_integer": "Integer",
+    "field_range": "Range",
+    "add": "Add",
+    "register": "Register"
+}

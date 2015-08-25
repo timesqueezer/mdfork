@@ -34,7 +34,6 @@ angular.module('mooddiary.utils', [])
             var login = this.login;
             return $q(function(resolve, reject) {
                 $http.post('/api/users', {email: email, password: pw}).success(function(data) {
-                    console.log(login);
                     login(email, pw).then(resolve);
                 }).error(function(data) {
                     reject(data);

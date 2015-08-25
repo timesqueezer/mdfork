@@ -1,4 +1,13 @@
 {% raw %}
+<div class="panel panel-default panel-body">
+    <h5 class="spaced-bottom" i18n="diary.select_fields"></h5>
+    <div class="row spaced-bottom" ng-repeat="row in (fields.length/6 | array)">
+        <div class="col-sm-2" ng-repeat="field in fields.slice(6*$index, 6*$index + 6)">
+            <div class="form-group"><label><input type="checkbox" class="form-control" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]"> {{ field.name }}</label></div>
+        </div>
+    </div>
+</div>
+
 <div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
     <div class="row spaced-bottom">
         <div class="col-md-2">
@@ -7,7 +16,7 @@
         </div>
         <div class="col-md-10">
             <div class="row row-border-bottom" ng-repeat="row in (fields.length/2 | array)">
-                <div class="col-md-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)" ng-init="editField[entry.id][field.id] = false">
+                <div class="col-md-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)" ng-init="editField[entry.id][field.id] = false" ng-show="activeFields[field.id]">
                     <h5>{{ field.name }}</h5>
                     <button class="btn btn-lg btn-link pull-right" ng-click="startEditField(entry, field)" ng-hide="editField[entry.id][field.id]"><i class="fa fa-pencil-square-o"></i></button>
                     <div style="font-size: 16pt" ng-hide="editField[entry.id][field.id]">
@@ -15,8 +24,8 @@
                         <div ng-show="field.type == 2">
                             <div class="progress">
                                 <div class="progress-bar progress-bar-info" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
+                                <div class="filled-circle">{{ getAnswerForField(entry, field) }}</div>
                             </div>
-                            {{ getAnswerForField(entry, field) }}
                         </div>
                         <div ng-show="field.type == 3" class="filled-circle">
                             {{ getAnswerForField(entry, field) }}
@@ -24,14 +33,14 @@
                     </div>
                     <div ng-show="editField[entry.id][field.id]" class="spaced-bottom">
                         <div class="form-group" ng-switch="field.type">
-                            <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="editValue"></textarea>
+                            <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent"></textarea>
                             <div class="input-group" ng-switch-when="2">
-                                <div class="input-group-addon">{{ editValue }}</div>
-                                <input class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="editValue" ng-init="editValue = 0">
+                                <div class="input-group-addon">{{ editAnswer.tmpContent }}</div>
+                                <input class="form-control" type="range" min="0" max="10" p laceholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
                             </div>
-                            <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="editValue">
+                            <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
                         </div>
-                        <button class="btn btn-sm btn-primary" ng-click="editField(entry, field)">Save</button>
+                        <button class="btn btn-sm btn-primary" ng-click="editFieldAnswer(entry, field)">Save</button>
                     </div>
                 </div>
             </div>

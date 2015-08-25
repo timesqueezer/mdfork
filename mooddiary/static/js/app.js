@@ -6,8 +6,44 @@ angular.module('mooddiary', [
     'mgcrea.ngStrap.modal',
     'mgcrea.ngStrap.alert',
     'mooddiary.diary',
-    'mooddiary.utils'
+    'mooddiary.utils',
+    'ngLocalize',
+    'ngLocalize.Events',
+    'ngLocalize.Config',
+    'ngLocalize.InstalledLanguages'
 ])
+
+.controller('myAppControl', ['$scope', 'localeEvents',
+    function ($scope, localeEvents) {
+        $scope.$on(localeEvents.resourceUpdates, function () {
+            console.log('rofl');
+        });
+        $scope.$on(localeEvents.localeChanges, function (event, data) {
+            console.log('new locale chosen: ' + data);
+        });
+    }
+])
+
+.value('localeConf', {
+    basePath: 'languages',
+    defaultLocale: 'en-US',
+    sharedDictionary: 'common',
+    fileExtension: '.lang.json',
+    persistSelection: true,
+    cookieName: 'COOKIE_LOCALE_LANG',
+    observableAttrs: new RegExp('^data-(?!ng-|i18n)'),
+    delimiter: '::'
+})
+
+.value('localeSupported', [
+    'en-US',
+    'de-DE'
+])
+
+.value('localeFallbacks', {
+    'en': 'en-US',
+    'de': 'de-DE'
+})
 
 .config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('authInterceptor');
@@ -46,6 +82,12 @@ angular.module('mooddiary', [
         controller: 'AboutCtrl'
     })
 
+    .state('login', {
+        url: '/login',
+        templateUrl: '/templates/login',
+        controller: 'LoginCtrl'
+    })
+
     ;
 
 }])
@@ -81,14 +123,16 @@ angular.module('mooddiary', [
 
 }])
 
-.filter('fieldTypeToString', function() {
+.filter('fieldTypeToString', ['$filter', 'locale', function($filter, locale) {
     return function(type) {
-        if (type == 1) return 'String';
-        else if (type == 2) return 'Range';
-        else if (type == 3) return 'Integer';
-        else return 'Invalid Type';
+        locale.ready('common').then(function() {
+            if (type == 1) return $filter('i18n')('common.field_string');
+            else if (type == 2) return $filter('i18n')('common.field_range');
+            else if (type == 3) return $filter('i18n')('common.field_integer');
+            else return 'Invalid Type';
+        });
     };
-})
+}])
 
 
 .filter('array', function() {
@@ -104,14 +148,48 @@ angular.module('mooddiary', [
     }
 })
 
-.controller('LoginCtrl', ['$scope', 'AuthService', '$modal', '$http', '$rootScope', '$state', function($scope, AuthService, $modal, $http, $rootScope, $state) {
-    var loginModal = $modal({title: 'Login or Register', show: false, contentTemplate: '/templates/loginModal', scope: $scope});
+.controller('NavCtrl', ['$scope', 'AuthService', '$http', '$state', 'locale', 'localeSupported', 'localeEvents',
+function($scope, AuthService, $http, $state, locale, localeSupported, localeEvents) {
+    $scope.logout = function() {
+        AuthService.logout();
+        $state.go('about');
+    };
 
+    $scope.supportedLang = localeSupported;
+    $scope.localeData = {
+        'en-US': {
+            flagClass: 'flag-us',
+            langDisplayText: 'English'
+        },
+        'de-DE': {
+            flagClass: 'flag-de',
+            langDisplayText: 'Deutsch'
+        }
+    };
+
+    $scope.setLocale = function (loc) {
+        locale.setLocale(loc);
+    };
+
+    locale.ready('common').then(function () {
+        $scope.flagClass = $scope.localeData[locale.getLocale()].flagClass;
+        $scope.langDisplayText = $scope.localeData[locale.getLocale()].langDisplayText;
+    });
+
+    $scope.$on(localeEvents.localeChanges, function (event, data) {
+        $scope.flagClass = $scope.localeData[data].flagClass;
+        $scope.langDisplayText = $scope.localeData[data].langDisplayText;
+    });
+
+    $scope.$state = $state;
+}])
+
+.controller('LoginCtrl', ['$scope', '$state', '$http', '$rootScope', 'AuthService', function($scope, $state, $http, $rootScope, AuthService) {
     $scope.login = function(email, password) {
         AuthService.login(email, password).then(function() {
-            loginModal.hide();
             $http.get('/api/me').success(function(data) {
                 $rootScope.me = data;
+                $state.go('diary.list');
             });
         }, function(resp) {
             $scope.errorMessage = resp.description;
@@ -120,23 +198,11 @@ angular.module('mooddiary', [
 
     $scope.register = function(email, password) {
         AuthService.register(email, password).then(function() {
-            loginModal.hide();
             $state.go('settings', {newUser: true});
         }, function(resp) {
             $scope.errorMessage = resp.message;
         });
     };
-
-    $scope.showLoginModal = function() {
-        loginModal.show();
-    };
-
-    $scope.logout = function() {
-        AuthService.logout();
-        $state.go('about');
-    }
-
-    $scope.$state = $state;
 }])
 
 .controller('AboutCtrl', function() {})

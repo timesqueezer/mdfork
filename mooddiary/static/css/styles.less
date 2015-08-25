@@ -2,11 +2,11 @@
 @import "../bower_components/bootswatch/paper/variables.less";
 @import "../bower_components/bootswatch/paper/bootswatch.less";
 
-@brand-primary:         #30C7E8;
-@brand-success:         #39B96A;
-@brand-info:            #43DB9C;
-@brand-warning:         #E7863C;
-@brand-danger:          #E74C3C;
+@brand-primary:         #006696;
+@brand-success:         #9BC53D;
+@brand-info:            #0FAFFF;
+@brand-warning:         #FA7921;
+@brand-danger:          #E55934;
 
 @border-radius-base:        1px;
 @border-radius-large:       1px;
@@ -16,34 +16,19 @@
     margin-bottom: 2em;
 }
 
-.modal-backdrop.am-fade {
-  opacity: .5;
-  transition: opacity .15s linear;
-  &.ng-enter {
-    opacity: 0;
-    &.ng-enter-active {
-      opacity: .5;
-    }
-  }
-  &.ng-leave {
-    opacity: .5;
-    &.ng-leave-active {
-      opacity: 0;
-    }
-  }
-}
-
 body {
-    background: #F1F1F1;
+    background: #EAEAEA;
 }
 
 @dark-info: darken(@brand-info, 10%);
 
 .filled-circle {
+    text-align: center;
+    vertical-align: middle;
     border-radius: 50%;
-    width: 2em;
-    height: 2em;
-    padding: 0.18em 0.7em;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 1em;
     color: white;
     background: radial-gradient(10px 10px 45deg, circle cover, @brand-info 0%, @dark-info 100%, @brand-primary 95%);
     background-image: -moz-radial-gradient(15px 15px 45deg, circle cover, @brand-info 0%, @dark-info 100%, @brand-primary 95%);
