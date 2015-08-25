@@ -61,6 +61,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     email = db.Column(db.String(100), nullable=True, unique=True)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
     password_salt = db.Column(db.LargeBinary, nullable=False)
     password_hash = db.Column(db.LargeBinary, nullable=False)

@@ -3,9 +3,8 @@ from datetime import timedelta
 
 from flask import Flask
 from flask.ext.assets import Bundle
-from flask.ext.admin.contrib.sqla import ModelView
 
-from mooddiary.core import db, migrate, assets, jwt, admin
+from mooddiary.core import db, migrate, assets, jwt
 from mooddiary.bundles import js, css
 from mooddiary.views import main
 from mooddiary.api import api
@@ -34,7 +33,6 @@ def create_app(config=None):
     migrate.init_app(app, db)
     assets.init_app(app)
     jwt.init_app(app)
-    admin.init_app(app)
 
     assets.register('js', js)
     assets.register('css', css)
@@ -42,10 +40,5 @@ def create_app(config=None):
     app.register_blueprint(main)
     app.register_blueprint(api, url_prefix='/api')
     app.register_blueprint(auth, url_prefix='/auth')
-
-    admin.add_view(ModelView(Entry, db.session))
-    admin.add_view(ModelView(EntryField, db.session))
-    admin.add_view(ModelView(EntryFieldAnswer, db.session))
-    admin.add_view(ModelView(User, db.session))
 
     return app

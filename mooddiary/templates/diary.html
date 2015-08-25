@@ -23,9 +23,7 @@
         <button class="btn btn-primary" type="submit" ng-click="addEntry()" i18n="common.add"></button>
     </form>
 
-    <a class="btn btn-sm btn-primary" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i> <span i18n="diary.add_entry"></span></a>
-
-    <hr>
+    <a class="btn btn-sm btn-primary spaced-bottom" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i><span i18n="diary.add_entry"></span></a>
 
     <ul class="nav nav-tabs spaced-bottom">
         <li role="presentation" ng-class="{active: $state.includes('diary.list')}"><a ui-sref="diary.list"><i class="fa fa-list"></i> <span i18n="diary.list"></span></a></li>

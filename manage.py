@@ -34,7 +34,8 @@ def initdb(random_data=False):
     if random_data:
         print("Creating random data")
 
-        matz = User(email='matzradloff@gmail.com', first_name='Matz', last_name='Radloff')
+        matz = User(email='matzradloff@gmail.com', first_name='Matz',
+                last_name='Radloff', is_admin=True)
         matz.set_password('Mohquah3')
         db.session.add(matz)
         db.session.commit()
