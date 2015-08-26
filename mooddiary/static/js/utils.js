@@ -8,8 +8,9 @@ angular.module('mooddiary.utils', [])
                     $window.localStorage.token = data.token;
                     $window.localStorage.exp = JSON.parse(atob(data.token.split('.')[0])).exp;
                     $rootScope.loggedIn = true;
-                    $rootScope.me = Me.get();
-                    resolve();
+                    $rootScope.me = Me.get(function() {
+                        resolve();
+                    });
                 }).error(function(data, status, headers, config) {
                     reject(data);
                 });
@@ -21,17 +22,21 @@ angular.module('mooddiary.utils', [])
             $rootScope.me = undefined;
         },
         checkAndSetLogin: function() {
-            var token = $window.localStorage.getItem('token');
-            var exp = $window.localStorage.getItem('exp');
-            if (token) {
-                var now = new Date();
-                var then = new Date();
-                then.setUTCSeconds(exp);
-                if (now < then) {
-                    $rootScope.loggedIn = true;
-                    $rootScope.me = Me.get();
-                }
-            }
+            return $q(function(resolve, reject) {
+                var token = $window.localStorage.getItem('token');
+                var exp = $window.localStorage.getItem('exp');
+                if (token) {
+                    var now = new Date();
+                    var then = new Date();
+                    then.setUTCSeconds(exp);
+                    if (now < then) {
+                        $rootScope.loggedIn = true;
+                        $rootScope.me = Me.get(function() {
+                            resolve();
+                        });
+                    } else { reject() }
+                } else { reject() }
+            });
         },
         register: function(email, pw) {
             var login = this.login;
