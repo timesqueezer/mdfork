@@ -39,7 +39,7 @@ def initdb(random_data=False):
         matz.set_password('Mohquah3')
         db.session.add(matz)
         db.session.commit()
-
+        return True
         faker = Faker()
         random_fields = [
             {'name': 'Overall Mood', 'type': EntryFieldType.RANGE.value},
