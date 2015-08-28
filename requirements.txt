@@ -8,7 +8,6 @@ flask-scrypt
 flask-jwt
 flask-migrate
 flask-assets
-flask-admin
 
 marshmallow
 fake-factory
