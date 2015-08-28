@@ -114,7 +114,16 @@ angular.module('mooddiary.diary', [])
     Chart.defaults.global.scaleBeginAtZero = true;
     $scope.buttonStyles = [];
     angular.forEach(Chart.defaults.global.colours, function(color) {
-        $scope.buttonStyles.push({'background-color': color});
+        var bigint = parseInt(color.slice(1), 16),
+        r = (bigint >> 16) & 255,
+        g = (bigint >> 8) & 255,
+        b = bigint & 255;
+
+        var style = {'background-color': color};
+        if (r + g + b < 500) { // Find a 'cleaner' way to calculate the 'brightness' here
+            style.color = '#FFFFFF';
+        }
+        $scope.buttonStyles.push(style);
     });
     var reloadCharts = function() {
         $scope.labels = _.map($scope.entries, function(entry) {
