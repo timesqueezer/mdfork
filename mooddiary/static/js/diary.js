@@ -111,6 +111,11 @@ angular.module('mooddiary.diary', [])
 }])
 
 .controller('DiaryChartCtrl', ['$scope', '$filter', 'Entry', function($scope, $filter, Entry) {
+    Chart.defaults.global.scaleBeginAtZero = true;
+    $scope.buttonStyles = [];
+    angular.forEach(Chart.defaults.global.colours, function(color) {
+        $scope.buttonStyles.push({'background-color': color});
+    });
     var reloadCharts = function() {
         $scope.labels = _.map($scope.entries, function(entry) {
             if ($scope.timeLimit == '1.w') {
@@ -135,7 +140,7 @@ angular.module('mooddiary.diary', [])
             })
             $scope.chartData[field.id] = data;
             angular.forEach($scope.series, function(field_name) {
-                if (field.name == field.name)
+                if (field.name == field_name)
                     $scope.actualChartData.push($scope.chartData[field.id]);
             });
         });
