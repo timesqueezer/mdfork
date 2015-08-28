@@ -24,5 +24,6 @@
     "about_hsmall": "Dein Stimmungstagebuch",
     "language": "Sprache",
     "password_differ": "Die Passwörter stimmen nicht überein",
-    "changes_saved": "Änderungen gespeichert"
+    "changes_saved": "Änderungen gespeichert",
+    "date": "Datum"
 }

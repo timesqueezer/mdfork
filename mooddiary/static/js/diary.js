@@ -105,7 +105,7 @@ angular.module('mooddiary.diary', [])
 
     $scope.newEntry = new Entry();
     $scope.newEntryAnswers = {};
-    $scope.today = new Date();
+    $scope.newEntry.date = new Date();
 
     $scope.$state = $state;
 }])
@@ -180,16 +180,24 @@ angular.module('mooddiary.diary', [])
     reloadCharts();
 }])
 
-.controller('DiaryListCtrl', ['$scope', 'Answer', function($scope, Answer) {
+.controller('DiaryListCtrl', ['$scope', 'Answer', '$alert', function($scope, Answer, $alert) {
     $scope.activeFields = {};
     angular.forEach($scope.fields, function(field) { $scope.activeFields[field.id] = true; });
     $scope.editField = {};
+    $scope.editEntry = {};
+
+    $scope.saveEntry = function(entry) {
+        entry.$save(function() {
+            $scope.editEntry[entry.id] = false;
+        }, function(error) {
+            $alert({content: error.data.message});
+        });
+    };
 
     $scope.startEditField = function(entry, field) {
         $scope.answer = _.findWhere(entry.answers, {entry_field_id: field.id});
         $scope.editAnswer = Answer.get({answerId: $scope.answer.id}, function() {
             $scope.editAnswer.tmpContent = $scope.getAnswerForField(entry, field);
-            console.log($scope.editAnswer);
 
             $scope.editField[entry.id][field.id] = true;
         });

@@ -17,6 +17,12 @@
         <div class="col-md-2">
             <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
             <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
+            <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
+            <div class="form-group" ng-show="editEntry[entry.id]">
+                <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
+                <input type="text" class="form-control" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>
+                <button class="btn btn-sm btn-primary" ng-click="saveEntry(entry)" i18n="common.save"></button>
+            </div>
         </div>
         <div class="col-md-10">
             <div class="row row-border-bottom" ng-repeat="row in (fields.length/2 | array)">
@@ -28,8 +34,8 @@
                         <div ng-show="field.type == 2">
                             <div class="progress">
                                 <div class="progress-bar progress-bar-info" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
-                                <div class="filled-circle">{{ getAnswerForField(entry, field) }}</div>
                             </div>
+                            <div class="filled-circle">{{ getAnswerForField(entry, field) }}</div>
                         </div>
                         <div ng-show="field.type == 3" class="filled-circle">
                             {{ getAnswerForField(entry, field) }}
