@@ -23,5 +23,7 @@
     "about_warning": "This app has just recently reached BETA-status. If you encounter any problems please let me know.",
     "about_hsmall": "Welcome to the Ups and Downs",
     "language": "Language",
-    "password_differ": "Passwords don't match"
+    "password_differ": "Passwords don't match",
+    "changes_saved": "Changes saved",
+    "date": "Date"
 }

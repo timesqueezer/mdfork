@@ -1,4 +1,3 @@
-from flask.ext.jwt import current_user
 from marshmallow import Schema, fields
 
 
@@ -28,4 +27,4 @@ class EntrySchema(IdMixin):
 
 class UserSchema(IdDateMixin):
     class Meta:
-        additional = ['email', 'first_name', 'last_name']
+        additional = ['email', 'first_name', 'last_name', 'language']

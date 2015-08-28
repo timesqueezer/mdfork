@@ -47,15 +47,51 @@ class UserEntryList(Resource):
 
     @jwt_required()
     def post(self):
-        entry = Entry.query.filter(db.func.date(Entry.date) == date.today()).first()
+        class EntryInputSchema(Schema):
+            date = fields.Date(required=True)
+
+        schema = EntryInputSchema()
+
+        result, errors = schema.load(request.json)
+        if errors:
+            return resp({'message': 'form error'}, status_code=400)
+
+        entry = Entry.query.filter(db.func.date(Entry.date) == result['date']).first()
         if entry:
-            return resp({'message': 'Entry for today already present.'}, status_code=400)
-        entry = Entry(user=current_user)
+            return resp({'message': 'Entry this date already present.'}, status_code=400)
+
+        entry = Entry(user=current_user, date=result['date'])
         db.session.add(entry)
         db.session.commit()
         schema = EntrySchema(exclude=['answers'])
         return resp(entry, schema)
 restful.add_resource(UserEntryList, '/entries')
+
+
+class EntryDetail(Resource):
+    @jwt_required()
+    def post(self, id):
+        entry = Entry.query.get_or_404(id)
+
+        class EntryInputSchema(Schema):
+            date = fields.Date(required=True)
+
+        schema = EntryInputSchema()
+
+        result, errors = schema.load(request.json)
+        if errors:
+            return resp({'message': 'form error'}, status_code=400)
+
+        entry_existing = Entry.query.filter(db.func.date(Entry.date) == result['date']).first()
+        if entry_existing:
+            return resp({'message': 'Entry this date already present.'}, status_code=400)
+
+        entry.date = result['date']
+
+        db.session.commit()
+        schema = EntrySchema()
+        return resp(entry, schema)
+restful.add_resource(EntryDetail, '/entries/<int:id>')
 
 
 class UserEntryFieldList(Resource):
