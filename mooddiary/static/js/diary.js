@@ -115,12 +115,15 @@ angular.module('mooddiary.diary', [])
     $scope.buttonStyles = [];
     angular.forEach(Chart.defaults.global.colours, function(color) {
         var bigint = parseInt(color.slice(1), 16),
-        r = (bigint >> 16) & 255,
-        g = (bigint >> 8) & 255,
-        b = bigint & 255;
+        r = ( (bigint >> 16) & 255 ) / 255,
+        g = ( (bigint >> 8) & 255 ) / 255,
+        b = ( bigint & 255 ) / 255,
+        max = Math.max(r, g, b),
+        min = Math.min(r, g, b),
+        l = ( max + min ) / 2;
 
         var style = {'background-color': color};
-        if (r + g + b < 500) { // Find a 'cleaner' way to calculate the 'brightness' here
+        if (l < 0.65) {
             style.color = '#FFFFFF';
         }
         $scope.buttonStyles.push(style);
@@ -129,10 +132,36 @@ angular.module('mooddiary.diary', [])
         $scope.labels = _.map($scope.entries, function(entry) {
             if ($scope.timeLimit == '1.w') {
                 return $filter('date')(entry.date, 'dd', 'UTC');
-/*            } else if ($scope.timeLimit == '2.w') {*/
-
+            } else if ($scope.timeLimit == '2.w') {
+                if ($scope.entries.indexOf(entry) % 2 == 0) {
+                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+                } else {
+                    return "";
+                }
+            } else if ($scope.timeLimit == '1.m') {
+                if ($scope.entries.indexOf(entry) % 4 == 0) {
+                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+                } else {
+                    return "";
+                }
+            } else if ($scope.timeLimit == '2.m') {
+                if ($scope.entries.indexOf(entry) % 8 == 0) {
+                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+                } else {
+                    return "";
+                }
+            } else if ($scope.timeLimit == '4.m') {
+                if ($scope.entries.indexOf(entry) % 8 == 0) {
+                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+                } else {
+                    return "";
+                }
             } else {
-                return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+                 if ($scope.entries.indexOf(entry) % 10 == 0) {
+                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
+                } else {
+                    return "";
+                }
             }
         });
 

@@ -20,17 +20,4 @@
 <div class="panel panel-default panel-body" ng-if="series.length>0">
     <canvas class="chart chart-line" data="actualChartData" labels="labels" series="series" legend="true"></canvas>
 </div>
-<div class="panel panel-danger">
-    <div class="panel-header">
-        <h4>Just wanted to see how this looks like</h4>
-    </div>
-    <div class="panel-body">
-        actualChartData
-        {{ actualChartData | json }}<hr>
-        labels
-        {{ labels | json }}<hr>
-        series
-        {{ series | json }}<hr>
-    </div>
-</div>
 {% endraw %}
