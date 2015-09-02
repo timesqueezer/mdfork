@@ -14,9 +14,6 @@ angular.module('mooddiary.diary', [])
         resolve: {
             fieldsResolved: ['Field', function(Field) {
                 return Field.query().$promise;
-            }],
-            entriesResolved: ['Entry', function(Entry) {
-                return Entry.query().$promise;
             }]
         }
     })
@@ -24,26 +21,41 @@ angular.module('mooddiary.diary', [])
         .state('diary.list', {
             url: '/list',
             templateUrl: '/templates/diaryList',
-            controller: 'DiaryListCtrl'
+            controller: 'DiaryListCtrl',
+            resolve: {
+                entriesResolved: ['Entry', function(Entry) {
+                    return Entry.query({sort_by: 'date', order: 'desc'}).$promise;
+                }]
+            }
         })
 
         .state('diary.table', {
             url: '/table',
             templateUrl: '/templates/diaryTable',
-            controller: 'DiaryListCtrl'
+            controller: 'DiaryListCtrl',
+            resolve: {
+                entriesResolved: ['Entry', function(Entry) {
+                    return Entry.query({sort_by: 'date', order: 'desc'}).$promise;
+                }]
+            }
         })
 
         .state('diary.chart', {
             url: '/chart',
             templateUrl: '/templates/diaryChart',
-            controller: 'DiaryChartCtrl'
+            controller: 'DiaryChartCtrl',
+            resolve: {
+                entriesResolved: ['Entry', function(Entry) {
+                    return Entry.query({sort_by: 'date', order: 'asc'}).$promise;
+                }]
+            }
         })
 
 }])
 
 
 
-.controller('DiaryCtrl', ['$scope', '$q', '$state', '$alert', 'fieldsResolved', 'entriesResolved', 'Field', 'Entry', 'Answer', function($scope, $q, $state, $alert, fieldsResolved, entriesResolved, Field, Entry, Answer) {
+.controller('DiaryCtrl', ['$scope', '$q', '$state', '$alert', 'fieldsResolved', 'Field', 'Entry', 'Answer', function($scope, $q, $state, $alert, fieldsResolved, entriesResolved, Field, Entry, Answer) {
 
     var errorCallback = $scope.errorCallback = function(data) {
         console.error(data);
@@ -100,7 +112,6 @@ angular.module('mooddiary.diary', [])
     };
 
     // Init
-    $scope.entries = entriesResolved;
     $scope.fields = fieldsResolved;
 
     $scope.newEntry = new Entry();
@@ -110,7 +121,7 @@ angular.module('mooddiary.diary', [])
     $scope.$state = $state;
 }])
 
-.controller('DiaryChartCtrl', ['$scope', '$filter', 'Entry', function($scope, $filter, Entry) {
+.controller('DiaryChartCtrl', ['$scope', '$filter', 'Entry', 'entriesResolved', function($scope, $filter, Entry, entriesResolved) {
     Chart.defaults.global.scaleBeginAtZero = true;
     $scope.buttonStyles = [];
     angular.forEach(Chart.defaults.global.colours, function(color) {
@@ -128,6 +139,7 @@ angular.module('mooddiary.diary', [])
         }
         $scope.buttonStyles.push(style);
     });
+
     var reloadCharts = function() {
         $scope.labels = _.map($scope.entries, function(entry) {
             if ($scope.timeLimit == '1.w') {
@@ -211,10 +223,13 @@ angular.module('mooddiary.diary', [])
         });*/
     });
 
+    // Init
+
     $scope.chartableFields = _.filter($scope.fields, function(field) {
         return field.type != 1;
     });
 
+    $scope.entries = entriesResolved;
     $scope.activeFields = {};
     $scope.chartData = {};
     $scope.actualChartData = [];
@@ -223,7 +238,7 @@ angular.module('mooddiary.diary', [])
     reloadCharts();
 }])
 
-.controller('DiaryListCtrl', ['$scope', 'Answer', '$alert', function($scope, Answer, $alert) {
+.controller('DiaryListCtrl', ['$scope', 'Answer', '$alert', 'entriesResolved', function($scope, Answer, $alert, entriesResolved) {
     $scope.activeFields = {};
     angular.forEach($scope.fields, function(field) { $scope.activeFields[field.id] = true; });
     $scope.editField = {};
@@ -253,6 +268,9 @@ angular.module('mooddiary.diary', [])
             $scope.editField[entry.id][field.id] = false;
         });
     };
+    // Init
+
+    $scope.entries = entriesResolved;
 }])
 
 ;

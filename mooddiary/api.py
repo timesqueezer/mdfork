@@ -31,6 +31,8 @@ def resp(data, schema=None, status_code=200):
 class UserEntryList(Resource):
     @jwt_required()
     def get(self):
+        query = Entry.query.filter_by(user_id=current_user.id)
+
         if 'timespan' in request.args:
             count, length = request.args.get('timespan').split('.')
             count = int(count)
@@ -38,9 +40,21 @@ class UserEntryList(Resource):
                 delta = timedelta(weeks=count)
             elif length == 'm':
                 delta = timedelta(weeks=count*4)
-            entries = Entry.query.filter(db.func.date(Entry.date) >= date.today() - delta).order_by('date DESC').all()
-        else:
-            entries = Entry.query.filter_by(user_id=current_user.id).order_by('date DESC').all()
+            query = query.filter(db.func.date(Entry.date) >= date.today() - delta)
+
+        if 'sort_by' in request.args and 'order' in request.args:
+            sort_by = request.args.get('sort_by')
+            order = request.args.get('order')
+
+            if order not in ['asc', 'desc']:
+                return resp({'message': 'Invalid value for order request parameter'}, 400)
+            if sort_by not in ['date']:
+                return resp({'message': 'Invalid value for order request parameter'}, 400)
+
+            query = query.order_by('{} {}'.format(sort_by, order))
+
+        entries = query.all()
+
         schema = EntrySchema(many=True)
 
         return resp(entries, schema)
