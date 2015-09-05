@@ -56,7 +56,7 @@ class UserEntryList(Resource):
         if errors:
             return resp({'message': 'form error'}, status_code=400)
 
-        entry = Entry.query.filter(db.func.date(Entry.date) == result['date']).first()
+        entry = Entry.query.filter_by(user_id=current_user. id).filter(db.func.date(Entry.date) == result['date']).first()
         if entry:
             return resp({'message': 'Entry this date already present.'}, status_code=400)
 
