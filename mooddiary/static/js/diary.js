@@ -91,6 +91,7 @@ angular.module('mooddiary.diary', [])
             $q.all(promises).then(function() {
                 $scope.newEntry = new Entry();
                 $scope.newEntryAnswers = {};
+                $scope.newEntry.date = new Date();
                 $scope.entryAdding = false;
                 reloadEntries();
             }, errorCallback);
