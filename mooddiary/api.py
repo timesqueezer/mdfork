@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import requests
 from flask import Blueprint, current_app, request, json, abort
 from flask.ext.restful import Api, Resource
 from flask.ext.jwt import current_user, jwt_required
@@ -31,6 +32,8 @@ def resp(data, schema=None, status_code=200):
 class UserEntryList(Resource):
     @jwt_required()
     def get(self):
+        query = Entry.query.filter_by(user_id=current_user.id)
+
         if 'timespan' in request.args:
             count, length = request.args.get('timespan').split('.')
             count = int(count)
@@ -38,9 +41,21 @@ class UserEntryList(Resource):
                 delta = timedelta(weeks=count)
             elif length == 'm':
                 delta = timedelta(weeks=count*4)
-            entries = Entry.query.filter(db.func.date(Entry.date) >= date.today() - delta).order_by('date DESC').all()
-        else:
-            entries = Entry.query.filter_by(user_id=current_user.id).order_by('date DESC').all()
+            query = query.filter(db.func.date(Entry.date) >= date.today() - delta)
+
+        if 'sort_by' in request.args and 'order' in request.args:
+            sort_by = request.args.get('sort_by')
+            order = request.args.get('order')
+
+            if order not in ['asc', 'desc']:
+                return resp({'message': 'Invalid value for order request parameter'}, 400)
+            if sort_by not in ['date']:
+                return resp({'message': 'Invalid value for order request parameter'}, 400)
+
+            query = query.order_by('{} {}'.format(sort_by, order))
+
+        entries = query.all()
+
         schema = EntrySchema(many=True)
 
         return resp(entries, schema)
@@ -239,15 +254,28 @@ restful.add_resource(UserMe, '/me')
 
 class UserList(Resource):
     def post(self):
-        # captcha stuff
         class UserInputSchema(Schema):
             email = fields.String(required=True, validate=Email())
             password = fields.String(required=True)
+            captcha = fields.String(required=True)
         schema = UserInputSchema()
         result, errors = schema.load(request.json)
 
         if errors:
             return resp({'message': 'form error'}, status_code=400)
+
+        # captcha stuff
+        url = "https://www.google.com/recaptcha/api/siteverify"
+        args = {
+            'secret': current_app.config['RECAPTCHA_SECRET_KEY'],
+            'response': result['captcha'],
+            'remoteip': request.remote_addr
+        }
+
+        resp = requests.post(url, data=args)
+        resp_data = resp.json()
+        if resp.status_code != requests.codes.ok or not resp_data.get('success'):
+            return resp({'message': 'Invalid captcha'})
 
         if User.query.filter_by(email=result['email']).count() >= 1:
             return resp({'message': 'email already in use'}, status_code=400)

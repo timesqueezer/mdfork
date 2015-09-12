@@ -26,6 +26,9 @@ def create_app(config=None):
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(days=28)
     app.config['JWT_ALGORITHM'] = 'HS512'
 
+    app.config['RECAPTCHA_SECRET_KEY'] = '6LdSswwTAAAAADs20eK6NqYaeppxIWm-gJrpto0l'
+    app.config['RECAPTCHA_PUBLIC_KEY'] = '6LdSswwTAAAAABTZq5Za_0blmaSpcg-dFcqaGda9'
+
     if config:
         app.config.from_object(config)
 
