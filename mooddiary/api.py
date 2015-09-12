@@ -272,9 +272,9 @@ class UserList(Resource):
             'remoteip': request.remote_addr
         }
 
-        resp = requests.post(url, data=args)
-        resp_data = resp.json()
-        if resp.status_code != requests.codes.ok or not resp_data.get('success'):
+        resp_google = requests.post(url, data=args)
+        resp_data = resp_google.json()
+        if resp_google.status_code != requests.codes.ok or not resp_data.get('success'):
             return resp({'message': 'Invalid captcha'})
 
         if User.query.filter_by(email=result['email']).count() >= 1:
