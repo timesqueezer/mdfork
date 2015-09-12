@@ -38,10 +38,10 @@ angular.module('mooddiary.utils', [])
                 } else { reject() }
             });
         },
-        register: function(email, pw) {
+        register: function(email, pw, captcha) {
             var login = this.login;
             return $q(function(resolve, reject) {
-                $http.post('/api/users', {email: email, password: pw}).success(function(data) {
+                $http.post('/api/users', {email: email, password: pw, captcha: captcha}).success(function(data) {
                     login(email, pw).then(resolve);
                 }).error(function(data) {
                     reject(data);
