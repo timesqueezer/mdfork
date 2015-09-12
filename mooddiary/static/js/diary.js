@@ -123,57 +123,47 @@ angular.module('mooddiary.diary', [])
 
 .controller('DiaryChartCtrl', ['$scope', '$filter', 'Entry', 'entriesResolved', function($scope, $filter, Entry, entriesResolved) {
     Chart.defaults.global.scaleBeginAtZero = true;
-    $scope.buttonStyles = [];
-    angular.forEach(Chart.defaults.global.colours, function(color) {
-        var bigint = parseInt(color.slice(1), 16),
-        r = ( (bigint >> 16) & 255 ) / 255,
-        g = ( (bigint >> 8) & 255 ) / 255,
-        b = ( bigint & 255 ) / 255,
-        max = Math.max(r, g, b),
-        min = Math.min(r, g, b),
-        l = ( max + min ) / 2;
+    Chart.defaults.global.colours = [
+        '#0a80ba',
+        '#F7464A', // red
+        '#39BF71', // green
+        '#FDB45C', // yellow
+        '#4D5360',  // dark grey
+        '#460793',
+        '#390DFA',
+        '#cc3f1a'
+    ];
+    Chart.defaults.global.tooltipTitleFontFamily = "'Josefin Sans', 'Roboto', 'Arial', sans-serif";
+    $scope.chartOptions = {
+        bezierCurveTension : 0.25,
+        datasetStrokeWidth : 1,
+        pointDotRadius: 4,
+    };
+    $scope.buttonStyles = {};
 
-        var style = {'background-color': color};
-        if (l < 0.65) {
-            style.color = '#FFFFFF';
-        }
-        $scope.buttonStyles.push(style);
-    });
+    var getChartLabel = function(date) {
+        return ($filter('date')(date, 'dd', 'UTC') == 01 ? ($filter('date')(date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(date, 'dd', 'UTC');
+    };
 
     var reloadCharts = function() {
         $scope.labels = _.map($scope.entries, function(entry) {
             if ($scope.timeLimit == '1.w') {
-                return $filter('date')(entry.date, 'dd', 'UTC');
+                var scale = 1;
             } else if ($scope.timeLimit == '2.w') {
-                if ($scope.entries.indexOf(entry) % 2 == 0) {
-                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
-                } else {
-                    return "";
-                }
+                var scale = 2;
             } else if ($scope.timeLimit == '1.m') {
-                if ($scope.entries.indexOf(entry) % 4 == 0) {
-                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
-                } else {
-                    return "";
-                }
+                var scale = 4;
             } else if ($scope.timeLimit == '2.m') {
-                if ($scope.entries.indexOf(entry) % 8 == 0) {
-                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
-                } else {
-                    return "";
-                }
+                var scale = 8;
             } else if ($scope.timeLimit == '4.m') {
-                if ($scope.entries.indexOf(entry) % 8 == 0) {
-                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
-                } else {
-                    return "";
-                }
+                var scale = 8;
             } else {
-                 if ($scope.entries.indexOf(entry) % 10 == 0) {
-                    return ($filter('date')(entry.date, 'dd', 'UTC') == 01 ? ($filter('date')(entry.date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(entry.date, 'dd', 'UTC');
-                } else {
-                    return "";
-                }
+                var scale = 10;
+            }
+            if ($scope.entries.indexOf(entry) % scale == 0) {
+                return getChartLabel(entry.date);
+            } else {
+                return "";
             }
         });
 
@@ -196,13 +186,32 @@ angular.module('mooddiary.diary', [])
         });
     };
 
+    var getStyle = function(color) {
+        var bigint = parseInt(color.slice(1), 16),
+        r = ( (bigint >> 16) & 255 ) / 255,
+        g = ( (bigint >> 8) & 255 ) / 255,
+        b = ( bigint & 255 ) / 255,
+        max = Math.max(r, g, b),
+        min = Math.min(r, g, b),
+        l = ( max + min ) / 2;
+
+        var style = {'background-color': color};
+        if (l < 0.65) {
+            style.color = '#FFFFFF';
+        }
+        return style;
+    };
+
     $scope.toggleChartField = function(field) {
         if ($scope.series.indexOf(field.name) == -1) {
             $scope.series.push(field.name);
             $scope.actualChartData.push($scope.chartData[field.id]);
+            var style = getStyle(Chart.defaults.global.colours[$scope.series.length-1]);
+            $scope.buttonStyles[field.id] = style;
         } else {
             $scope.series.splice($scope.series.indexOf(field.name), 1);
             $scope.actualChartData.splice($scope.actualChartData.indexOf($scope.chartData[field.id]), 1);
+            delete $scope.buttonStyles[field.id];
         }
     };
 

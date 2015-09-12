@@ -54,28 +54,39 @@
 <div class="panel panel-default panel-body">
     <h3 i18n="common.fields"></h3>
 
-    <div class="row row-spaced" ng-repeat="row in (fields.length/3 | array)">
-        <div class="col-sm-4" ng-repeat="field in fields.slice(3*$index, 3*$index + 3)">
-            <h4>{{ field.name }} <small>{{ field.type | fieldTypeToString }}</small></h4></h6>
-            <a class="btn btn-lg btn-link" ng-click="deleteField(field)"><i class="fa fa-trash-o"></i></a>
-        </div>
-    </div>
+    <button class="btn btn-primary" ng-init="showFieldAddForm = false" ng-click="showFieldAddForm = true" ng-hide="showFieldAddForm" i18n="common.add"></button>
 
-    <form name="fieldAddForm" class="form" novalidate>
-        <legend i18n="common.field_add"></legend>
-        <div class="form-group">
-            <label>Name</label>
-            <input class="form-control" name="name" type="text" placeholder="Name" ng-model="newField.name">
-        </div>
-        <div class="form-group">
-            <label>Type</label>
-            <select class="form-control" name="type" ng-model="newField.type">
-                <option value="1" i18n="common.field_string"></option>
-                <option value="2" i18n="common.field_range" selected="selected"></option>
-                <option value="3" i18n="common.field_integer"></option>
-            </select>
+    <form name="fieldAddForm" class="form" ng-show="showFieldAddForm" novalidate>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" name="name" type="text" placeholder="Name" ng-model="newField.name">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select class="form-control" name="type" ng-model="newField.type">
+                        <option value="1" i18n="common.field_string"></option>
+                        <option value="2" i18n="common.field_range" selected="selected"></option>
+                        <option value="3" i18n="common.field_integer"></option>
+                    </select>
+                </div>
+            </div>
         </div>
         <button class="btn btn-primary" type="submit" ng-click="addField()" i18n="common.add"></button>
     </form>
+
+    <hr>
+
+    <div class="row row-spaced" ng-repeat="row in (fields.length/3 | array)">
+        <div class="col-sm-4" ng-repeat="field in fields.slice(3*$index, 3*$index + 3)">
+            <h4>
+                <a class="btn btn-lg btn-danger" ng-click="deleteField(field)"><i class="fa fa-trash-o"></i></a>
+                {{ field.name }} <small>{{ field.type | fieldTypeToString }}</small>
+            </h4>
+        </div>
+    </div>
 </div>
 {% endraw %}
