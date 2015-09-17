@@ -13,9 +13,9 @@
 @brand-warning:         #FA7921;
 @brand-danger:          #E55934;
 
-@border-radius-base:        1px;
-@border-radius-large:       1px;
-@border-radius-small:       1px;
+@border-radius-base:        2px;
+@border-radius-large:       2px;
+@border-radius-small:       2px;
 
 @navbar-default-color: @gray;
 
@@ -52,18 +52,27 @@ body {
     padding-left: 15px;
 }
 
-.filled-circle {
-    text-align: center;
-    vertical-align: middle;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    margin-bottom: 1em;
-    color: white;
-    background: radial-gradient(10px 10px 45deg, circle cover, @brand-info 0%, @dark-info 100%, @brand-primary 95%);
-    background-image: -moz-radial-gradient(15px 15px 45deg, circle cover, @brand-info 0%, @dark-info 100%, @brand-primary 95%);
-    background-image: -webkit-radial-gradient(15px 15px, circle cover, @brand-info, @dark-info);
-    background-image: radial-gradient(15px 15px 45deg, circle cover, @brand-info 0%, @dark-info 100%, @brand-primary 95%);
+.number-square {
+  display: inline-block;
+  margin-bottom: 0.5em;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 6px 16px;
+  font-size: 14pt;
+  line-height: 1.846;
+  border-radius: 2px;
+  background: @brand-primary;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+  color: #fff;
+  min-width: 65px;
+}
+
+.progress-bar:last-child.progress-bar:before {
+  background-color: #C9E9FF;
 }
 
 p {
@@ -86,7 +95,8 @@ h3 {
     color: @brand-primary;
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 0.2em;
-    margin-bottom: 0.5em;
+    margin-bottom: 22pt;
+    margin-top: 11pt;
 }
 
 #alert-container {
@@ -131,5 +141,121 @@ h3 {
     tbody button {
       height: 65px;
     }
+  }
+}
+
+label {
+    color: #111;
+}
+@track-color: #fff;
+@thumb-color: #fafafa;
+
+@thumb-radius: 3px;
+@thumb-height: 30px;
+@thumb-width: 14px;
+@thumb-shadow-size: 1px;
+@thumb-shadow-blur: 2px;
+@thumb-shadow-color: #ccc;
+@thumb-border-width: 0px;
+@thumb-border-color: @brand-primary;
+
+@track-width: 100%;
+@track-height: 8px;
+@track-shadow-size: 0px;
+@track-shadow-blur: 0px;
+@track-shadow-color: #bbb;
+@track-border-width: 1px;
+@track-border-color: #f0f0f0;
+
+@track-radius: 2px;
+@contrast: 1%;
+
+.shadow(@shadow-size,@shadow-blur,@shadow-color) {
+  box-shadow: @shadow-size @shadow-size @shadow-blur @shadow-color, 0px 0px @shadow-size lighten(@shadow-color,5%);
+}
+
+.track() {
+  width: @track-width;
+  height: @track-height;
+  cursor: pointer;
+  animate: 0.2s;
+}
+
+.thumb() {
+  .shadow(@thumb-shadow-size,@thumb-shadow-blur,@thumb-shadow-color);
+  border: @thumb-border-width solid @thumb-border-color;
+  height: @thumb-height;
+  width: @thumb-width;
+  border-radius: @thumb-radius;
+  background: @thumb-color;
+  cursor: pointer;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: @thumb-height/2 0;
+  width: @track-width;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-runnable-track {
+    .track();
+    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+    background: @track-color;
+    border-radius: @track-radius;
+    border: @track-border-width solid @track-border-color;
+  }
+
+  &::-webkit-slider-thumb {
+    .thumb();
+    -webkit-appearance: none;
+    margin-top: ((-@track-border-width * 2 + @track-height) / 2) - (@thumb-height / 2);
+  }
+
+  &:focus::-webkit-slider-runnable-track {
+    background: lighten(@track-color, @contrast);
+  }
+
+  &::-moz-range-track {
+    .track();
+    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+    background: @track-color;
+    border-radius: @track-radius;
+     border: @track-border-width solid @track-border-color;
+  }
+  &::-moz-range-thumb {
+     .thumb();
+  }
+
+  &::-ms-track {
+    .track();
+    background: transparent;
+    border-color: transparent;
+    border-width: @thumb-width 0;
+    color: transparent;
+  }
+
+  &::-ms-fill-lower {
+    background: darken(@track-color, @contrast);
+    border: @track-border-width solid @track-border-color;
+    border-radius: @track-radius*2;
+    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+  }
+  &::-ms-fill-upper {
+    background: @track-color;
+    border: @track-border-width solid @track-border-color;
+    border-radius: @track-radius*2;
+    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+  }
+  &::-ms-thumb {
+    .thumb();
+  }
+  &:focus::-ms-fill-lower {
+    background: @track-color;
+  }
+  &:focus::-ms-fill-upper {
+    background: lighten(@track-color, @contrast);
   }
 }

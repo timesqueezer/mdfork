@@ -8,6 +8,7 @@ flask-jwt
 flask-migrate
 flask-assets
 
+requests
 marshmallow
 fake-factory
 cssmin

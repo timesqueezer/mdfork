@@ -32,12 +32,12 @@
                     <div style="font-size: 16pt" ng-hide="editField[entry.id][field.id]">
                         <p ng-show="field.type == 1">{{ getAnswerForField(entry, field) }}</p>
                         <div ng-show="field.type == 2">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-info" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
+                            <div class="progress pull-right" style="width:65%;margin-top:1em;">
+                                <div class="progress-bar progress-bar-primary" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
                             </div>
-                            <div class="filled-circle">{{ getAnswerForField(entry, field) }}</div>
+                            <div class="number-square">{{ getAnswerForField(entry, field) }}</div>
                         </div>
-                        <div ng-show="field.type == 3" class="filled-circle">
+                        <div ng-show="field.type == 3" class="number-square">
                             {{ getAnswerForField(entry, field) }}
                         </div>
                     </div>

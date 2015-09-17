@@ -11,7 +11,8 @@ angular.module('mooddiary', [
     'ngLocalize',
     'ngLocalize.Events',
     'ngLocalize.Config',
-    'ngLocalize.InstalledLanguages'
+    'ngLocalize.InstalledLanguages',
+    'grecaptcha'
 ])
 
 .controller('myAppControl', ['$scope', 'localeEvents',
@@ -54,6 +55,13 @@ angular.module('mooddiary', [
         duration: 4,
         show: true,
         type: 'danger'
+    });
+}])
+
+.config(['grecaptchaProvider', function(grecaptchaProvider) {
+    grecaptchaProvider.setParameters({
+        sitekey: '6LdSswwTAAAAABTZq5Za_0blmaSpcg-dFcqaGda9',
+        theme: 'light'
     });
 }])
 
@@ -219,12 +227,16 @@ function($scope, $state, Me, $rootScope, AuthService, locale) {
         });
     };
 
-    $scope.register = function(email, password) {
-        AuthService.register(email, password).then(function() {
-            $state.go('settings', {newUser: true});
-        }, function(resp) {
-            $scope.errorMessage = resp.message;
-        });
+    $scope.register = function() {
+        if (!$scope.password || !$scope.password2 || $scope.password != $scope.password2) {
+            $alert({content: locale.getString('common.password_differ')});
+        } else {
+            AuthService.register($scope.email, $scope.password, $scope.captcha).then(function() {
+                $state.go('settings', {newUser: true});
+            }, function(resp) {
+                $scope.errorMessage = resp.message;
+            });
+        }
     };
 }])
 

@@ -1,7 +1,7 @@
 {% raw %}
 <div class="row spaced-bottom" ng-repeat="row in (chartableFields.length/4 | array)">
     <div class="col-sm-3" ng-repeat="field in chartableFields.slice(4*$index, 4*$index + 4)">
-        <button class="btn btn-block btn-default" ng-style="buttonStyles[chartableFields.indexOf(field)]" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]" bs-checkbox>{{ field.name }}</small></button>
+        <button class="btn btn-block btn-default" ng-style="buttonStyles[field.id]" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]" bs-checkbox>{{ field.name }}</small></button>
     </div>
 </div>
 <div class="row spaced-bottom">
@@ -18,6 +18,6 @@
     </div>
 </div>
 <div class="panel panel-default panel-body" ng-if="series.length>0">
-    <canvas class="chart chart-line" data="actualChartData" labels="labels" series="series" legend="true"></canvas>
+    <canvas class="chart chart-line" data="actualChartData" labels="labels" series="series" legend="true" options="chartOptions"></canvas>
 </div>
 {% endraw %}
