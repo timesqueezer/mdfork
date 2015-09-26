@@ -1,4 +1,6 @@
-angular.module('mooddiary.utils', [])
+angular.module('mooddiary.utils', [
+    'restmod'
+])
 
 .service('AuthService', ['$window', '$http', '$q', '$rootScope', 'Me', function($window, $http, $q, $rootScope, Me) {
     return {
@@ -8,7 +10,7 @@ angular.module('mooddiary.utils', [])
                     $window.localStorage.token = data.token;
                     $window.localStorage.exp = JSON.parse(atob(data.token.split('.')[0])).exp;
                     $rootScope.loggedIn = true;
-                    $rootScope.me = Me.get(function() {
+                    $rootScope.me = Me.$fetch().$then(function() {
                         resolve();
                     });
                 }).error(function(data, status, headers, config) {
@@ -31,7 +33,7 @@ angular.module('mooddiary.utils', [])
                     then.setUTCSeconds(exp);
                     if (now < then) {
                         $rootScope.loggedIn = true;
-                        $rootScope.me = Me.get(function() {
+                        $rootScope.me = Me.$fetch().$then(function() {
                             resolve();
                         });
                     } else { reject() }
@@ -67,20 +69,36 @@ angular.module('mooddiary.utils', [])
     };
 }])
 
-.factory('Me', ['$resource', function($resource) {
-    return $resource('/api/me');
+.factory('User', ['restmod', function(restmod) {
+    return restmod.model('users').mix('DirtyModel', {
+        entries: { hasMany: 'Entry' },
+        fields: { hasMany: 'Field' }
+    });
 }])
 
-.factory('Entry', ['$resource', function($resource) {
-    return $resource('/api/entries/:entryId', {entryId: '@id'});
+.factory('Me', ['restmod', 'User', function(restmod, User) {
+    return User.single('me');
 }])
 
-.factory('Field', ['$resource', function($resource) {
-    return $resource('/api/fields/:fieldId', {fieldId: '@id'});
+.factory('Entry', ['restmod', function(restmod) {
+    return restmod.model('entries').mix('DirtyModel', {
+        user: { belongsTo: 'User' },
+        answers: { hasMany: 'Answer' }
+    });
 }])
 
-.factory('Answer', ['$resource', function($resource) {
-    return $resource('/api/answers/:answerId', {answerId: '@id'});
+.factory('Field', ['restmod', function(restmod) {
+    return restmod.model('fields').mix('DirtyModel', {
+        user: { belongsTo : 'User' },
+        answers: { hasMany: 'Answer' }
+    });
+}])
+
+.factory('Answer', ['restmod', function(restmod) {
+    return restmod.model('answers').mix('DirtyModel', {
+        entry: { belongsTo: 'Entry' },
+        field: { belongsTo: 'Field' }
+    });
 }])
 
 ;

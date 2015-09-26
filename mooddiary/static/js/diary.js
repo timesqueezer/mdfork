@@ -1,4 +1,6 @@
-angular.module('mooddiary.diary', [])
+angular.module('mooddiary.diary', [
+    'mooddiary.utils'
+])
 
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
@@ -12,8 +14,8 @@ angular.module('mooddiary.diary', [])
         templateUrl: '/templates/diary',
         controller: 'DiaryCtrl',
         resolve: {
-            fieldsResolved: ['Field', function(Field) {
-                return Field.query().$promise;
+            fieldsResolved: ['Me', function(Me) {
+                return Me.fields.$refresh().$asPromise();
             }]
         }
     })
@@ -23,8 +25,8 @@ angular.module('mooddiary.diary', [])
             templateUrl: '/templates/diaryList',
             controller: 'DiaryListCtrl',
             resolve: {
-                entriesResolved: ['Entry', function(Entry) {
-                    return Entry.query({sort_by: 'date', order: 'desc'}).$promise;
+                entriesResolved: ['Me', function(Me) {
+                    return Me.entries.$refresh({sort_by: 'date', order: 'desc'}).$asPromise();
                 }]
             }
         })
@@ -34,8 +36,8 @@ angular.module('mooddiary.diary', [])
             templateUrl: '/templates/diaryTable',
             controller: 'DiaryListCtrl',
             resolve: {
-                entriesResolved: ['Entry', function(Entry) {
-                    return Entry.query({sort_by: 'date', order: 'desc'}).$promise;
+                entriesResolved: ['Me', function(Me) {
+                    return Me.entries.$refresh({sort_by: 'date', order: 'desc'}).$asPromise();
                 }]
             }
         })
@@ -45,8 +47,8 @@ angular.module('mooddiary.diary', [])
             templateUrl: '/templates/diaryChart',
             controller: 'DiaryChartCtrl',
             resolve: {
-                entriesResolved: ['Entry', function(Entry) {
-                    return Entry.query({sort_by: 'date', order: 'asc'}).$promise;
+                entriesResolved: ['Me', function(Me) {
+                    return Me.entries.$refresh({sort_by: 'date', order: 'asc'}).$asPromise();
                 }]
             }
         })
@@ -55,7 +57,7 @@ angular.module('mooddiary.diary', [])
 
 
 
-.controller('DiaryCtrl', ['$scope', '$q', '$state', '$alert', 'fieldsResolved', 'Field', 'Entry', 'Answer', function($scope, $q, $state, $alert, fieldsResolved, entriesResolved, Field, Entry, Answer) {
+.controller('DiaryCtrl', ['$scope', '$q', '$state', '$alert', 'fieldsResolved', 'Me', function($scope, $q, $state, $alert, fieldsResolved, Me) {
 
     var errorCallback = $scope.errorCallback = function(data) {
         console.error(data);
@@ -71,7 +73,7 @@ angular.module('mooddiary.diary', [])
 
     var reloadEntries = $scope.reloadEntries = function() {
         return $q(function(resolve, reject) {
-            Entry.query(function(data) {
+            Me.entries.$refresh().$then(function(data) {
                 $scope.entries = data;
                 resolve();
             }, reject);
@@ -91,38 +93,38 @@ angular.module('mooddiary.diary', [])
     };
 
     $scope.addEntry = function() {
-        $scope.newEntry.$save(function(created_entry) {
+        $scope.newEntry.$save().$then(function(created_entry) {
             var promises = [];
             angular.forEach($scope.fields, function(field) {
-                var answer = new Answer();
+                var answer = created_entry.answers.$build();
                 answer.entry_field_id = field.id;
                 answer.entry_id = created_entry.id;
                 answer.content = $scope.newEntryAnswers[field.id];
-                promises.push(answer.$save().$promise);
+                promises.push(answer.$save().$asPromise());
             });
             $q.all(promises).then(function() {
-                $scope.newEntry = new Entry();
+                $scope.newEntry = Me.entries.$build();
                 $scope.newEntryAnswers = {};
                 $scope.newEntry.date = new Date();
                 $scope.entryAdding = false;
                 reloadEntries();
             }, errorCallback);
         }, function(resp) {
-            $scope.errorMessage = resp.data.message;
+            $scope.errorMessage = resp.$response.data.message;
         });
     };
 
     // Init
     $scope.fields = fieldsResolved;
 
-    $scope.newEntry = new Entry();
+    $scope.newEntry = Me.entries.$build();
     $scope.newEntryAnswers = {};
     $scope.newEntry.date = new Date();
 
     $scope.$state = $state;
 }])
 
-.controller('DiaryChartCtrl', ['$scope', '$filter', 'Entry', 'entriesResolved', function($scope, $filter, Entry, entriesResolved) {
+.controller('DiaryChartCtrl', ['$scope', '$filter', 'Me', 'entriesResolved', function($scope, $filter, Me, entriesResolved) {
     Chart.defaults.global.scaleBeginAtZero = true;
     Chart.defaults.global.colours = [
         '#0a80ba',
@@ -222,15 +224,11 @@ angular.module('mooddiary.diary', [])
         if ($scope.timeLimit == '0.a') {
             $scope.reloadEntries().then(reloadCharts, $scope.errorCallback);
         } else {
-            Entry.query({timespan: $scope.timeLimit}, function(data) {
+            Me.entries.$refresh({timespan: $scope.timeLimit}).$then(function(data) {
                 $scope.entries = data;
                 reloadCharts();
             }, $scope.errorCallback);
         }
-        /*
-            $scope.entries = data;
-            reloadCharts();
-        });*/
     });
 
     // Init
@@ -249,22 +247,22 @@ angular.module('mooddiary.diary', [])
 }])
 
 .controller('DiaryListCtrl', ['$scope', 'Answer', '$alert', 'entriesResolved', function($scope, Answer, $alert, entriesResolved) {
-    $scope.activeFields = {};
-    angular.forEach($scope.fields, function(field) { $scope.activeFields[field.id] = true; });
-    $scope.editField = {};
-    $scope.editEntry = {};
+    $scope.reloadList = function() {
+        $scope.activeFieldsList = _.filter($scope.fields, function(field) { return $scope.activeFields[field.id]; });
+    };
 
     $scope.saveEntry = function(entry) {
         entry.$save(function() {
             $scope.editEntry[entry.id] = false;
         }, function(error) {
-            $alert({content: error.data.message});
+            $alert({content: error.$response.data.message});
         });
     };
 
     $scope.startEditField = function(entry, field) {
         $scope.answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        $scope.editAnswer = Answer.get({answerId: $scope.answer.id}, function() {
+        Answer.$find($scope.answer.id).$then(function(answer) {
+            $scope.editAnswer = answer;
             $scope.editAnswer.tmpContent = $scope.getAnswerForField(entry, field);
 
             $scope.editField[entry.id][field.id] = true;
@@ -274,13 +272,19 @@ angular.module('mooddiary.diary', [])
     $scope.editFieldAnswer = function(entry, field) {
         $scope.editAnswer.content = $scope.editAnswer.tmpContent;
         $scope.answer.content = $scope.editAnswer.tmpContent;
-        $scope.editAnswer.$save().then(function() {
+        $scope.editAnswer.$save(['content']).$then(function() {
             $scope.editField[entry.id][field.id] = false;
         });
     };
     // Init
 
+    $scope.activeFields = {};
+    angular.forEach($scope.fields, function(field) { $scope.activeFields[field.id] = true; });
+    $scope.editField = {};
+    $scope.editEntry = {};
+
     $scope.entries = entriesResolved;
+    $scope.activeFieldsList = $scope.fields;
 }])
 
 ;

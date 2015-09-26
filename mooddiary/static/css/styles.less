@@ -9,7 +9,7 @@
 
 @brand-primary:         #0A80BA;
 @brand-success:         #9BC53D;
-@brand-info:            #0FAFFF;
+@brand-info:            #FFA340;
 @brand-warning:         #FA7921;
 @brand-danger:          #E55934;
 
@@ -144,6 +144,10 @@ h3 {
   }
 }
 
+.ng-hide-add, .ng-hide-remove, .ng-hide-add-active, .ng-hide-remove-active {
+  transition: all linear 0.5s;
+}
+
 label {
     color: #111;
 }
@@ -193,7 +197,7 @@ label {
 
 input[type=range] {
   -webkit-appearance: none;
-  margin: @thumb-height/2 0;
+  margin: 0;
   width: @track-width;
 
   &:focus {
@@ -212,6 +216,10 @@ input[type=range] {
     .thumb();
     -webkit-appearance: none;
     margin-top: ((-@track-border-width * 2 + @track-height) / 2) - (@thumb-height / 2);
+  }
+
+  &:focus::-webkit-slider-thumb {
+    border: 1px solid @thumb-border-color;
   }
 
   &:focus::-webkit-slider-runnable-track {

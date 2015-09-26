@@ -1,5 +1,4 @@
 angular.module('mooddiary', [
-    'ngResource',
     'ngAnimate',
     'ui.router',
     'chart.js',
@@ -12,7 +11,8 @@ angular.module('mooddiary', [
     'ngLocalize.Events',
     'ngLocalize.Config',
     'ngLocalize.InstalledLanguages',
-    'grecaptcha'
+    'grecaptcha',
+    'restmod'
 ])
 
 .controller('myAppControl', ['$scope', 'localeEvents',
@@ -77,10 +77,12 @@ angular.module('mooddiary', [
     });
 }])
 
-.config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider) {
+.config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', 'restmodProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider, restmodProvider) {
     $locationProvider.html5Mode(true);
     $urlMatcherFactoryProvider.strictMode(false);
     $urlRouterProvider.otherwise('/about');
+
+    restmodProvider.rebase('MoodDiaryApi');
 
     $stateProvider
 
@@ -89,8 +91,8 @@ angular.module('mooddiary', [
         templateUrl: '/templates/settings',
         controller: 'SettingsCtrl',
         resolve: {
-            fieldsResolved: ['Field', function(Field) {
-                return Field.query().$promise;
+            fieldsResolved: ['Me', function(Me) {
+                return Me.fields.$refresh().$asPromise();
             }]
         }
     })
@@ -111,34 +113,36 @@ angular.module('mooddiary', [
 
 }])
 
-.controller('SettingsCtrl', ['$scope', '$alert', '$rootScope', 'fieldsResolved', 'Field', 'locale', 'localeSupported', 'localeEvents',
-function($scope, $alert, $rootScope, fieldsResolved, Field, locale, localeSupported, localeEvents) {
+.controller('SettingsCtrl', ['$scope', '$alert', '$rootScope', 'fieldsResolved', 'Me', 'locale', 'localeSupported', 'localeEvents',
+function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported, localeEvents) {
 
     var errorCallback = function(data) {
         console.log(data);
     };
 
     var reloadFields = function() {
-        Field.query(function(data) {
+        Me.fields.$refresh().$then(function(data) {
             $scope.fields = data;
         }, errorCallback);
     };
 
     $scope.fields = fieldsResolved;
-    $scope.newField = new Field({type: 2});
+    $scope.newField = Me.fields.$build({type: 2});
 
     $scope.addField = function() {
         if (angular.isString($scope.newField.type)) {
             $scope.newField.type = parseInt($scope.newField.type);
         }
-        $scope.newField.$save(function() {
+        $scope.newField.$save().$then(function() {
             reloadFields();
-            $scope.newField = new Field({type: 2});
+            $scope.newField = Me.fields.$build({type: 2});
         }, errorCallback);
     };
 
     $scope.deleteField = function(field) {
-        field.$delete(reloadFields);
+        if (confirm(locale.getString('common.delete_field_confirm'))) {
+            field.$destroy().$then(reloadFields);
+        }
     };
 
     $scope.supportedLang = localeSupported;
@@ -173,7 +177,7 @@ function($scope, $alert, $rootScope, fieldsResolved, Field, locale, localeSuppor
             $alert({content: locale.getString('common.password_differ')});
             return;
         }
-        $rootScope.me.$save(function() {
+        $rootScope.me.$save($rootScope.me.$dirty()).$then(function() {
             $alert({content: locale.getString('common.changes_saved')});
         });
     };
@@ -228,10 +232,10 @@ function($scope, $state, Me, $rootScope, AuthService, locale) {
     };
 
     $scope.register = function() {
-        if (!$scope.password || !$scope.password2 || $scope.password != $scope.password2) {
+        if (!$scope.passwordRegister || !$scope.password2Register || $scope.passwordRegister != $scope.password2Register) {
             $alert({content: locale.getString('common.password_differ')});
         } else {
-            AuthService.register($scope.email, $scope.password, $scope.captcha).then(function() {
+            AuthService.register($scope.emailRegister, $scope.passwordRegister, $scope.captcha).then(function() {
                 $state.go('settings', {newUser: true});
             }, function(resp) {
                 $scope.errorMessage = resp.message;
@@ -241,5 +245,23 @@ function($scope, $state, Me, $rootScope, AuthService, locale) {
 }])
 
 .controller('AboutCtrl', function() {})
+
+;
+
+angular.module('restmod').factory('MoodDiaryApi', ['restmod', 'inflector', function(restmod, inflector) {
+
+    return restmod.mixin({ // include default packer extension
+        $config: {
+            urlPrefix: '/api/',
+            style: 'MoodDiary',
+            primaryKey: 'id'
+        },
+        $extend: {
+            Model: {
+                encodeUrlName: inflector.parameterize
+            }
+        }
+    });
+}])
 
 ;

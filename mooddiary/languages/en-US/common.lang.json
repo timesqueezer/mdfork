@@ -25,5 +25,7 @@
     "language": "Language",
     "password_differ": "Passwords don't match",
     "changes_saved": "Changes saved",
-    "date": "Date"
+    "date": "Date",
+    "category_help_text": "",
+    "delete_field_confirm": "Are you sure?"
 }
