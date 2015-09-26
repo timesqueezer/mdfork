@@ -9,6 +9,7 @@ from marshmallow.validate import Length, Email
 from mooddiary.core import db
 from mooddiary.models import User, Entry, EntryField, EntryFieldAnswer, EntryFieldType
 from mooddiary.schemas import EntrySchema, EntryFieldSchema, EntryFieldAnswerSchema, UserSchema
+from mooddiary.utils import resp
 
 api = Blueprint('api', __name__)
 restful = Api(api)
@@ -18,15 +19,6 @@ restful = Api(api)
 @api.route('/<path:path>')
 def index(path):
     return json.dumps({'message': 'Endpoint not found'}), 404
-
-
-def resp(data, schema=None, status_code=200):
-    if schema:
-        response = current_app.response_class(json.dumps(schema.dump(data).data), mimetype='application/json')
-    else:
-        response = current_app.response_class(json.dumps(data), mimetype='application/json')
-    response.status_code = status_code
-    return response
 
 
 class UserEntryList(Resource):
@@ -40,7 +32,7 @@ class UserEntryList(Resource):
             if length == 'w':
                 delta = timedelta(weeks=count)
             elif length == 'm':
-                delta = timedelta(weeks=count*4)
+                delta = timedelta(weeks=count * 4)
             query = query.filter(db.func.date(Entry.date) >= date.today() - delta)
 
         if 'sort_by' in request.args and 'order' in request.args:
@@ -80,13 +72,16 @@ class UserEntryList(Resource):
         db.session.commit()
         schema = EntrySchema(exclude=['answers'])
         return resp(entry, schema)
-restful.add_resource(UserEntryList, '/entries')
+restful.add_resource(UserEntryList, '/me/entries')
 
 
 class EntryDetail(Resource):
     @jwt_required()
-    def post(self, id):
+    def patch(self, id):
         entry = Entry.query.get_or_404(id)
+
+        if entry.user_id != current_user.id:
+            abort(401)
 
         class EntryInputSchema(Schema):
             date = fields.Date(required=True)
@@ -99,7 +94,7 @@ class EntryDetail(Resource):
 
         entry_existing = Entry.query.filter(db.func.date(Entry.date) == result['date']).first()
         if entry_existing:
-            return resp({'message': 'Entry this date already present.'}, status_code=400)
+            return resp({'message': 'Entry at this date already present.'}, status_code=400)
 
         entry.date = result['date']
 
@@ -133,7 +128,7 @@ class UserEntryFieldList(Resource):
         db.session.commit()
         schema = EntryFieldSchema()
         return resp(field, schema)
-restful.add_resource(UserEntryFieldList, '/fields')
+restful.add_resource(UserEntryFieldList, '/me/fields')
 
 
 class EntryFieldDetail(Resource):
@@ -159,7 +154,7 @@ class EntryFieldAnswerDetail(Resource):
         return resp(answer, schema)
 
     @jwt_required()
-    def post(self, id):
+    def patch(self, id):
         answer = EntryFieldAnswer.query.get_or_404(id)
         if answer.entry.user_id != current_user.id:
             abort(401)
@@ -183,21 +178,23 @@ class EntryFieldAnswerDetail(Resource):
 restful.add_resource(EntryFieldAnswerDetail, '/answers/<int:id>')
 
 
-class EntryFieldAnswerList(Resource):
+class EntryAnswerList(Resource):
     @jwt_required()
-    def post(self):
+    def post(self, id):
+        entry = Entry.query.get_or_404(id)
+        if entry.user_id != current_user.id:
+            abort(401)
+
         class AnswerInputSchema(Schema):
             entry_field_id = fields.Integer(required=True)
-            entry_id = fields.Integer(required=True)
             content = fields.String(required=True, validate=Length(max=300))
 
         schema = AnswerInputSchema()
         result, errors = schema.load(request.json)
 
         if errors:
-            return resp({'message': 'form error'}, status_code=400)
+            return resp(errors, status_code=400)
 
-        entry = Entry.query.get_or_404(result['entry_id'])
         entry_field = EntryField.query.get_or_404(result['entry_field_id'])
         answer = EntryFieldAnswer(entry=entry, entry_field=entry_field, content=result['content'])
         db.session.add(answer)
@@ -206,7 +203,7 @@ class EntryFieldAnswerList(Resource):
         schema = EntryFieldAnswerSchema()
         return resp(answer, schema)
 
-restful.add_resource(EntryFieldAnswerList, '/answers')
+restful.add_resource(EntryAnswerList, '/entries/<int:id>/answers')
 
 
 class UserMe(Resource):
@@ -218,7 +215,7 @@ class UserMe(Resource):
         return resp(user, schema)
 
     @jwt_required()
-    def post(self):
+    def patch(self):
         class UserInputSchema(Schema):
             email = fields.String(validate=Email())
             first_name = fields.String(validate=Length(min=2, max=40))
@@ -257,7 +254,7 @@ class UserList(Resource):
         class UserInputSchema(Schema):
             email = fields.String(required=True, validate=Email())
             password = fields.String(required=True)
-            captcha = fields.String(required=True)
+            captcha = fields.String(required=True if not current_app.debug else False)
         schema = UserInputSchema()
         result, errors = schema.load(request.json)
 
@@ -265,17 +262,18 @@ class UserList(Resource):
             return resp({'message': 'form error'}, status_code=400)
 
         # captcha stuff
-        url = "https://www.google.com/recaptcha/api/siteverify"
-        args = {
-            'secret': current_app.config['RECAPTCHA_SECRET_KEY'],
-            'response': result['captcha'],
-            'remoteip': request.remote_addr
-        }
+        if not current_app.debug:
+            url = "https://www.google.com/recaptcha/api/siteverify"
+            args = {
+                'secret': current_app.config['RECAPTCHA_SECRET_KEY'],
+                'response': result['captcha'],
+                'remoteip': request.remote_addr
+            }
 
-        resp_google = requests.post(url, data=args)
-        resp_data = resp_google.json()
-        if resp_google.status_code != requests.codes.ok or not resp_data.get('success'):
-            return resp({'message': 'Invalid captcha'})
+            response = requests.post(url, data=args)
+            resp_data = response.json()
+            if response.status_code != requests.codes.ok or not resp_data.get('success'):
+                return resp({'message': 'Invalid captcha'})
 
         if User.query.filter_by(email=result['email']).count() >= 1:
             return resp({'message': 'email already in use'}, status_code=400)
