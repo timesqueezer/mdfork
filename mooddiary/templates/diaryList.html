@@ -18,6 +18,7 @@
             <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
             <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
             <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
+            <button class="btn btn-lg btn-link" ng-click="entry.$destroy()"><i class="fa fa-times"></i></button>
             <div class="form-group" ng-show="editEntry[entry.id]">
                 <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
                 <input type="text" class="form-control spaced-bottom" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>

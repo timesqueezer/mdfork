@@ -24,6 +24,11 @@ def send_flag(flag=None):
     return send_file('static/bower_components/flag-icon-css/flags/' + flag)
 
 
+@main.route('/favicon.ico')
+def send_favicon():
+    return send_file('static/favicon.ico')
+
+
 @main.route('/')
 @main.route('/<path:path>')
 def index(path=None):

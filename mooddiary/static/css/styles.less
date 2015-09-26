@@ -24,15 +24,28 @@
 }
 
 body {
-    background: #EAEAEA;
+    background: linear-gradient(lighten(#9AC9E0, 20%), lighten(#9AC9E0, 10%));
 }
 
-@navbar-default-brand-color: @brand-primary;
+@navbar-default-brand-color: #444;
 @navbar-default-link-hover-color: @brand-primary;
 @navbar-default-link-active-color: @brand-primary;
 
 .navbar-brand {
     font-size: 22pt;
+    text-shadow: 0 0 25px #999;
+}
+
+p {
+  font-size: 14pt;
+}
+
+.panel {
+  margin-bottom: 11pt;
+}
+
+.navbar {
+  margin-bottom: 11pt;
 }
 
 @dark-info: darken(@brand-info, 10%);
@@ -193,6 +206,10 @@ label {
   border-radius: @thumb-radius;
   background: @thumb-color;
   cursor: pointer;
+}
+
+.form-control {
+  font-size: 14pt !important;
 }
 
 input[type=range] {
