@@ -13,6 +13,9 @@
         {% assets "js" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}
+
+        <link rel="shortcut icon" href="{{ url_for('main.send_favicon') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('main.send_favicon') }}">
     </head>
 {% raw %}
     <body ng-controller="myAppControl">
@@ -27,7 +30,7 @@
                             <span class="icon-bar"></span>
                         </button>
                         <a class="navbar-brand" ui-sref="about">
-                            MoodDiary <span class="label label-success">Beta</span>
+                            MoodDiary
                         </a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -50,7 +53,7 @@
         </div>
         <div id="alert-container"></div>
         <div class="center-block text-center">
-            &copy;2015 Matz Radloff - <a href="mailto:matzradloff@gmail.com">Contact</a>
+            &copy;2015 Matz Radloff - <a href="mailto:matzradloff@gmail.com">Contact</a> - <a href="https://github.com/timesqueezer/mooddiary"><i class="fa fa-github"></i> GitHub</a>
         </div>
     </body>
 </html>

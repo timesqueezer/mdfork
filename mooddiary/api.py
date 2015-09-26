@@ -101,6 +101,19 @@ class EntryDetail(Resource):
         db.session.commit()
         schema = EntrySchema()
         return resp(entry, schema)
+
+    @jwt_required()
+    def delete(self, id):
+        entry = Entry.query.get_or_404(id)
+
+        if entry.user_id != current_user.id:
+            abort(401)
+
+        for answer in entry.answers:
+            db.session.delete(answer)
+        db.session.delete(entry)
+        db.session.commit()
+        return "", 204
 restful.add_resource(EntryDetail, '/entries/<int:id>')
 
 
@@ -132,6 +145,26 @@ restful.add_resource(UserEntryFieldList, '/me/fields')
 
 
 class EntryFieldDetail(Resource):
+    @jwt_required()
+    def patch(self, field_id):
+        field = EntryField.query.get_or_404(field_id)
+        if field.user_id != current_user.id:
+            abort(401)
+
+        class FieldInputSchema(Schema):
+            name = fields.String(required=True, validate=Length(max=100))
+
+        schema = FieldInputSchema()
+        result, errors = schema.load(request.json)
+        if errors:
+            return resp({'errors': errors}, status_code=400)
+
+        field.name = result['name']
+        db.session.commit()
+
+        schema = EntryFieldSchema()
+        return resp(field, schema)
+
     @jwt_required()
     def delete(self, field_id):
         field = EntryField.query.get_or_404(field_id)

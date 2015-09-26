@@ -128,6 +128,7 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
 
     $scope.fields = fieldsResolved;
     $scope.newField = Me.fields.$build({type: 2});
+    $scope.showEditField = {};
 
     $scope.addField = function() {
         if (angular.isString($scope.newField.type)) {
@@ -186,12 +187,10 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
 
 .filter('fieldTypeToString', ['$filter', 'locale', function($filter, locale) {
     return function(type) {
-        locale.ready('common').then(function() {
-            if (type == 1) return $filter('i18n')('common.field_string');
-            else if (type == 2) return $filter('i18n')('common.field_range');
-            else if (type == 3) return $filter('i18n')('common.field_integer');
-            else return 'Invalid Type';
-        });
+        if (type == 1) return locale.getString('common.field_string');
+        else if (type == 2) return locale.getString('common.field_range');
+        else if (type == 3) return locale.getString('common.field_integer');
+        else return 'Invalid Type';
     };
 }])
 

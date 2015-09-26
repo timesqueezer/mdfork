@@ -72,8 +72,13 @@ angular.module('mooddiary.diary', [
     };
 
     var reloadEntries = $scope.reloadEntries = function() {
+        if ($state.includes('diary.chart')) {
+            var args = {sort_by: 'date', order: 'asc'};
+        } else {
+            var args = {sort_by: 'date', order: 'desc'};
+        }
         return $q(function(resolve, reject) {
-            Me.entries.$refresh().$then(function(data) {
+            Me.entries.$refresh(args).$then(function(data) {
                 $scope.entries = data;
                 resolve();
             }, reject);
@@ -94,23 +99,32 @@ angular.module('mooddiary.diary', [
 
     $scope.addEntry = function() {
         $scope.newEntry.$save().$then(function(created_entry) {
+            $scope.entryAdding = false;
             var promises = [];
             angular.forEach($scope.fields, function(field) {
                 var answer = created_entry.answers.$build();
                 answer.entry_field_id = field.id;
                 answer.entry_id = created_entry.id;
-                answer.content = $scope.newEntryAnswers[field.id];
+                if (field.type == 1 && !$scope.newEntryAnswers[field.id])
+                    answer.content = '';
+                else if (field.type == 3 && !$scope.newEntryAnswers[field.id])
+                    answer.content = '0';
+                else
+                    answer.content = $scope.newEntryAnswers[field.id];
                 promises.push(answer.$save().$asPromise());
             });
             $q.all(promises).then(function() {
                 $scope.newEntry = Me.entries.$build();
                 $scope.newEntryAnswers = {};
                 $scope.newEntry.date = new Date();
-                $scope.entryAdding = false;
-                reloadEntries();
+                reloadEntries().then(function() {
+                    if ($state.includes('diary.chart')) {
+                        $scope.$broadcast('reloadCharts');
+                    }
+                });
             }, errorCallback);
         }, function(resp) {
-            $scope.errorMessage = resp.$response.data.message;
+            $alert({content: resp.$response.data.message});
         });
     };
 
@@ -141,6 +155,8 @@ angular.module('mooddiary.diary', [
         bezierCurveTension : 0.25,
         datasetStrokeWidth : 1,
         pointDotRadius: 4,
+        animation : false,
+        animationSteps: 10
     };
     $scope.buttonStyles = {};
 
@@ -149,20 +165,20 @@ angular.module('mooddiary.diary', [
     };
 
     var reloadCharts = function() {
+        if ($scope.timeLimit == '1.w' || $scope.entries.length < 10) {
+            var scale = 1;
+        } else if ($scope.timeLimit == '2.w') {
+            var scale = 2;
+        } else if ($scope.timeLimit == '1.m') {
+            var scale = 4;
+        } else if ($scope.timeLimit == '2.m') {
+            var scale = 8;
+        } else if ($scope.timeLimit == '4.m') {
+            var scale = 8;
+        } else {
+            var scale = 10;
+        }
         $scope.labels = _.map($scope.entries, function(entry) {
-            if ($scope.timeLimit == '1.w') {
-                var scale = 1;
-            } else if ($scope.timeLimit == '2.w') {
-                var scale = 2;
-            } else if ($scope.timeLimit == '1.m') {
-                var scale = 4;
-            } else if ($scope.timeLimit == '2.m') {
-                var scale = 8;
-            } else if ($scope.timeLimit == '4.m') {
-                var scale = 8;
-            } else {
-                var scale = 10;
-            }
             if ($scope.entries.indexOf(entry) % scale == 0) {
                 return getChartLabel(entry.date);
             } else {
@@ -196,7 +212,7 @@ angular.module('mooddiary.diary', [
         b = ( bigint & 255 ) / 255,
         max = Math.max(r, g, b),
         min = Math.min(r, g, b),
-        l = ( max + min ) / 2;
+        l = ( max + min ) / 2; // calculate brightness
 
         var style = {'background-color': color};
         if (l < 0.65) {
@@ -205,14 +221,21 @@ angular.module('mooddiary.diary', [
         return style;
     };
 
+    $scope.$on('reloadCharts', reloadCharts);
+
     $scope.toggleChartField = function(field) {
         if ($scope.series.indexOf(field.name) == -1) {
             $scope.series.push(field.name);
             $scope.actualChartData.push($scope.chartData[field.id]);
             var style = getStyle(Chart.defaults.global.colours[$scope.series.length-1]);
             $scope.buttonStyles[field.id] = style;
+            $scope.activeFieldIds.push(field.id);
         } else {
             $scope.series.splice($scope.series.indexOf(field.name), 1);
+            $scope.activeFieldIds.splice($scope.activeFieldIds.indexOf(field.id), 1);
+            angular.forEach($scope.activeFieldIds, function(fieldId) {
+                $scope.buttonStyles[fieldId] = getStyle(Chart.defaults.global.colours[$scope.activeFieldIds.indexOf(fieldId)]);
+            });
             $scope.actualChartData.splice($scope.actualChartData.indexOf($scope.chartData[field.id]), 1);
             delete $scope.buttonStyles[field.id];
         }
@@ -239,11 +262,14 @@ angular.module('mooddiary.diary', [
 
     $scope.entries = entriesResolved;
     $scope.activeFields = {};
+    $scope.activeFieldIds = []; // Keep track of the order in which fields are activated
     $scope.chartData = {};
     $scope.actualChartData = [];
     $scope.series = [];
 
     reloadCharts();
+    $scope.toggleChartField($scope.fields[0]);
+    $scope.activeFields[$scope.fields[0].id] = true;
 }])
 
 .controller('DiaryListCtrl', ['$scope', 'Answer', '$alert', 'entriesResolved', function($scope, Answer, $alert, entriesResolved) {
@@ -252,7 +278,7 @@ angular.module('mooddiary.diary', [
     };
 
     $scope.saveEntry = function(entry) {
-        entry.$save(function() {
+        entry.$save(['date']).$then(function() {
             $scope.editEntry[entry.id] = false;
         }, function(error) {
             $alert({content: error.$response.data.message});
@@ -261,20 +287,31 @@ angular.module('mooddiary.diary', [
 
     $scope.startEditField = function(entry, field) {
         $scope.answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        Answer.$find($scope.answer.id).$then(function(answer) {
-            $scope.editAnswer = answer;
-            $scope.editAnswer.tmpContent = $scope.getAnswerForField(entry, field);
+        if ($scope.answer) {
+            Answer.$find($scope.answer.id).$then(function(answer) {
+                $scope.editAnswer = answer;
+                $scope.editAnswer.tmpContent = $scope.getAnswerForField(entry, field);
 
+                $scope.editField[entry.id][field.id] = true;
+            });
+        } else {
+            $scope.editAnswer = $scope.answer = entry.answers.$build({entry_field_id: field.id});
             $scope.editField[entry.id][field.id] = true;
-        });
+        }
     };
 
     $scope.editFieldAnswer = function(entry, field) {
         $scope.editAnswer.content = $scope.editAnswer.tmpContent;
         $scope.answer.content = $scope.editAnswer.tmpContent;
-        $scope.editAnswer.$save(['content']).$then(function() {
-            $scope.editField[entry.id][field.id] = false;
-        });
+        if ($scope.editAnswer.id) {
+            $scope.editAnswer.$save(['content']).$then(function() {
+                $scope.editField[entry.id][field.id] = false;
+            });
+        } else {
+            $scope.editAnswer.$save().$then(function() {
+                $scope.editField[entry.id][field.id] = false;
+            });
+        }
     };
     // Init
 
