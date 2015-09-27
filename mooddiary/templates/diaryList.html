@@ -11,51 +11,53 @@
         </div>
     </div>
 </div>
-
-<div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
-    <div class="row spaced-bottom">
-        <div class="col-md-2">
-            <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
-            <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
-            <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
-            <button class="btn btn-lg btn-link" ng-click="entry.$destroy()"><i class="fa fa-times"></i></button>
-            <div class="form-group" ng-show="editEntry[entry.id]">
-                <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
-                <input type="text" class="form-control spaced-bottom" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>
-                <button class="btn btn-sm btn-primary" ng-click="saveEntry(entry)" i18n="common.save"></button>
+<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="false" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
+    <div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
+        <div class="row spaced-bottom">
+            <div class="col-md-2">
+                <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
+                <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
+                <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
+                <button class="btn btn-lg btn-link" ng-click="entry.$destroy()"><i class="fa fa-times"></i></button>
+                <div class="form-group" ng-show="editEntry[entry.id]">
+                    <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
+                    <input type="text" class="form-control spaced-bottom" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>
+                    <button class="btn btn-sm btn-primary" ng-click="saveEntry(entry)" i18n="common.save"></button>
+                </div>
             </div>
-        </div>
-        <div class="col-md-10">
-            <div class="row row-border-bottom" ng-repeat="row in (activeFieldsList.length/2 | array)">
-                <div class="col-md-6" ng-repeat="field in activeFieldsList.slice(2*$index, 2*$index + 2)" ng-init="editField[entry.id][field.id] = false">
-                    <h5>{{ field.name }}</h5>
-                    <button class="btn btn-lg btn-link pull-right" ng-click="startEditField(entry, field)" ng-hide="editField[entry.id][field.id]"><i class="fa fa-pencil-square-o"></i></button>
-                    <div style="font-size: 16pt" ng-hide="editField[entry.id][field.id]">
-                        <p ng-show="field.type == 1">{{ getAnswerForField(entry, field) }}</p>
-                        <div ng-show="field.type == 2">
-                            <div class="progress pull-right" style="width:65%;margin-top:1em;">
-                                <div class="progress-bar progress-bar-primary" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
+            <div class="col-md-10">
+                <div class="row row-border-bottom" ng-repeat="row in (activeFieldsList.length/2 | array)">
+                    <div class="col-md-6" ng-repeat="field in activeFieldsList.slice(2*$index, 2*$index + 2)" ng-init="editField[entry.id][field.id] = false">
+                        <h5>{{ field.name }}</h5>
+                        <button class="btn btn-lg btn-link pull-right" ng-click="startEditField(entry, field)" ng-hide="editField[entry.id][field.id]"><i class="fa fa-pencil-square-o"></i></button>
+                        <div style="font-size: 16pt" ng-hide="editField[entry.id][field.id]">
+                            <p ng-show="field.type == 1">{{ getAnswerForField(entry, field) }}</p>
+                            <div ng-show="field.type == 2">
+                                <div class="progress pull-right" style="width:65%;margin-top:1em;">
+                                    <div class="progress-bar progress-bar-primary" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
+                                </div>
+                                <div class="number-square">{{ getAnswerForField(entry, field) }}</div>
                             </div>
-                            <div class="number-square">{{ getAnswerForField(entry, field) }}</div>
-                        </div>
-                        <div ng-show="field.type == 3" class="number-square">
-                            {{ getAnswerForField(entry, field) }}
-                        </div>
-                    </div>
-                    <div ng-show="editField[entry.id][field.id]" class="spaced-bottom">
-                        <div class="form-group" ng-switch="field.type">
-                            <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent"></textarea>
-                            <div class="input-group" ng-switch-when="2">
-                                <div class="input-group-addon">{{ editAnswer.tmpContent }}</div>
-                                <input class="form-control" type="range" min="0" max="10" p laceholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
+                            <div ng-show="field.type == 3" class="number-square">
+                                {{ getAnswerForField(entry, field) }}
                             </div>
-                            <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
                         </div>
-                        <button class="btn btn-sm btn-primary" ng-click="editFieldAnswer(entry, field)">Save</button>
+                        <div ng-show="editField[entry.id][field.id]" class="spaced-bottom">
+                            <div class="form-group" ng-switch="field.type">
+                                <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent"></textarea>
+                                <div class="input-group" ng-switch-when="2">
+                                    <div class="input-group-addon">{{ editAnswer.tmpContent }}</div>
+                                    <input class="form-control" type="range" min="0" max="10" p laceholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
+                                </div>
+                                <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
+                            </div>
+                            <button class="btn btn-sm btn-primary" ng-click="editFieldAnswer(entry, field)">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="clearfix"></div>
 </div>
 {% endraw %}
