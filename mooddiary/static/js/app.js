@@ -12,7 +12,8 @@ angular.module('mooddiary', [
     'ngLocalize.Config',
     'ngLocalize.InstalledLanguages',
     'grecaptcha',
-    'restmod'
+    'restmod',
+    'infinite-scroll'
 ])
 
 .controller('myAppControl', ['$scope', 'localeEvents',

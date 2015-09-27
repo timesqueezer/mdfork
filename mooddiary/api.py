@@ -46,7 +46,10 @@ class UserEntryList(Resource):
 
             query = query.order_by('{} {}'.format(sort_by, order))
 
-        entries = query.all()
+        if 'page' in request.args:
+            entries = query.paginate(int(request.args['page']), 8).items
+        else:
+            entries = query.all()
 
         schema = EntrySchema(many=True)
 

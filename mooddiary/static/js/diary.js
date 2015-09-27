@@ -23,23 +23,13 @@ angular.module('mooddiary.diary', [
         .state('diary.list', {
             url: '/list',
             templateUrl: '/templates/diaryList',
-            controller: 'DiaryListCtrl',
-            resolve: {
-                entriesResolved: ['Me', function(Me) {
-                    return Me.entries.$refresh({sort_by: 'date', order: 'desc'}).$asPromise();
-                }]
-            }
+            controller: 'DiaryListCtrl'
         })
 
         .state('diary.table', {
             url: '/table',
             templateUrl: '/templates/diaryTable',
-            controller: 'DiaryListCtrl',
-            resolve: {
-                entriesResolved: ['Me', function(Me) {
-                    return Me.entries.$refresh({sort_by: 'date', order: 'desc'}).$asPromise();
-                }]
-            }
+            controller: 'DiaryListCtrl'
         })
 
         .state('diary.chart', {
@@ -160,8 +150,15 @@ angular.module('mooddiary.diary', [
     };
     $scope.buttonStyles = {};
 
-    var getChartLabel = function(date) {
-        return ($filter('date')(date, 'dd', 'UTC') == 01 ? ($filter('date')(date, 'MMMM', 'UTC') + ' ') : '') + $filter('date')(date, 'dd', 'UTC');
+    var getChartLabel = function(entry, scale) {
+        if ($filter('date')(entry.date, 'dd', 'UTC') == 01) {
+            return $filter('date')(entry.date, 'MMM', 'UTC') + ' 01';
+        }
+        if ($scope.entries.indexOf(entry) % scale == 0) {
+            return $filter('date')(entry.date, 'dd', 'UTC');
+        } else {
+            return '';
+        }
     };
 
     var reloadCharts = function() {
@@ -179,11 +176,7 @@ angular.module('mooddiary.diary', [
             var scale = 10;
         }
         $scope.labels = _.map($scope.entries, function(entry) {
-            if ($scope.entries.indexOf(entry) % scale == 0) {
-                return getChartLabel(entry.date);
-            } else {
-                return "";
-            }
+            return getChartLabel(entry, scale);
         });
 
         $scope.actualChartData = [];
@@ -272,7 +265,17 @@ angular.module('mooddiary.diary', [
     $scope.activeFields[$scope.fields[0].id] = true;
 }])
 
-.controller('DiaryListCtrl', ['$scope', 'Answer', '$alert', 'entriesResolved', function($scope, Answer, $alert, entriesResolved) {
+.controller('DiaryListCtrl', ['$scope', '$state', 'Answer', '$alert', function($scope, $state, Answer, $alert) {
+    $scope.args = {sort_by: 'date', order: 'desc', page: 1};
+
+    $scope.loadMore = function() {
+        $scope.args.page += 1;
+        $scope.stopScroll = true;
+        $scope.entries.$fetch($scope.args).$then(function() { $scope.stopScroll = false; }, function() {
+            $scope.stopScroll = true;
+        });
+    };
+
     $scope.reloadList = function() {
         $scope.activeFieldsList = _.filter($scope.fields, function(field) { return $scope.activeFields[field.id]; });
     };
@@ -320,7 +323,7 @@ angular.module('mooddiary.diary', [
     $scope.editField = {};
     $scope.editEntry = {};
 
-    $scope.entries = entriesResolved;
+    $scope.entries = $scope.me.entries.$refresh($scope.args);
     $scope.activeFieldsList = $scope.fields;
 }])
 

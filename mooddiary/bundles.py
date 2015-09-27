@@ -21,6 +21,8 @@ js = Bundle(
     'bower_components/bootstrap/js/collapse.js',
     'bower_components/angular-restmod/dist/angular-restmod-bundle.js',
     'bower_components/angular-restmod/dist/plugins/dirty.js',
+    'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
+    'angular-locale_de-de.js',
 
     'js/utils.js',
     'js/diary.js',

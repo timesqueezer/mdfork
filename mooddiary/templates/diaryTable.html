@@ -7,7 +7,7 @@
                 <th ng-repeat="field in fields">{{ field.name }}</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
             <tr ng-repeat="entry in entries">
                 <td>{{ entry.date | date : 'dd/MM' }}</td>
                 <td ng-repeat="field in fields">{{ getAnswerForField(entry, field) }}</td>

@@ -5,6 +5,7 @@ from faker import Faker
 
 from flask.ext.script import Manager
 from flask.ext.migrate import MigrateCommand, stamp
+from flask.ext.assets import ManageAssets
 
 from mooddiary import create_app
 from mooddiary.core import db, migrate
@@ -12,7 +13,7 @@ from mooddiary.models import *
 
 manager = Manager(create_app)
 manager.add_command('migrate', MigrateCommand)
-
+manager.add_command("assets", ManageAssets)
 
 @manager.shell
 def make_shell_context():

@@ -24,7 +24,8 @@
     "flag-icon-css": "~0.7.1",
     "fontawesome": "latest",
     "jquery": "latest",
-    "underscore": "latest"
+    "underscore": "latest",
+    "ngInfiniteScroll": "http://github.com/timesqueezer/ngInfiniteScroll.git#master"
   },
   "ignore": [
     "**/.*",
