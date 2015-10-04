@@ -99,7 +99,9 @@ angular.module('mooddiary.diary', [
                     answer.content = '';
                 else if (field.type == 3 && !$scope.newEntryAnswers[field.id])
                     answer.content = '0';
-                else
+                else if (field.type != 1) {
+                    answer.content = $scope.newEntryAnswers[field.id].toString();
+                } else
                     answer.content = $scope.newEntryAnswers[field.id];
                 promises.push(answer.$save().$asPromise());
             });
@@ -163,16 +165,22 @@ angular.module('mooddiary.diary', [
 
     var reloadCharts = function() {
         if ($scope.timeLimit == '1.w' || $scope.entries.length < 10) {
+            $scope.chartOptions.pointDotRadius = 4;
             var scale = 1;
         } else if ($scope.timeLimit == '2.w') {
+            $scope.chartOptions.pointDotRadius = 3;
             var scale = 2;
         } else if ($scope.timeLimit == '1.m') {
+            $scope.chartOptions.pointDotRadius = 2;
             var scale = 4;
         } else if ($scope.timeLimit == '2.m') {
+            $scope.chartOptions.pointDotRadius = 0;
             var scale = 8;
         } else if ($scope.timeLimit == '4.m') {
+            $scope.chartOptions.pointDotRadius = 0;
             var scale = 8;
         } else {
+            $scope.chartOptions.pointDotRadius = $scope.entries.length > 14 ? $scope.entries.length > 28 ? 0 : 1 : 2;
             var scale = 10;
         }
         $scope.labels = _.map($scope.entries, function(entry) {
@@ -240,7 +248,7 @@ angular.module('mooddiary.diary', [
         if ($scope.timeLimit == '0.a') {
             $scope.reloadEntries().then(reloadCharts, $scope.errorCallback);
         } else {
-            Me.entries.$refresh({timespan: $scope.timeLimit}).$then(function(data) {
+            Me.entries.$refresh({timespan: $scope.timeLimit, sort_by: 'date', order: 'asc'}).$then(function(data) {
                 $scope.entries = data;
                 reloadCharts();
             }, $scope.errorCallback);
@@ -304,7 +312,7 @@ angular.module('mooddiary.diary', [
     };
 
     $scope.editFieldAnswer = function(entry, field) {
-        $scope.editAnswer.content = $scope.editAnswer.tmpContent;
+        $scope.editAnswer.content = $scope.editAnswer.tmpContent.toString();
         $scope.answer.content = $scope.editAnswer.tmpContent;
         if ($scope.editAnswer.id) {
             $scope.editAnswer.$save(['content']).$then(function() {

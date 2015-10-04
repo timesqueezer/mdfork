@@ -57,7 +57,7 @@ def initdb(random_data=False):
             db.session.add(new_entry_field)
         db.session.commit()
 
-        for i in range(50, 0, -1):
+        for i in range(150, 0, -1):
             new_entry = Entry(date=datetime.utcnow() - timedelta(days=i), user_id=matz.id)
             db.session.add(new_entry)
             for field in EntryField.query:

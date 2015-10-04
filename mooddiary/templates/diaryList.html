@@ -1,11 +1,11 @@
 {% raw %}
 <div class="panel panel-default panel-body">
     <h5 i18n="diary.select_fields"></h5>
-    <div class="row" ng-repeat="row in (fields.length/6 | array)">
-        <div class="col-sm-2" ng-repeat="field in fields.slice(6*$index, 6*$index + 6)">
+    <div class="row" ng-repeat="row in (fields.length/4 | array)">
+        <div class="col-sm-3" ng-repeat="field in fields.slice(4*$index, 4*$index + 4)">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-change="reloadList()" ng-model="activeFields[field.id]"> {{ field.name }}
+                    <input type="checkbox" ng-change="reloadList()" ng-model="activeFields[field.id]"> <strong>{{ field.name }}</strong> {{ field.type | fieldTypeToString }}
                 </label>
             </div>
         </div>
@@ -15,10 +15,16 @@
     <div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
         <div class="row spaced-bottom">
             <div class="col-md-2">
-                <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
-                <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
-                <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
-                <button class="btn btn-lg btn-link" ng-click="entry.$destroy()"><i class="fa fa-times"></i></button>
+                <div class="row">
+                    <div class="col-xs-8">
+                        <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
+                        <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
+                    </div>
+                    <div class="col-xs-4">
+                        <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
+                        <button class="btn btn-lg btn-link" ng-click="entry.$destroy()" ng-hide="editEntry[entry.id]"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
                 <div class="form-group" ng-show="editEntry[entry.id]">
                     <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
                     <input type="text" class="form-control spaced-bottom" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>
