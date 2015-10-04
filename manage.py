@@ -37,7 +37,7 @@ def initdb(random_data=False):
 
         matz = User(email='matzradloff@gmail.com', first_name='Matz',
                 last_name='Radloff', is_admin=True)
-        matz.set_password('Mohquah3')
+        matz.set_password('testpw')
         db.session.add(matz)
         db.session.commit()
         return True
