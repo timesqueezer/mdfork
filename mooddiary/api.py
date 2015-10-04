@@ -9,7 +9,7 @@ from marshmallow.validate import Length, Email
 from mooddiary.core import db
 from mooddiary.models import User, Entry, EntryField, EntryFieldAnswer, EntryFieldType
 from mooddiary.schemas import EntrySchema, EntryFieldSchema, EntryFieldAnswerSchema, UserSchema
-from mooddiary.utils import resp
+from mooddiary.utils import resp, constant_validator
 
 api = Blueprint('api', __name__)
 restful = Api(api)
@@ -132,7 +132,7 @@ class UserEntryFieldList(Resource):
     def post(self):
         class FieldInputSchema(Schema):
             name = fields.String(required=True, validate=Length(max=100))
-            type = fields.Select([item.value for item in list(EntryFieldType)], required=True)
+            type = fields.Integer(required=True, validate=constant_validator(EntryFieldType))
 
         schema = FieldInputSchema()
         result, errors = schema.load(request.json)
