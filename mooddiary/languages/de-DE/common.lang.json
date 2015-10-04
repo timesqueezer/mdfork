@@ -31,5 +31,6 @@
     "changes_saved": "Änderungen gespeichert",
     "date": "Datum",
     "category_help_text": "Hier kannst du Dinge eintragen, die du jeden Tag in dein Tagebuch schreibst. Zum Beispiel 'Stimmung (Zahl 1-10)' oder 'Stunden Schlaf (Zahl)'.",
-    "delete_field_confirm": "Beim Löschen einer Kategorie werden alle Einträge in dieser Kategorie gelöscht."
+    "delete_field_confirm": "Beim Löschen einer Kategorie werden alle Einträge in dieser Kategorie gelöscht.",
+    "cookie_policy": "Mit dem Registrieren stimmen Sie automatisch der Nutzung von Cookies zu."
 }
