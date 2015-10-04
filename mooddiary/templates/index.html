@@ -52,8 +52,13 @@
             <div ui-view></div>
         </div>
         <div id="alert-container"></div>
-        <div class="center-block text-center spaced-bottom">
-            &copy;2015 Matz Radloff - <a href="mailto:matzradloff@gmail.com">Contact</a> - <a href="https://github.com/timesqueezer/mooddiary"><i class="fa fa-github"></i> GitHub</a>
+        <div class="center-block text-center spaced-bottom" ng-controller="LanguageCtrl">
+            &copy;2015 Matz Radloff - <a href="mailto:matzradloff@gmail.com">Contact</a> - <a ui-sref="disclaimer">Disclaimer</a> - <a href="https://github.com/timesqueezer/mooddiary"><i class="fa fa-github"></i> GitHub</a> -
+            <div class="btn-group">
+                <button ng-repeat="lang in supportedLang" class="btn bt-xs btn-link" ng-click="setLocale(lang)">
+                    <span class="flag-icon" ng-class="localeData[lang].flagClass"></span>
+                </button>
+            </div>
         </div>
     </body>
 </html>

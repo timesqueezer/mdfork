@@ -110,6 +110,12 @@ angular.module('mooddiary', [
         controller: 'LoginCtrl'
     })
 
+    .state('disclaimer', {
+        url: '/disclaimer',
+        templateUrl: '/templates/disclaimer',
+        controller: function() {}
+    })
+
     ;
 
 }])
@@ -147,6 +153,20 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         }
     };
 
+    $scope.saveProfile = function() {
+        if ($rootScope.me.password && $rootScope.me.password != $scope.password2) {
+            $alert({content: locale.getString('common.password_differ')});
+            return;
+        }
+        $rootScope.me.$save($rootScope.me.$dirty()).$then(function() {
+            $alert({content: locale.getString('common.changes_saved')});
+        });
+    };
+
+}])
+
+.controller('LanguageCtrl', ['$scope', '$rootScope', 'locale', 'localeSupported', 'localeEvents',
+function($scope, $rootScope, locale, localeSupported, localeEvents) {
     $scope.supportedLang = localeSupported;
     $scope.localeData = {
         'en-US': {
@@ -173,17 +193,6 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         $scope.flagClass = $scope.localeData[data].flagClass;
         $scope.langDisplayText = $scope.localeData[data].langDisplayText;
     });
-
-    $scope.saveProfile = function() {
-        if ($rootScope.me.password && $rootScope.me.password != $scope.password2) {
-            $alert({content: locale.getString('common.password_differ')});
-            return;
-        }
-        $rootScope.me.$save($rootScope.me.$dirty()).$then(function() {
-            $alert({content: locale.getString('common.changes_saved')});
-        });
-    };
-
 }])
 
 .filter('fieldTypeToString', ['$filter', 'locale', function($filter, locale) {
