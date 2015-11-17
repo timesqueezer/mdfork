@@ -2,7 +2,7 @@ import os
 from flask import flash, request, render_template, Blueprint, abort, send_file
 
 
-main = Blueprint('main', __name__, template_folder='templates', static_folder='static/gen', static_url_path='/static')
+main = Blueprint('main', __name__, template_folder='templates', static_folder='static', static_url_path='/static')
 
 
 @main.route('/templates/<path:partial>')

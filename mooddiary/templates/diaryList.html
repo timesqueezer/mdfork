@@ -1,8 +1,20 @@
 {% raw %}
 <div class="panel panel-default panel-body">
+    <button class="btn btn-sm btn-link visible-xs pull-right" style="margin-top: 1.2em;" data-toggle="collapse" data-target="#fieldListToggle" aria-expanded="false" aria-controls="fieldListToggle"><i class="fa fa-bars"></i></button>
     <h5 i18n="diary.select_fields"></h5>
-    <div class="row" ng-repeat="row in (fields.length/4 | array)">
-        <div class="col-sm-3" ng-repeat="field in fields.slice(4*$index, 4*$index + 4)">
+    <div id="fieldListToggle" class="collapse">
+        <div class="row" ng-repeat="row in (fields.length/4 | array)">
+            <div class="col-sm-3 col-xs-12" ng-repeat="field in fields.slice(4*$index, 4*$index + 4)">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-change="reloadList()" ng-model="activeFields[field.id]"> <strong>{{ field.name }}</strong> {{ field.type | fieldTypeToString }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row hidden-xs" ng-repeat="row in (fields.length/4 | array)">
+        <div class="col-sm-3 col-xs-12" ng-repeat="field in fields.slice(4*$index, 4*$index + 4)">
             <div class="checkbox">
                 <label>
                     <input type="checkbox" ng-change="reloadList()" ng-model="activeFields[field.id]"> <strong>{{ field.name }}</strong> {{ field.type | fieldTypeToString }}
@@ -15,16 +27,10 @@
     <div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
         <div class="row spaced-bottom">
             <div class="col-md-2">
-                <div class="row">
-                    <div class="col-xs-8">
-                        <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
-                        <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
-                    </div>
-                    <div class="col-xs-4">
-                        <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
-                        <button class="btn btn-lg btn-link" ng-click="entry.$destroy()" ng-hide="editEntry[entry.id]"><i class="fa fa-times"></i></button>
-                    </div>
-                </div>
+                <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
+                <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
+                <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
+                <button class="btn btn-lg btn-link" ng-click="deleteEntry(entry)" ng-hide="editEntry[entry.id]"><i class="fa fa-times"></i></button>
                 <div class="form-group" ng-show="editEntry[entry.id]">
                     <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
                     <input type="text" class="form-control spaced-bottom" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>
@@ -53,7 +59,7 @@
                                 <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent"></textarea>
                                 <div class="input-group" ng-switch-when="2">
                                     <div class="input-group-addon">{{ editAnswer.tmpContent }}</div>
-                                    <input class="form-control" type="range" min="0" max="10" p laceholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
+                                    <input class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
                                 </div>
                                 <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="editAnswer.tmpContent">
                             </div>

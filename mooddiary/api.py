@@ -96,7 +96,7 @@ class EntryDetail(Resource):
             return resp({'message': 'form error'}, status_code=400)
 
         entry_existing = Entry.query.filter(db.func.date(Entry.date) == result['date']).first()
-        if entry_existing:
+        if entry_existing and entry_existing.id != entry.id:
             return resp({'message': 'Entry at this date already present.'}, status_code=400)
 
         entry.date = result['date']
@@ -286,6 +286,15 @@ restful.add_resource(UserMe, '/me')
 
 
 class UserList(Resource):
+    @jwt_required()
+    def get(self):
+        if not current_user.is_admin:
+            abort(401)
+
+        users = User.query.all()
+        schema = UserSchema(many=True)
+        return resp(users, schema)
+
     def post(self):
         class UserInputSchema(Schema):
             email = fields.String(required=True, validate=Email())

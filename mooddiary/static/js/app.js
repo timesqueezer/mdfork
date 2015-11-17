@@ -116,6 +116,18 @@ angular.module('mooddiary', [
         controller: function() {}
     })
 
+    .state('privacy', {
+        url: '/privacy',
+        templateUrl: '/templates/privacyPolicy',
+        controller: function() {}
+    })
+
+    .state('admin', {
+        url: '/admin',
+        templateUrl: '/templates/admin',
+        controller: 'AdminCtrl'
+    })
+
     ;
 
 }])
@@ -254,6 +266,15 @@ function($scope, $state, Me, $rootScope, AuthService, locale) {
 }])
 
 .controller('AboutCtrl', function() {})
+
+.controller('AdminCtrl', ['$scope', '$state', 'User', 'Me', function($scope, $state, User, Me) {
+    if (!Me.is_admin) {
+        $state.go('about');
+    } else {
+        $scope.users = User.$collection();
+        $scope.users.$refresh();
+    }
+}])
 
 ;
 

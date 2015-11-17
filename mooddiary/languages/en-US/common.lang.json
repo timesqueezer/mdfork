@@ -32,5 +32,6 @@
     "date": "Date",
     "category_help_text": "",
     "delete_field_confirm": "Are you sure?",
-    "cookie_policy": "By registering you automatically accept the usage of cookies."
+    "cookie_policy": "By registering you automatically accept the usage of cookies.",
+    "privacy": "Privacy Policy"
 }
