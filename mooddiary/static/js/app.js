@@ -76,6 +76,8 @@ angular.module('mooddiary', [
     }, function() {
         locale.setLocale('de-DE');
     });
+
+    moment().utc();
 }])
 
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', 'restmodProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider, restmodProvider) {

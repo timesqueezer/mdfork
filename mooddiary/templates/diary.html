@@ -17,7 +17,9 @@
 
 <div class="panel panel-default panel-body" ng-show="entryAdding">
     <form class="form">
-        <legend><span i18n="diary.add_entry"></span> <small>{{ newEntry.date | date : 'dd.MM' }}</small></legend>
+        <legend>
+            <span i18n="diary.add_entry"></span> <small>{{ newEntry.date | date : 'dd.MM' }}</small> <span ng-show="entrySaving"><i style="color: #444;" class="fa fa-spinner fa-pulse"></i></span>
+        </legend>
         <div class="form-group">
             <label class="control-label"><i class="fa fa-calendar"></i><span i18n="common.date"></span></label>
             <input type="text" class="form-control" ng-model="newEntry.date" data-date-format="dd.MM.yyyy" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>

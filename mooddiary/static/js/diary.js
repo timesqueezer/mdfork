@@ -88,7 +88,9 @@ angular.module('mooddiary.diary', [
     };
 
     $scope.addEntry = function() {
+        $scope.entrySaving = true;
         $scope.newEntry.$save().$then(function(created_entry) {
+            $scope.entrySaving = false;
             $scope.entryAdding = false;
             var promises = [];
             angular.forEach($scope.fields, function(field) {
@@ -167,24 +169,61 @@ angular.module('mooddiary.diary', [
         if ($scope.timeLimit == '1.w' || $scope.entries.length < 10) {
             $scope.chartOptions.pointDotRadius = 4;
             var scale = 1;
+            var days = 7;
         } else if ($scope.timeLimit == '2.w') {
             $scope.chartOptions.pointDotRadius = 3;
             var scale = 2;
+            var days = 14;
         } else if ($scope.timeLimit == '1.m') {
             $scope.chartOptions.pointDotRadius = 2;
             var scale = 4;
+            var days = 30;
         } else if ($scope.timeLimit == '2.m') {
             $scope.chartOptions.pointDotRadius = 0;
             var scale = 8;
+            var days = 60;
         } else if ($scope.timeLimit == '4.m') {
             $scope.chartOptions.pointDotRadius = 0;
             var scale = 8;
+            var days = 120;
         } else {
             $scope.chartOptions.pointDotRadius = $scope.entries.length > 14 ? $scope.entries.length > 28 ? 0 : 1 : 2;
             var scale = 10;
+            var days = -1;
         }
-        $scope.labels = _.map($scope.entries, function(entry) {
-            return getChartLabel(entry, scale);
+
+        $scope.data = [];
+
+        angular.forEach($scope.chartableFields, function(field) {
+            if ($scope.activeFields[field.id]) {
+                var dataset = {label: field.name, data: []};
+                dataset.data = [];
+                angular.forEach($scope.entries, function(entry) {
+                    var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
+                    if (answer) {
+                        var date = new Date(entry.date);
+                        var dataPoint = {x: date};
+                        dataPoint.y = parseInt(answer.content);
+                        dataset.data.push(dataPoint);
+                    }
+                });
+                $scope.data.push(dataset);
+            }
+        });
+
+        var ctx = document.getElementById('theCanvas').getContext('2d');
+        new Chart(ctx).Scatter($scope.data, {scaleType: 'date'});
+/*
+
+        $scope.labels = _.map(dateRange, function(daydelta) {
+            /*var entry = _.find($scope.entries, function(entry) {
+                return moment(entry.date).days() == moment().subtract(daydelta, 'days').days();
+            });
+            if (entry) {
+                return getChartLabel(entry, scale);
+            } else {
+                return moment().subtract(daydelta, 'days').days();
+            //}
         });
 
         $scope.actualChartData = [];
@@ -203,7 +242,7 @@ angular.module('mooddiary.diary', [
                 if (field.name == field_name)
                     $scope.actualChartData.push($scope.chartData[field.id]);
             });
-        });
+        });*/
     };
 
     var getStyle = function(color) {
@@ -268,7 +307,7 @@ angular.module('mooddiary.diary', [
     $scope.actualChartData = [];
     $scope.series = [];
 
-    reloadCharts();
+//    reloadCharts();
     $scope.toggleChartField($scope.fields[0]);
     $scope.activeFields[$scope.fields[0].id] = true;
 }])

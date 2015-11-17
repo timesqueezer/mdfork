@@ -25,7 +25,9 @@
     "fontawesome": "latest",
     "jquery": "latest",
     "underscore": "latest",
-    "ngInfiniteScroll": "http://github.com/timesqueezer/ngInfiniteScroll.git#master"
+    "ngInfiniteScroll": "http://github.com/timesqueezer/ngInfiniteScroll.git#master",
+    "moment": "~2.10.6",
+    "Chart.Scatter.js": "~1.1.2"
   },
   "ignore": [
     "**/.*",
