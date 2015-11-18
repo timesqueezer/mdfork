@@ -21,7 +21,7 @@ def index(path):
     return json.dumps({'message': 'Endpoint not found'}), 404
 
 
-class UserEntryList(Resource):
+class UserMeEntryList(Resource):
     @jwt_required()
     def get(self):
         query = Entry.query.filter_by(user_id=current_user.id)
@@ -75,7 +75,33 @@ class UserEntryList(Resource):
         db.session.commit()
         schema = EntrySchema(exclude=['answers'])
         return resp(entry, schema)
-restful.add_resource(UserEntryList, '/me/entries')
+restful.add_resource(UserMeEntryList, '/me/entries')
+
+
+class UserEntryList(Resource):
+    @jwt_required()
+    def get(self, id):
+        if not current_user.is_admin:
+            abort(401)
+        query = Entry.query.filter_by(user_id=id)
+
+        if 'sort_by' in request.args and 'order' in request.args:
+            sort_by = request.args.get('sort_by')
+            order = request.args.get('order')
+
+            if order not in ['asc', 'desc']:
+                return resp({'message': 'Invalid value for order request parameter'}, 400)
+            if sort_by not in ['date']:
+                return resp({'message': 'Invalid value for order request parameter'}, 400)
+
+            query = query.order_by('{} {}'.format(sort_by, order))
+
+        entries = query.all()
+
+        schema = EntrySchema(many=True)
+
+        return resp(entries, schema)
+restful.add_resource(UserEntryList, '/users/<int:id>/entries')
 
 
 class EntryDetail(Resource):
@@ -120,7 +146,7 @@ class EntryDetail(Resource):
 restful.add_resource(EntryDetail, '/entries/<int:id>')
 
 
-class UserEntryFieldList(Resource):
+class UserMeEntryFieldList(Resource):
     @jwt_required()
     def get(self):
         fields = EntryField.query.filter_by(user_id=current_user.id).all()
@@ -144,7 +170,19 @@ class UserEntryFieldList(Resource):
         db.session.commit()
         schema = EntryFieldSchema()
         return resp(field, schema)
-restful.add_resource(UserEntryFieldList, '/me/fields')
+restful.add_resource(UserMeEntryFieldList, '/me/fields')
+
+
+class UserEntryFieldList(Resource):
+    @jwt_required()
+    def get(self, id):
+        if not current_user.is_admin:
+            abort(401)
+        fields = EntryField.query.filter_by(user_id=id).all()
+        schema = EntryFieldSchema(many=True)
+
+        return resp(fields, schema)
+restful.add_resource(UserEntryFieldList, '/users/<int:id>/fields')
 
 
 class EntryFieldDetail(Resource):

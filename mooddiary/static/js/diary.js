@@ -205,7 +205,7 @@ angular.module('mooddiary.diary', [
         } else if ($scope.timeLimit == '1.m') {
             $scope.chartOptions.pointDotRadius = 2;
         } else if ($scope.timeLimit == '2.m') {
-            $scope.chartOptions.pointDotRadius = 0;
+            $scope.chartOptions.pointDotRadius = isMobile ? 0: 1;
         } else if ($scope.timeLimit == '4.m') {
             $scope.chartOptions.pointDotRadius = 0;
         } else {

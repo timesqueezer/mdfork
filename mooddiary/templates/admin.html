@@ -11,13 +11,32 @@
             <th>Created at</th>
             <th>Updated at</th>
         </tr>
-        <tr ng-repeat="user in users">
+        <tr ng-repeat="user in users" ng-click="loadUser(user)" style="cursor: pointer">
             <td>{{ user.id }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.first_name }} {{ user.last_name }}</td>
             <td>{{ user.created_at | date : 'medium' }}</td>
             <td>{{ user.updated_at | date : 'medium' }}</td>
         </tr>
+    </table>
+</div>
+<div class="panel panel-default" ng-show="selectedUser">
+    <div class="panel-heading">
+        <h4>{{selectedUser.email}}'s Entries</h4>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th ng-repeat="field in selectedUser.fields">{{ field.name }}</th>
+            </tr>
+        </thead>
+        <tbody infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
+            <tr ng-repeat="entry in selectedUser.entries">
+                <td>{{ entry.date | date : 'dd/MM' }}</td>
+                <td ng-repeat="field in selectedUser.fields">{{ getAnswerForField(entry, field) }}</td>
+            </tr>
+        </tbody>
     </table>
 </div>
 {% endraw %}

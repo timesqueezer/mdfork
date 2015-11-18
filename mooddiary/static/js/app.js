@@ -269,13 +269,36 @@ function($scope, $state, Me, $rootScope, AuthService, locale) {
 
 .controller('AboutCtrl', function() {})
 
-.controller('AdminCtrl', ['$scope', '$state', 'User', 'Me', function($scope, $state, User, Me) {
+.controller('AdminCtrl', ['$scope', '$state', 'User', 'Me', '$q', function($scope, $state, User, Me, $q) {
     if (!Me.is_admin) {
         $state.go('about');
     } else {
         $scope.users = User.$collection();
         $scope.users.$refresh();
     }
+
+    var args = {sort_by: 'date', order: 'desc'};
+
+    $scope.loadUser = function(user) {
+        $scope.selectedUser = null;
+        var promises = [];
+        promises.push(user.fields.$resolve().$asPromise());
+        promises.push(user.entries.$resolve().$asPromise());
+        $q.all(promises).then(function() {
+            $scope.selectedUser = user;
+        });
+    };
+
+    $scope.getAnswerForField = function(entry, field) {
+        var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
+        if (answer) {
+            if (field.type != 1)
+                answer.content = parseInt(answer.content);
+            return answer.content;
+        } else {
+            return '-';
+        }
+    };
 }])
 
 ;
