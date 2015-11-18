@@ -23,7 +23,7 @@ js = Bundle(
     'bower_components/angular-restmod/dist/plugins/dirty.js',
     'bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js',
     'bower_components/moment/moment.js',
-    'bower_components/Chart.Scatter.js/Chart.Scatter.js',
+    'bower_components/Chart.Scatter/Chart.Scatter.js',
     'angular-locale_de-de.js',
 
     'js/utils.js',

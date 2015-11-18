@@ -33,5 +33,11 @@
     "category_help_text": "",
     "delete_field_confirm": "Are you sure?",
     "cookie_policy": "By registering you automatically accept the usage of cookies.",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "chart_empty_data_message": "No data selected",
+    "week": "Week",
+    "weeks": "Weeks",
+    "month": "Month",
+    "months": "Months",
+    "all": "All"
 }

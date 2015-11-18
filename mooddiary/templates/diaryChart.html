@@ -5,20 +5,20 @@
     </div>
 </div>
 
-<div class="panel panel-default panel-body" ng-if="series.length>0">
-    <canvas id="theCanvas"></canvas>
+<div class="panel panel-default panel-body">
+    <div><canvas id="theCanvas"></canvas></div>
 </div>
 
 <div class="row spaced-bottom">
     <div class="col-sm-12">
         <div ng-init="timeLimit='0.a'" class="btn-group" ng-model="timeLimit" bs-radio-group>
-            <label class="btn btn-primary"><input type="radio" value="1.w"><strong>1</strong> Week</label>
-            <label class="btn btn-primary"><input type="radio" value="2.w"><strong>2</strong> Week</label>
-            <label class="btn btn-primary"><input type="radio" value="1.m"><strong>1</strong> Month</label>
-            <label class="btn btn-primary"><input type="radio" value="2.m"><strong>2</strong> Month</label>
-            <label class="btn btn-primary"><input type="radio" value="4.m"><strong>4</strong> Month</label>
-            <label class="btn btn-primary"><input type="radio" value="6.m"><strong>6</strong> Month</label>
-            <label class="btn btn-primary"><input type="radio" value="0.a">All</label>
+            <label class="btn btn-primary"><input type="radio" value="1.w"><strong>1</strong> <span i18n="common.week"></span></label>
+            <label class="btn btn-primary"><input type="radio" value="2.w"><strong>2</strong> <span i18n="common.weeks"></span></label>
+            <label class="btn btn-primary"><input type="radio" value="1.m"><strong>1</strong> <span i18n="common.month"></span></label>
+            <label class="btn btn-primary"><input type="radio" value="2.m"><strong>2</strong> <span i18n="common.months"></span></label>
+            <label class="btn btn-primary"><input type="radio" value="4.m"><strong>4</strong> <span i18n="common.months"></span></label>
+            <label class="btn btn-primary"><input type="radio" value="6.m"><strong>6</strong> <span i18n="common.months"></span></label>
+            <label class="btn btn-primary"><input type="radio" value="0.a"><span i18n="common.all"></span></label>
         </div>
     </div>
 </div>

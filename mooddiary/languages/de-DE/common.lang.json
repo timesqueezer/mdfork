@@ -33,5 +33,11 @@
     "category_help_text": "Hier kannst du Dinge eintragen, die du jeden Tag in dein Tagebuch schreibst. Zum Beispiel 'Stimmung (Zahl 1-10)' oder 'Stunden Schlaf (Zahl)'.",
     "delete_field_confirm": "Beim Löschen einer Kategorie werden alle Einträge in dieser Kategorie gelöscht.",
     "cookie_policy": "Mit dem Registrieren stimmen Sie automatisch der Nutzung von Cookies zu.",
-    "privacy": "Datenschutzerklärung"
+    "privacy": "Datenschutzerklärung",
+    "chart_empty_data_message": "Keine Daten ausgewählt",
+    "week": "Woche",
+    "weeks": "Wochen",
+    "month": "Monat",
+    "months": "Monate",
+    "all": "Alle"
 }

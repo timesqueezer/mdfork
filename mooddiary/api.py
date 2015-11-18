@@ -223,7 +223,7 @@ class EntryAnswerList(Resource):
 
         class AnswerInputSchema(Schema):
             entry_field_id = fields.Integer(required=True)
-            content = fields.String(required=True, validate=Length(max=300))
+            content = fields.Raw(required=True)
 
         schema = AnswerInputSchema()
         result, errors = schema.load(request.json)
@@ -232,7 +232,7 @@ class EntryAnswerList(Resource):
             return resp(errors, status_code=400)
 
         entry_field = EntryField.query.get_or_404(result['entry_field_id'])
-        answer = EntryFieldAnswer(entry=entry, entry_field=entry_field, content=result['content'])
+        answer = EntryFieldAnswer(entry=entry, entry_field=entry_field, content=str(result['content']))
         db.session.add(answer)
         db.session.commit()
 
