@@ -16,8 +16,8 @@ def create_app(config=None):
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = '129iv3n91283nv9812n3v89q2nnv9iaszv978n98qwe7z897d'
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/mooddiaryDb'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/mooddiary.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost/mooddiaryDb'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/mooddiary.db'
 
     app.config['DEBUG'] = True
     app.config['ASSETS_DEBUG'] = True

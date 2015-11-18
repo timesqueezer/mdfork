@@ -64,6 +64,8 @@ angular.module('mooddiary.diary', [
     var reloadEntries = $scope.reloadEntries = function() {
         if ($state.includes('diary.chart')) {
             var args = {sort_by: 'date', order: 'asc'};
+        } else if ($state.includes('diary.list')) {
+            var args = {sort_by: 'date', order: 'desc', 'page': 1};
         } else {
             var args = {sort_by: 'date', order: 'desc'};
         }
@@ -361,6 +363,12 @@ angular.module('mooddiary.diary', [
             $scope.editAnswer.$save().$then(function() {
                 $scope.editField[entry.id][field.id] = false;
             });
+        }
+    };
+
+    $scope.deleteEntry = function(entry) {
+        if (confirm('Bist du dir sicher?')) {
+            entry.$destroy();
         }
     };
     // Init

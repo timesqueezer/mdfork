@@ -2,15 +2,15 @@
 
 <div class="panel panel-default panel-body">
     <div class="row">
-        <div class="col-sm-8">
+        <div class="col-xs-10">
             <ul class="nav nav-tabs">
                 <li role="presentation" ng-class="{active: $state.includes('diary.list')}"><a ui-sref="diary.list"><i class="fa fa-list"></i> <span i18n="diary.list"></span></a></li>
                 <li role="presentation" ng-class="{active: $state.includes('diary.table')}" class="hidden-xs"><a ui-sref="diary.table"><i class="fa fa-table"></i> <span i18n="diary.table"></span></a></li>
                 <li role="presentation" ng-class="{active: $state.includes('diary.chart')}"><a ui-sref="diary.chart"><i class="fa fa-line-chart"></i> <span i18n="diary.chart"></span></a></li>
             </ul>
         </div>
-        <div class="col-sm-4">
-            <a class="btn btn-sm btn-primary pull-right" style="margin-top:0.5em;" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i><span i18n="diary.add_entry"></span></a>
+        <div class="col-xs-2">
+            <a class="btn btn-sm btn-primary pull-right" style="margin-top: 1em;" ng-click="entryAdding=true" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i><span i18n="diary.add_entry" class="hidden-xs"></span></a>
         </div>
     </div>
 </div>
