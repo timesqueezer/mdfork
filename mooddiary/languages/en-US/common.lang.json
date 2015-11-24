@@ -39,5 +39,10 @@
     "weeks": "Weeks",
     "month": "Month",
     "months": "Months",
-    "all": "All"
+    "all": "All",
+    "join_now": "Join now",
+    "type": "Type",
+    "color": "Color",
+    "custom_color": "Custom Color",
+    "selected_color": "Selected Color"
 }

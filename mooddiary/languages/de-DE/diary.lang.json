@@ -3,5 +3,6 @@
     "add_entry": "Eintrag Hinzufügen",
     "list": "Liste",
     "table": "Tabelle",
-    "chart": "Diagram"
+    "chart": "Diagram",
+    "no_entries": "Keine Einträge vorhanden"
 }

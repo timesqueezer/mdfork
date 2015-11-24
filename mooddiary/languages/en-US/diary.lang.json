@@ -3,5 +3,6 @@
     "add_entry": "Add Entry",
     "list": "List",
     "table": "Table",
-    "chart": "Chart"
+    "chart": "Chart",
+    "no_entries": "No entries yet"
 }

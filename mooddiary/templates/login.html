@@ -16,26 +16,8 @@
                 </div>
                 <button class="btn btn-lg btn-primary" type="submit" ng-click="login(email, password)">Login</button>
             </form>
-            <form class="form" novalidate>
-                <hr>
-                <div class="form-group">
-                    <input name="username" class="form-control" ng-model="emailRegister" placeholder="Email">
-                </div>
-                <div class="form-group">
-                    <input name="password" type="password" class="form-control" ng-model="passwordRegister" i18n-attr="{placeholder: 'common.password'}">
-                </div>
-                <div class="form-group">
-                    <input name="password2" type="password" class="form-control" ng-model="password2Register" i18n-attr="{placeholder: 'common.password_repeat'}">
-                </div>
-                <div class="info-text spaced-bottom" i18n="common.cookie_policy"></div>
-                <div class="form-group">
-                    <div grecaptcha ng-model="captcha" class="spaced-bottom"></div>
-                    <button class="btn btn-lg btn-success" ng-click="register()" i18n="common.register"></button>
-                </div>
-            </form>
         </div>
         <div class="col-md-3"></div>
     </div>
 </div>
 {% endraw %}
-t

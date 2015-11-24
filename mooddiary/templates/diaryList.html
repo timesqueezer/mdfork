@@ -1,8 +1,8 @@
 {% raw %}
 <div class="panel panel-default panel-body">
-    <button class="btn btn-sm btn-link visible-xs pull-right" style="margin-top: 1.2em;" data-toggle="collapse" data-target="#fieldListToggle" aria-expanded="false" aria-controls="fieldListToggle"><i class="fa fa-bars"></i></button>
+    <button class="btn btn-lg btn-link visible-xs pull-right" style="margin-top: 0.5em;" data-toggle="collapse" data-target="#fieldListToggle" aria-controls="fieldListToggle"><i class="fa fa-bars"></i></button>
     <h5 i18n="diary.select_fields"></h5>
-    <div id="fieldListToggle" class="collapse">
+    <div id="fieldListToggle" class="collapse in">
         <div class="row" ng-repeat="row in (fields.length/4 | array)">
             <div class="col-sm-3 col-xs-12" ng-repeat="field in fields.slice(4*$index, 4*$index + 4)">
                 <div class="checkbox">
@@ -13,31 +13,23 @@
             </div>
         </div>
     </div>
-    <div class="row hidden-xs" ng-repeat="row in (fields.length/4 | array)">
-        <div class="col-sm-3 col-xs-12" ng-repeat="field in fields.slice(4*$index, 4*$index + 4)">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" ng-change="reloadList()" ng-model="activeFields[field.id]"> <strong>{{ field.name }}</strong> {{ field.type | fieldTypeToString }}
-                </label>
-            </div>
-        </div>
-    </div>
 </div>
-<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="false" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
-    <div class="panel panel-default panel-body" ng-repeat="entry in entries" ng-init="editField[entry.id] = {}">
-        <div class="row spaced-bottom">
-            <div class="col-md-2">
+<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
+    <div class="panel panel-default panel-body" ng-repeat="entry in me.entries | orderBy: 'date' : true" ng-init="editField[entry.id] = {}">
+        <div class="row">
+            <div class="col-md-2 col-xs-12">
+                <button class="btn btn-lg btn-link visible-xs pull-right" style="margin-top: 1em;" ng-click="toggleEntry(entry)"><i class="fa fa-bars"></i></button>
                 <h4><span class="label label-primary">{{ entry.date | date: 'EEEE' }}</span></h4>
-                <h4><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
-                <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
-                <button class="btn btn-lg btn-link" ng-click="deleteEntry(entry)" ng-hide="editEntry[entry.id]"><i class="fa fa-times"></i></button>
+                <h4 style="margin-bottom: 0"><small>{{ entry.date | date: 'MMMM d, y'}}</small></h4>
+                <button class="btn btn-lg btn-link" ng-click="editEntry[entry.id] = true" ng-hide="editEntry[entry.id] || entryHidden[entry.id]"><i class="fa fa-pencil-square-o"></i></button>
+                <button class="btn btn-lg btn-link" ng-click="deleteEntry(entry)" ng-hide="editEntry[entry.id] || entryHidden[entry.id]"><i class="fa fa-times"></i></button>
                 <div class="form-group" ng-show="editEntry[entry.id]">
                     <label class="control-label"><i class="fa fa-calendar"></i> <span i18n="common.date"></span></label>
                     <input type="text" class="form-control spaced-bottom" ng-model="entry.date" data-date-format="yyyy-MM-dd" data-date-type="date" data-min-date="02/10/86" data-max-date="today" data-autoclose="1" name="date" i18n-attr="{placeholder: 'common.date'}" bs-datepicker>
                     <button class="btn btn-sm btn-primary" ng-click="saveEntry(entry)" i18n="common.save"></button>
                 </div>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10 col-xs-12" ng-hide="entryHidden[entry.id]">
                 <div class="row row-border-bottom" ng-repeat="row in (activeFieldsList.length/2 | array)">
                     <div class="col-md-6" ng-repeat="field in activeFieldsList.slice(2*$index, 2*$index + 2)" ng-init="editField[entry.id][field.id] = false">
                         <h5>{{ field.name }}</h5>
@@ -72,4 +64,8 @@
     </div>
     <div class="clearfix"></div>
 </div>
+<div class="panel panel-default panel-body" ng-show="entries.length == 0">
+    <p i18n="diary.no_entries"></p>
+</div>
+<h4 ng-hide="stopScroll" class="text-center"><i style="color: #444;" class="fa fa-spinner fa-pulse"></i></h4>
 {% endraw %}

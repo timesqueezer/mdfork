@@ -17,7 +17,7 @@ class EntryFieldAnswerSchema(IdMixin):
 
 class EntryFieldSchema(IdMixin):
     class Meta:
-        additional = ['name', 'type']
+        additional = ['name', 'type', 'color']
 
 
 class EntrySchema(IdMixin):

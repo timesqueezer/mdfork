@@ -1,7 +1,7 @@
 {% raw %}
 <div class="row spaced-bottom" ng-repeat="row in (chartableFields.length/4 | array)">
     <div class="col-sm-3" ng-repeat="field in chartableFields.slice(4*$index, 4*$index + 4)">
-        <button class="btn btn-block btn-default" ng-style="buttonStyles[field.id]" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]" bs-checkbox>{{ field.name }}</small></button>
+        <button class="btn btn-block btn-default" ng-style="buttonStyles[field.id]" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]" ng-init="activeFields[field.id] = false" bs-checkbox>{{ field.name }}</small></button>
     </div>
 </div>
 
@@ -11,7 +11,7 @@
 
 <div class="row spaced-bottom">
     <div class="col-sm-12">
-        <div ng-init="timeLimit='0.a'" class="btn-group" ng-model="timeLimit" bs-radio-group>
+        <div class="btn-group" ng-model="timeLimit" bs-radio-group>
             <label class="btn btn-primary"><input type="radio" value="1.w"><strong>1</strong> <span i18n="common.week"></span></label>
             <label class="btn btn-primary"><input type="radio" value="2.w"><strong>2</strong> <span i18n="common.weeks"></span></label>
             <label class="btn btn-primary"><input type="radio" value="1.m"><strong>1</strong> <span i18n="common.month"></span></label>

@@ -39,5 +39,10 @@
     "weeks": "Wochen",
     "month": "Monat",
     "months": "Monate",
-    "all": "Alle"
+    "all": "Alle",
+    "join_now": "Registriere dich hier",
+    "type": "Typ",
+    "color": "Farbe",
+    "custom_color": "Eigene Farbe",
+    "selected_color": "Ausgewählte Farbe"
 }

@@ -1,15 +1,17 @@
 <div class="panel panel-default panel-body">
     <div class="jumbotron">
         <div class="row">
-            <div class="col-sm-4" style="text-align: center">
+            <div class="col-xs-4" style="text-align: center">
                 <img src="/static/favicon.ico" class="img-responsive" style="width:128px; display:inline">
             </div>
-            <div class="col-sm-8">
-                <h2>MoodDiary<br><small i18n="common.about_hsmall" class="hidden-xs">Welcome to the Ups and Downs</small></h2>
-                <h4 class="visible-xs" i18n="common.about_hsmall" style="color:#bbb;"></h4>
+            <div class="col-xs-8">
+                <h2 class="hidden-xs">MoodDiary<br><small i18n="common.about_hsmall">Welcome to the Ups and Downs</small></h2>
+                <h3 class="visible-xs">MoodDiary</h3>
             </div>
         </div>
     </div>
+    <button ng-hide="me" class="btn btn-info btn-block visible-xs" ui-sref="register" i18n="common.join_now"></button>
+    <button ng-hide="me" class="btn btn-info hidden-xs" ui-sref="register" i18n="common.join_now"></button>
     <h4 i18n="common.about_h1"></h4>
     <p i18n="common.about_p1"></p>
     <h4 i18n="common.about_h2"></h4>

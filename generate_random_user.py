@@ -29,7 +29,9 @@ with app.app_context():
         {'name': 'Stray Thougts Intensity', 'type': EntryFieldType.RANGE.value}
     ]
     for field in random_fields:
-        new_entry_field = EntryField(name=field['name'], type=field['type'], user_id=demo_account.id)
+        color = str(hex(random.randint(0, 255)))[2:] + str(hex(random.randint(0, 255)))[2:] + str(hex(random.randint(0, 255)))[2:]
+        new_entry_field = EntryField(name=field['name'], type=field['type'],
+                user_id=demo_account.id, color=color)
         db.session.add(new_entry_field)
     db.session.commit()
 

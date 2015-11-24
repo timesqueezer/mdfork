@@ -31,6 +31,8 @@ class EntryField(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     type = db.Column(db.Integer, default=EntryFieldType.RANGE.value)
+    color = db.Column(db.String(6), nullable=False)
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', backref='fields')
 

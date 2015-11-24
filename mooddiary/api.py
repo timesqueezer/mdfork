@@ -47,7 +47,9 @@ class UserMeEntryList(Resource):
             query = query.order_by('{} {}'.format(sort_by, order))
 
         if 'page' in request.args:
-            entries = query.paginate(int(request.args['page']), 8).items
+            page = int(request.args['page'])
+            per_page = int(request.args.get('per_page', 4))
+            entries = query.paginate(page, per_page).items
         else:
             entries = query.all()
 
@@ -58,7 +60,7 @@ class UserMeEntryList(Resource):
     @jwt_required()
     def post(self):
         class EntryInputSchema(Schema):
-            date = fields.Date(required=True)
+            date = fields.DateTime(required=True)
 
         schema = EntryInputSchema()
 
@@ -159,13 +161,14 @@ class UserMeEntryFieldList(Resource):
         class FieldInputSchema(Schema):
             name = fields.String(required=True, validate=Length(max=100))
             type = fields.Integer(required=True, validate=constant_validator(EntryFieldType))
+            color = fields.String(required=True, validate=Length(min=6, max=6))
 
         schema = FieldInputSchema()
         result, errors = schema.load(request.json)
         if errors:
             return resp({'message': 'form error'}, status_code=400)
 
-        field = EntryField(name=result['name'], type=result['type'], user=current_user)
+        field = EntryField(name=result['name'], type=result['type'], user=current_user, color=result['color'])
         db.session.add(field)
         db.session.commit()
         schema = EntryFieldSchema()
@@ -194,6 +197,7 @@ class EntryFieldDetail(Resource):
 
         class FieldInputSchema(Schema):
             name = fields.String(required=True, validate=Length(max=100))
+            color = fields.String(required=True, validate=Length(min=6, max=6))
 
         schema = FieldInputSchema()
         result, errors = schema.load(request.json)
@@ -201,6 +205,7 @@ class EntryFieldDetail(Resource):
             return resp({'errors': errors}, status_code=400)
 
         field.name = result['name']
+        field.color = result['color']
         db.session.commit()
 
         schema = EntryFieldSchema()
@@ -243,7 +248,6 @@ class EntryFieldAnswerDetail(Resource):
             return resp({'message': 'form error'}, status_code=400)
 
         answer.content = result['content']
-        print(result['content'])
         db.session.commit()
 
         schema = EntryFieldAnswerSchema()
@@ -365,6 +369,12 @@ class UserList(Resource):
         user.set_password(result['password'])
 
         db.session.add(user)
+        template_field_1 = EntryField(name='Stimmung', type=EntryFieldType.RANGE.value, user=user)
+        db.session.add(template_field_1)
+        template_field_2 = EntryField(name='Stunden Schlaf', type=EntryFieldType.INTEGER.value, user=user)
+        db.session.add(template_field_2)
+        template_field_3 = EntryField(name='Text', type=EntryFieldType.STRING.value, user=user)
+        db.session.add(template_field_3)
         db.session.commit()
 
         schema = UserSchema()
