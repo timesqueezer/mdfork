@@ -34,4 +34,4 @@ with app.app_context():
             index = index % len(defaultColors)
             field.color = defaultColors[index]
 
-    #db.session.commit()
+    db.session.commit()
