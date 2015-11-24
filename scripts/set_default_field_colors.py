@@ -30,6 +30,8 @@ with app.app_context():
 
     for user in User.query:
         for field in user.fields:
-            field.color = defaultColors[user.fields.index(field)]
+            index = user.fields.index(field)
+            index = index % len(defaultColors)
+            field.color = defaultColors[index]
 
-    db.session.commit()
+    #db.session.commit()
