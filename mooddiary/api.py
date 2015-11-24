@@ -369,11 +369,11 @@ class UserList(Resource):
         user.set_password(result['password'])
 
         db.session.add(user)
-        template_field_1 = EntryField(name='Stimmung', type=EntryFieldType.RANGE.value, user=user)
+        template_field_1 = EntryField(name='Stimmung', type=EntryFieldType.RANGE.value, user=user, color='0a80ba')
         db.session.add(template_field_1)
-        template_field_2 = EntryField(name='Stunden Schlaf', type=EntryFieldType.INTEGER.value, user=user)
+        template_field_2 = EntryField(name='Stunden Schlaf', type=EntryFieldType.INTEGER.value, user=user, color='F7464A')
         db.session.add(template_field_2)
-        template_field_3 = EntryField(name='Text', type=EntryFieldType.STRING.value, user=user)
+        template_field_3 = EntryField(name='Text', type=EntryFieldType.STRING.value, user=user, color='39BF71')
         db.session.add(template_field_3)
         db.session.commit()
 

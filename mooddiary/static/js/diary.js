@@ -293,8 +293,8 @@ angular.module('mooddiary.diary', [
     $scope.entries = entriesResolved;
     $scope.activeFields = {};
 
-    $scope.toggleChartField($scope.fields[0]);
     $scope.activeFields[$scope.fields[0].id] = true;
+    $scope.toggleChartField($scope.fields[0]);
 
     angular.element(document).ready(function() {
         $scope.timeLimit = '2.w';

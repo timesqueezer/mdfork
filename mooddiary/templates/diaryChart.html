@@ -1,7 +1,7 @@
 {% raw %}
 <div class="row spaced-bottom" ng-repeat="row in (chartableFields.length/4 | array)">
     <div class="col-sm-3" ng-repeat="field in chartableFields.slice(4*$index, 4*$index + 4)">
-        <button class="btn btn-block btn-default" ng-style="buttonStyles[field.id]" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]" ng-init="activeFields[field.id] = false" bs-checkbox>{{ field.name }}</small></button>
+        <button class="btn btn-block btn-default" ng-style="buttonStyles[field.id]" ng-change="toggleChartField(field)" ng-model="activeFields[field.id]" bs-checkbox>{{ field.name }}</small></button>
     </div>
 </div>
 
