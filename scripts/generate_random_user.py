@@ -19,19 +19,18 @@ with app.app_context():
     db.session.commit()
     faker = Faker()
     random_fields = [
-        {'name': 'Overall Mood', 'type': EntryFieldType.RANGE.value},
-        {'name': 'Cups of Coffee', 'type': EntryFieldType.INTEGER.value},
-        {'name': 'Hours of Sleep', 'type': EntryFieldType.INTEGER.value},
-        {'name': 'Quality of Sleep', 'type': EntryFieldType.RANGE.value},
-        {'name': 'Comment', 'type': EntryFieldType.STRING.value},
-        {'name': 'Energy Drinks', 'type': EntryFieldType.INTEGER.value},
-        {'name': 'Concentration', 'type': EntryFieldType.RANGE.value},
-        {'name': 'Stray Thougts Intensity', 'type': EntryFieldType.RANGE.value}
+        {'name': 'Overall Mood', 'type': EntryFieldType.RANGE.value, 'color': '0a80ba'},
+        {'name': 'Cups of Coffee', 'type': EntryFieldType.INTEGER.value, 'color': 'F7464A'},
+        {'name': 'Hours of Sleep', 'type': EntryFieldType.INTEGER.value, 'color': '39BF71'},
+        {'name': 'Quality of Sleep', 'type': EntryFieldType.RANGE.value, 'color': 'FDB45C'},
+        {'name': 'Comment', 'type': EntryFieldType.STRING.value, 'color': '4D5360'},
+        {'name': 'Energy Drinks', 'type': EntryFieldType.INTEGER.value, 'color': '460793'},
+        {'name': 'Concentration', 'type': EntryFieldType.RANGE.value, 'color': '390DFA'},
+        {'name': 'Stray Thougts Intensity', 'type': EntryFieldType.RANGE.value, 'color': 'cc3f1a'}
     ]
     for field in random_fields:
-        color = str(hex(random.randint(0, 255)))[2:] + str(hex(random.randint(0, 255)))[2:] + str(hex(random.randint(0, 255)))[2:]
         new_entry_field = EntryField(name=field['name'], type=field['type'],
-                user_id=demo_account.id, color=color)
+                user_id=demo_account.id, color=field['color'])
         db.session.add(new_entry_field)
     db.session.commit()
 
