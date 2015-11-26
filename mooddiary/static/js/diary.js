@@ -15,7 +15,12 @@ angular.module('mooddiary.diary', [
         controller: 'DiaryCtrl',
         resolve: {
             fieldsResolved: ['Me', function(Me) {
-                return Me.fields.$refresh().$asPromise();
+                return Me.fields.$refresh().$asPromise().then(function(fields) {
+                    return _.map(fields, function(field) {
+                        field.colorStyle = {'background-color': field.color, 'border-color': field.color};
+                        return field;
+                    });
+                });
             }]
         }
     })
@@ -364,6 +369,10 @@ angular.module('mooddiary.diary', [
     $scope.toggleEntry = function(entry) {
         $scope.entryHidden[entry.id] = !$scope.entryHidden[entry.id];
         console.log($scope.entryHidden[entry.id]);
+    };
+
+    $scope.getProgressBarStyle = function(entry, field) {
+        return $.extend({width: $scope.getAnswerForField(entry, field)*10 + '%'}, field.colorStyle);
     };
     // Init
     $scope.args = {sort_by: 'date', order: 'desc', page: 0};

@@ -38,11 +38,11 @@
                             <p ng-show="field.type == 1">{{ getAnswerForField(entry, field) }}</p>
                             <div ng-show="field.type == 2">
                                 <div class="progress pull-right" style="width:65%;margin-top:1em;">
-                                    <div class="progress-bar progress-bar-primary" ng-style="{width: getAnswerForField(entry, field)*10 + '%'}"></div>
+                                    <div class="progress-bar" ng-style="getProgressBarStyle(entry, field)"></div>
                                 </div>
-                                <div class="number-square">{{ getAnswerForField(entry, field) }}</div>
+                                <div class="number-square" ng-style="field.colorStyle">{{ getAnswerForField(entry, field) }}</div>
                             </div>
-                            <div ng-show="field.type == 3" class="number-square">
+                            <div ng-show="field.type == 3" class="number-square" ng-style="field.colorStyle">
                                 {{ getAnswerForField(entry, field) }}
                             </div>
                         </div>
