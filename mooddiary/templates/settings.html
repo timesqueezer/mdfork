@@ -57,71 +57,72 @@
     <h3 i18n="common.fields"></h3>
     <div id="fieldContent" class="collapse in">
         <p class="info-text" i18n="common.category_help_text"></p>
-
-        <form name="fieldAddForm" class="form" novalidate>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input class="form-control" name="name" type="text" placeholder="Name" ng-model="newField.name">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label i18n="common.type"></label>
-                        <select class="form-control" name="type" ng-model="newField.type">
-                            <option value="1" i18n="common.field_string"></option>
-                            <option value="2" i18n="common.field_range" selected="selected"></option>
-                            <option value="3" i18n="common.field_integer"></option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label i18n="common.color"></label>
-                        <div class="row">
-                            <div class="col-xs-3" ng-repeat="style in defaultColorStyles">
-                                <div ng-style="style[0]" class="img-thumbnail" ng-click="setStyle(style)"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label i18n="common.custom_color"></label>
-                        <input disabled class="form-control" placeholder="Common soon...">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label i18n="common.selected_color"></label>
-                        <div ng-style="selectedColorStyle" class="thumbnail"></div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-primary" type="submit" ng-click="addField()" i18n="common.add"></button>
-        </form>
-
-        <hr>
-
         <div class="row row-spaced" ng-repeat="row in (fields.length/2 | array)">
             <div class="col-sm-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)">
                 <h4>
-                    <button class="btn btn-danger pull-right" ng-click="deleteField(field)"><i class="fa fa-trash-o"></i></button>
-                    <button class="btn btn-link pull-right" ng-click="showEditField[field.id] = true"><i class="fa fa-pencil-square-o"></i></button>
-                    <div ng-hide="showEditField[field.id]">
+                    <button class="btn btn-link pull-right" ng-click="deleteField(field)"><i class="fa fa-trash-o"></i></button>
+                    <button class="btn btn-link pull-right" ng-click="editField(field)"><i class="fa fa-pencil-square-o"></i></button>
+                    <div>
                         <div ng-style="getFieldStyle(field.color)" class="img-thumbnail"></div>
                         {{ field.name }} <small>{{ field.type | fieldTypeToString }}</small>
-                    </div>
-                    <div ng-show="showEditField[field.id]" class="form-inline">
-                        <input style="font-size: 16pt;width:50%;" class="form-control" ng-model="field.name">
-                        <button class="btn btn-sm btn-primary" ng-click="field.$save(['name']); showEditField[field.id] = false;" i18n="common.save"></button>
                     </div>
                 </h4>
             </div>
         </div>
+        <button class="btn btn-primary" ng-click="editField()" ng-hide="editOrAddField"><i class="fa fa-plus"></i> <span i18n="common.add"></span></button>
     </div>
+</div>
+<div class="panel panel-default panel-body" ng-show="editOrAddField" id="editOrAddContainer">
+    <form name="fieldAddForm" class="form" novalidate>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" name="name" type="text" placeholder="Name" ng-model="newField.name">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label i18n="common.type"></label>
+                    <select class="form-control" name="type" ng-model="newField.type" id="typeSelect">
+                        <option value="1" i18n="common.field_string"></option>
+                        <option value="2" i18n="common.field_range" selected="selected"></option>
+                        <option value="3" i18n="common.field_integer"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label i18n="common.color"></label>
+                            <div class="row">
+                                <div class="col-xs-3" ng-repeat="style in defaultColorStyles">
+                                    <div ng-style="style[0]" class="img-thumbnail" ng-click="setStyle(style)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label i18n="common.custom_color"></label>
+                            <input disabled class="form-control" placeholder="Comming soon...">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label i18n="common.selected_color"></label>
+                            <div ng-style="selectedColorStyle" class="img-thumbnail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary" type="submit" ng-click="addField()"><span i18n="common.save"></span></button>
+            </div>
+        </div>
+    </form>
 </div>
 {% endraw %}

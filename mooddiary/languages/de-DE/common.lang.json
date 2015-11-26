@@ -44,5 +44,7 @@
     "type": "Typ",
     "color": "Farbe",
     "custom_color": "Eigene Farbe",
-    "selected_color": "Ausgewählte Farbe"
+    "selected_color": "Ausgewählte Farbe",
+    "change_color": "Farbe ändern",
+    "default_error": "Da lief wohl etwas schief; überprüfe bitte deine Eingaben"
 }

@@ -196,7 +196,7 @@ class EntryFieldDetail(Resource):
             abort(401)
 
         class FieldInputSchema(Schema):
-            name = fields.String(required=True, validate=Length(max=100))
+            name = fields.String(required=True, validate=Length(min=1, max=100))
             color = fields.String(required=True, validate=Length(min=6, max=6))
 
         schema = FieldInputSchema()

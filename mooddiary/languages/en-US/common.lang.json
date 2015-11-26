@@ -44,5 +44,7 @@
     "type": "Type",
     "color": "Color",
     "custom_color": "Custom Color",
-    "selected_color": "Selected Color"
+    "selected_color": "Selected Color",
+    "change_color": "Change Color",
+    "default_error": "Something went wrong, please check your input"
 }

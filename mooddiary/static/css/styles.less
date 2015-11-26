@@ -113,7 +113,7 @@ h3 {
 
 #alert-container {
     position: fixed; bottom: 25px; right: 25px;
-    font-size: 18pt;
+    font-size: 14pt;
     box-shadow: 5px 5px 20px #ddd;
 }
 
@@ -306,6 +306,20 @@ input[type=range] {
   animation:0.5s my_animation;
 }
 
+.ng-hide-add {
+  -webkit-animation:0.5s my_animation;
+  -moz-animation:0.5s my_animation;
+  -o-animation:0.5s my_animation;
+  animation:0.5s my_animation;
+}
+
+.ng-hide-remove {
+  -webkit-animation:0.5s my_animation_out;
+  -moz-animation:0.5s my_animation_out;
+  -o-animation:0.5s my_animation_out;
+  animation:0.5s my_animation_out;
+}
+
 @keyframes my_animation {
   from { opacity:1; }
   to { opacity:0; }
@@ -324,4 +338,24 @@ input[type=range] {
 @-o-keyframes my_animation {
   from { opacity:1; }
   to { opacity:0; }
+}
+
+@keyframes my_animation_out {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+@-webkit-keyframes my_animation_out {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+@-moz-keyframes my_animation_out {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+@-o-keyframes my_animation_out {
+  from { opacity:0; }
+  to { opacity:1; }
 }

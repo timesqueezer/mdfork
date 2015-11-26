@@ -147,11 +147,12 @@ angular.module('mooddiary', [
 
 }])
 
-.controller('SettingsCtrl', ['$scope', '$alert', '$rootScope', 'fieldsResolved', 'Me', 'locale', 'localeSupported', 'localeEvents',
-function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported, localeEvents) {
-
+.controller('SettingsCtrl', ['$scope', '$alert', '$rootScope', 'fieldsResolved', 'Me', 'locale', 'localeSupported', 'localeEvents', 'smoothScroll',
+function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported, localeEvents, smoothScroll) {
+    // Functions and constants
     var errorCallback = function(data) {
         console.log(data);
+        $alert({content: locale.getString('common.default_error')});
     };
 
     var reloadFields = function() {
@@ -159,10 +160,6 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
             $scope.fields = data;
         }, errorCallback);
     };
-
-    $scope.fields = fieldsResolved;
-    $scope.newField = fieldsResolved.$build({type: 2});
-    $scope.showEditField = {};
 
     var defaultColors = [
         '#0a80ba',
@@ -175,10 +172,16 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         '#cc3f1a'
     ];
 
-    $scope.defaultColorStyles = _.map(defaultColors, function(color) {
-        return [{'background-color': color, 'height': '80px', 'width': '100px', 'cursor': 'pointer'}, color];
-    });
+    // generic color-style to user e.g. in setStyle(style) or style[0] as 'real' style in ng-style
+    $scope.getColorStyle = function(color, clickable) {
+        clickable = clickable || false;
+        if (clickable)
+            return [{'background-color': color, 'height': '80px', 'width': '100%', 'cursor': 'pointer'}, color];
+        else
+            return [{'background-color': color, 'height': '80px', 'width': '100%', 'border-radius': '3px'}, color];
+    };
 
+    // Field circle-dots
     $scope.getFieldStyle = function(color) {
         return {'background-color': color, 'height': '30px', 'width': '30px', 'vertical-align': 'middle', 'border-radius': '30px'};
     };
@@ -187,11 +190,16 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         if (angular.isString($scope.newField.type)) {
             $scope.newField.type = parseInt($scope.newField.type);
         }
-        $scope.newField.$save().$then(function() {
-            //reloadFields();
+        var callback = function() {
+            $scope.editOrAddField = false;
             $scope.newField = Me.fields.$build({type: 2});
-            $scope.setStyle([{'background-color': '#FFFFFF', 'height': '80px', 'width': '100px', 'cursor': 'pointer'}, '#FFFFFF']);
-        }, errorCallback);
+            $scope.setStyle($scope.getColorStyle(defaultColors[0]));
+        };
+        if ($scope.newField.id) {
+            $scope.newField.$save(['name', 'color']).$then(callback, errorCallback);
+        } else {
+            $scope.newField.$save().$then(callback, errorCallback);
+        }
     };
 
     $scope.deleteField = function(field) {
@@ -215,10 +223,34 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         $scope.newField.color = style[1].slice(1);
     };
 
+    $scope.editField = function(field) { // Or add without parameter
+        $scope.editOrAddField = true;
+        var elem = document.getElementById('editOrAddContainer');
+        smoothScroll(elem);
+
+        if (field) {
+            $scope.newField = field;
+            $scope.setStyle($scope.getColorStyle(field.color));
+            document.getElementById('typeSelect').setAttribute('disabled', 'disabled');
+        } else {
+            document.getElementById('typeSelect').removeAttribute('disabled');
+        }
+    };
+
+    // Init-stuff
+
     if ($rootScope.isMobile) {
         $('#profileEditForm').collapse();
         $('#fieldContent').collapse();
     }
+
+    $scope.defaultColorStyles = _.map(defaultColors, function(color) {
+        return $scope.getColorStyle(color, true);
+    });
+
+    $scope.fields = fieldsResolved;
+    $scope.newField = fieldsResolved.$build({type: 2});
+    $scope.setStyle($scope.defaultColorStyles[0]);
 
 }])
 
