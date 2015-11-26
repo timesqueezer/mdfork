@@ -18,6 +18,12 @@ angular.module('mooddiary.diary', [
                 return Me.fields.$refresh().$asPromise().then(function(fields) {
                     return _.map(fields, function(field) {
                         field.colorStyle = {'background-color': field.color, 'border-color': field.color};
+                        var bigint = parseInt(field.color.slice(1), 16),
+                            r = (bigint >> 16) & 255,
+                            g = (bigint >> 8) & 255,
+                            b = bigint & 255;
+                        field.colorStyleRGBA = {'background-color': 'rgba('+r+','+g+','+b+', 0.3)'};
+
                         return field;
                     });
                 });
