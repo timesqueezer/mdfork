@@ -22,7 +22,7 @@ angular.module('mooddiary.diary', [
                             r = (bigint >> 16) & 255,
                             g = (bigint >> 8) & 255,
                             b = bigint & 255;
-                        field.colorStyleRGBA = {'background-color': 'rgba('+r+','+g+','+b+', 0.3)'};
+                        field.colorStyleRGBA = {'background-color': 'rgba('+r+','+g+','+b+', 0.1)'};
 
                         return field;
                     });
@@ -34,13 +34,31 @@ angular.module('mooddiary.diary', [
         .state('diary.list', {
             url: '/list',
             templateUrl: '/templates/diaryList',
-            controller: 'DiaryListCtrl'
+            controller: 'DiaryListCtrl',
+            resolve: {
+                'firstPage': ['Me', '$q', function(Me, $q) {
+                    if (Me.entries.length > 0) {
+                        return $q.when(true);
+                    } else {
+                        return Me.entries.$resolve({'page': 1, 'per_page': 2}).$asPromise();
+                    }
+                }]
+            }
         })
 
         .state('diary.table', {
             url: '/table',
             templateUrl: '/templates/diaryTable',
-            controller: 'DiaryListCtrl'
+            controller: 'DiaryListCtrl',
+            resolve: {
+                'firstPage': ['Me', '$q', function(Me, $q) {
+                    if (Me.entries.length > 0) {
+                        return $q.when(true);
+                    } else {
+                        return Me.entries.$resolve({'page': 1, 'per_page': 12}).$asPromise();
+                    }
+                }]
+            }
         })
 
         .state('diary.chart', {
@@ -81,10 +99,7 @@ angular.module('mooddiary.diary', [
             var args = {sort_by: 'date', order: 'desc'};
         }
         return $q(function(resolve, reject) {
-            Me.entries.$refresh(args).$then(function(data) {
-                $scope.entries = data;
-                resolve();
-            }, reject);
+            Me.entries.$refresh(args).$then(resolve, reject);
 
         });
     };
@@ -131,9 +146,9 @@ angular.module('mooddiary.diary', [
                 $scope.newEntryAnswers = {};
                 $scope.newEntry.date = new Date();
                 if ($state.includes('diary.chart')) {
-                    reloadEntries().then(function() {
+                    //reloadEntries().then(function() {
                         $scope.$broadcast('reloadCharts');
-                    });
+                    //});
                 }
             }, errorCallback);
         }, function(resp) {
@@ -313,21 +328,25 @@ angular.module('mooddiary.diary', [
     });
 }])
 
-.controller('DiaryListCtrl', ['$scope', '$rootScope', '$state', 'Answer', '$alert', 'Me', function($scope, $rootScope, $state, Answer, $alert, Me) {
+.controller('DiaryListCtrl', ['$scope', '$rootScope', '$state', 'Answer', '$alert', 'Me', 'firstPage', function($scope, $rootScope, $state, Answer, $alert, Me, firstPage) {
     $scope.loadMore = function() {
+        $scope.reloadCount += 1;
+        $scope.listLimit += $scope.args.page == 1 && $state.includes('diary.list') ? 0 : $scope.args.per_page;
         $scope.args.page += 1;
-        $scope.stopScroll = true;
-        var lastLength = Me.entries.length;
-        Me.entries.$fetch($scope.args).$then(function(entries) {
-            $scope.stopScroll = entries.length == 0 ? true : false;
-            if ($rootScope.isMobile) {
-                angular.forEach(entries.slice(lastLength), function(entry) {
-                    $scope.entryHidden[entry.id] = true;
-                });
-            }
-         }, function() {
+        if ($scope.me.entries.length < ($scope.args.page * $scope.args.per_page) ) {
             $scope.stopScroll = true;
-        });
+            var lastLength = Me.entries.length;
+            Me.entries.$fetch($scope.args).$then(function(entries) {
+                $scope.stopScroll = entries.length == 0 ? true : false;
+                if ($rootScope.isMobile) {
+                    angular.forEach(entries.slice(lastLength), function(entry) {
+                        $scope.entryHidden[entry.id] = true;
+                    });
+                }
+             }, function() {
+                $scope.stopScroll = true;
+            });
+        }
     };
 
     $scope.reloadList = function() {
@@ -381,11 +400,17 @@ angular.module('mooddiary.diary', [
         return $.extend({width: $scope.getAnswerForField(entry, field)*10 + '%'}, field.colorStyle);
     };
     // Init
-    $scope.args = {sort_by: 'date', order: 'desc', page: 0};
+    $scope.args = {sort_by: 'date', order: 'desc', page: 1}; // Page actually starts at 2
 
     if ($rootScope.isMobile) {
         $('#fieldListToggle').collapse();
+    }
+    if ($state.includes('diary.list')) {
         $scope.args.per_page = 2;
+        $scope.listLimit = 2;
+    } else {
+        $scope.args.per_page = 12;
+        $scope.listLimit = 12;
     }
 
     $scope.activeFields = {};
@@ -393,6 +418,7 @@ angular.module('mooddiary.diary', [
     $scope.editField = {};
     $scope.editEntry = {};
     $scope.entryHidden = {};
+    $scope.reloadCount = 0;
 
     //$scope.entries = $scope.me.entries.$collection();
     //$scope.loadMore();

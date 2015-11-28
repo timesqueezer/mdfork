@@ -14,8 +14,8 @@
         </div>
     </div>
 </div>
-<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
-    <div class="panel panel-default panel-body" ng-repeat="entry in me.entries | orderBy: 'date' : true" ng-init="editField[entry.id] = {}">
+<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="false" infinite-scroll-distance="0.2" infinite-scroll-disabled="stopScroll">
+    <div class="panel panel-default panel-body" ng-repeat="entry in entries = (me.entries | orderBy: 'date' : true | limitTo: listLimit)" ng-init="editField[entry.id] = {}">
         <div class="row">
             <div class="col-md-2 col-xs-12">
                 <button class="btn btn-lg btn-link visible-xs pull-right" style="margin-top: 1em;" ng-click="toggleEntry(entry)"><i class="fa fa-bars"></i></button>
@@ -69,3 +69,17 @@
 </div>
 <h4 ng-hide="stopScroll" class="text-center"><i style="color: #444;" class="fa fa-spinner fa-pulse"></i></h4>
 {% endraw %}
+
+{%if config.get('DEBUG') %}
+<div class="panel panel-default panel-body" style="position:fixed;top:10px;left:10px;width:360px;visibility:hidden;">
+{% raw %}
+    <p>listLimit: {{ listLimit }}</p>
+    <p>entries.length: {{ entries.length }}</p>
+    <p>me.entries.length: {{ me.entries.length }}</p>
+    <p>reloadCount: {{ reloadCount }}</p>
+    <p>args:</p>
+    <pre>{{ args | json }}</pre>
+</div>
+
+{% endraw %}
+{% endif %}
