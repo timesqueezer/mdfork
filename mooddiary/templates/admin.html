@@ -31,10 +31,10 @@
                 <th ng-repeat="field in selectedUser.fields">{{ field.name }}</th>
             </tr>
         </thead>
-        <tbody infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
+        <tbody>
             <tr ng-repeat="entry in selectedUser.entries">
                 <td>{{ entry.date | date : 'dd/MM' }}</td>
-                <td ng-repeat="field in selectedUser.fields">{{ getAnswerForField(entry, field) }}</td>
+                <td ng-repeat="field in selectedUser.fields">{{ entry.answersSorted[field.id].content }}</td>
             </tr>
         </tbody>
     </table>

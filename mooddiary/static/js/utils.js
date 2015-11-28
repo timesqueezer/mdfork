@@ -83,7 +83,16 @@ angular.module('mooddiary.utils', [
 .factory('Entry', ['restmod', function(restmod) {
     return restmod.model('entries').mix('DirtyModel', {
         user: { belongsTo: 'User' },
-        answers: { hasMany: 'Answer' }
+        answers: { hasMany: 'Answer' },
+        $hooks: {
+            'after-feed': function() {
+                this.answersSorted = {};
+                var entry = this;
+                angular.forEach(this.answers, function(answer) {
+                    entry.answersSorted[answer.entry_field_id] = answer;
+                });
+            }
+        }
     });
 }])
 

@@ -90,17 +90,6 @@ angular.module('mooddiary.diary', [
         })
     };
 
-    $scope.getAnswerForField = function(entry, field) {
-        var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        if (answer) {
-            if (field.type != 1)
-                answer.content = parseInt(answer.content);
-            return answer.content;
-        } else {
-            return '-';
-        }
-    };
-
     $scope.showEntryAddContainer = function() {
         $scope.entryAdding = true;
         var elem = document.getElementById('AddEntry');
@@ -306,7 +295,7 @@ angular.module('mooddiary.diary', [
     });
 }])
 
-.controller('DiaryListCtrl', ['$scope', '$rootScope', '$state', 'Answer', '$alert', 'Me', 'firstPage', function($scope, $rootScope, $state, Answer, $alert, Me, firstPage) {
+.controller('DiaryListCtrl', ['$scope', '$rootScope', '$state', 'Answer', '$alert', 'Me', 'firstPage', 'locale', '$q', function($scope, $rootScope, $state, Answer, $alert, Me, firstPage, locale, $q) {
     $scope.loadMore = function() {
         $scope.reloadCount += 1;
         $scope.listLimit += $scope.args.page == 1 && $state.includes('diary.list') ? 0 : $scope.args.per_page;
@@ -332,35 +321,41 @@ angular.module('mooddiary.diary', [
     };
 
     $scope.saveEntry = function(entry) {
-        entry.$save(['date']).$then(function() {
-            $scope.editEntry[entry.id] = false;
-        }, function(error) {
-            $alert({content: error.$response.data.message});
+        $scope.saving = true;
+        var promises = [];
+        for (i in entry.answersSorted) {
+            entry.answersSorted[i].content = entry.answersSorted[i].content.toString();
+            if (entry.answersSorted[i].id) {
+                promises.push(entry.answersSorted[i].$save(['content']).$asPromise());
+            } else {
+                promises.push(entry.answersSorted[i].$save().$asPromise());
+            }
+        }
+        $q.all(promises).then(function() {
+            $alert({content: locale.getString('common.save')});
+            entry.$save(['date']).$then(function() {
+                $scope.edittingEntry[entry.id] = false;
+                $scope.saving = false;
+            }, function(error) {
+                $scope.edittingEntry[entry.id] = false;
+                $scope.saving = false;
+                $alert({content: error.$response.data.message});
+            });
         });
     };
 
-    $scope.startEditField = function(entry, field) {
-        $scope.answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        if ($scope.answer) {
-            $scope.editAnswer = $scope.answer;
-            $scope.editAnswer.tmpContent = $scope.getAnswerForField(entry, field);
-
-            $scope.editField[entry.id][field.id] = true;
-        } else {
-            $scope.editAnswer = $scope.answer = entry.answers.$build({entry_field_id: field.id});
-            $scope.editField[entry.id][field.id] = true;
-        }
-    };
-
-    $scope.editFieldAnswer = function(entry, field) {
-        $scope.editAnswer.content = $scope.editAnswer.tmpContent.toString();
-        $scope.answer.content = $scope.editAnswer.tmpContent;
-        $scope.editField[entry.id][field.id] = false;
-        if ($scope.editAnswer.id) {
-            $scope.editAnswer.$save(['content']);
-        } else {
-            $scope.editAnswer.$save();
-        }
+    $scope.editEntry = function(entry) {
+        angular.forEach($scope.fields, function(field) {
+            var answer = entry.answersSorted[field.id];
+            if (answer) {
+                if (field.type == 3) {
+                    answer.content = parseInt(answer.content);
+                }
+            } else {
+                entry.answersSorted[field.id] = entry.answers.$build({entry_field_id: field.id});
+            }
+        });
+        $scope.edittingEntry[entry.id] = true;
     };
 
     $scope.deleteEntry = function(entry) {
@@ -371,11 +366,10 @@ angular.module('mooddiary.diary', [
 
     $scope.toggleEntry = function(entry) {
         $scope.entryHidden[entry.id] = !$scope.entryHidden[entry.id];
-        console.log($scope.entryHidden[entry.id]);
     };
 
     $scope.getProgressBarStyle = function(entry, field) {
-        return $.extend({width: $scope.getAnswerForField(entry, field)*10 + '%'}, field.colorStyle);
+        return $.extend({width: entry.answersSorted[field.id].content * 10 + '%'}, field.colorStyle);
     };
     // Init
     $scope.args = {sort_by: 'date', order: 'desc', page: 1}; // Page actually starts at 2
@@ -393,8 +387,7 @@ angular.module('mooddiary.diary', [
 
     $scope.activeFields = {};
     angular.forEach($scope.fields, function(field) { $scope.activeFields[field.id] = true; });
-    $scope.editField = {};
-    $scope.editEntry = {};
+    $scope.edittingEntry = {};
     $scope.entryHidden = {};
     $scope.reloadCount = 0;
 

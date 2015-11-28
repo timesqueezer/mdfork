@@ -363,17 +363,6 @@ function($scope, $state, Me, $rootScope, AuthService, locale) {
             $scope.selectedUser = user;
         });
     };
-
-    $scope.getAnswerForField = function(entry, field) {
-        var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
-        if (answer) {
-            if (field.type != 1)
-                answer.content = parseInt(answer.content);
-            return answer.content;
-        } else {
-            return '-';
-        }
-    };
 }])
 
 ;

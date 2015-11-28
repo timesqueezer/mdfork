@@ -10,7 +10,7 @@
         <tbody infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
             <tr ng-repeat="entry in entries = (me.entries | orderBy: 'date' : true | limitTo: listLimit)">
                 <td>{{ entry.date | date : 'dd/MM' }}</td>
-                <td ng-repeat="field in fields" ng-style="field.colorStyleRGBA">{{ getAnswerForField(entry, field) }}</td>
+                <td ng-repeat="field in fields" ng-style="field.colorStyleRGBA">{{ entry.answersSorted[field.id].content }}</td>
             </tr>
         </tbody>
     </table>
