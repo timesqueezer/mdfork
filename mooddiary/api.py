@@ -28,12 +28,13 @@ class UserMeEntryList(Resource):
 
         if 'timespan' in request.args:
             count, length = request.args.get('timespan').split('.')
-            count = int(count)
-            if length == 'w':
-                delta = timedelta(weeks=count)
-            elif length == 'm':
-                delta = timedelta(weeks=count * 4)
-            query = query.filter(db.func.date(Entry.date) >= date.today() - delta)
+            if (length != 'a'):
+                count = int(count)
+                if length == 'w':
+                    delta = timedelta(weeks=count)
+                elif length == 'm':
+                    delta = timedelta(weeks=count * 4)
+                query = query.filter(db.func.date(Entry.date) >= date.today() - delta)
 
         if 'sort_by' in request.args and 'order' in request.args:
             sort_by = request.args.get('sort_by')

@@ -39,14 +39,14 @@ with app.app_context():
         db.session.add(new_entry_field)
     db.session.commit()
 
-    for i in range(150, 0, -1):
+    for i in range(300, 0, -1):
         new_entry = Entry(date=datetime.utcnow() - timedelta(days=i), user_id=demo_account.id)
         db.session.add(new_entry)
         for field in EntryField.query:
             if field.type == EntryFieldType.STRING.value:
                 content = faker.sentence()
             elif field.type == EntryFieldType.RANGE.value:
-                content = str(random.randint(0, 10))
+                content = str(random.randint(6, 9))
             elif field.type == EntryFieldType.INTEGER.value:
                 content = str(random.randint(0, 100))
 

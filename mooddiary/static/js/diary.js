@@ -90,20 +90,6 @@ angular.module('mooddiary.diary', [
         })
     };
 
-    var reloadEntries = $scope.reloadEntries = function() {
-        if ($state.includes('diary.chart')) {
-            var args = {sort_by: 'date', order: 'asc'};
-        } else if ($state.includes('diary.list')) {
-            var args = {sort_by: 'date', order: 'desc', 'page': 1};
-        } else {
-            var args = {sort_by: 'date', order: 'desc'};
-        }
-        return $q(function(resolve, reject) {
-            Me.entries.$refresh(args).$then(resolve, reject);
-
-        });
-    };
-
     $scope.getAnswerForField = function(entry, field) {
         var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
         if (answer) {
@@ -146,9 +132,7 @@ angular.module('mooddiary.diary', [
                 $scope.newEntryAnswers = {};
                 $scope.newEntry.date = new Date();
                 if ($state.includes('diary.chart')) {
-                    //reloadEntries().then(function() {
-                        $scope.$broadcast('reloadCharts');
-                    //});
+                    $scope.$broadcast('reloadCharts');
                 }
             }, errorCallback);
         }, function(resp) {
@@ -217,7 +201,7 @@ angular.module('mooddiary.diary', [
     };
 
     var reloadCharts = function() {
-        if ($scope.timeLimit == '1.w' || $scope.entries.length < 10) {
+        if ($scope.timeLimit == '1.w' || Me.entries.length < 10) {
             $scope.chartOptions.pointDotRadius = 4;
         } else if ($scope.timeLimit == '2.w') {
             $scope.chartOptions.pointDotRadius = 3;
@@ -228,7 +212,7 @@ angular.module('mooddiary.diary', [
         } else if ($scope.timeLimit == '4.m') {
             $scope.chartOptions.pointDotRadius = 0;
         } else {
-            $scope.chartOptions.pointDotRadius = $scope.entries.length > 14 ? $scope.entries.length > 28 ? 0 : 1 : 2;
+            $scope.chartOptions.pointDotRadius = Me.entries.length > 14 ? Me.entries.length > 28 ? 0 : 1 : 2;
         }
 
         $scope.data = [];
@@ -242,7 +226,7 @@ angular.module('mooddiary.diary', [
                 dataset.strokeColor = '#' + field.color;
                 dataset.fillColor = rgba(hexToRgb(field.color), 0.15);
                 dataset.data = [];
-                angular.forEach($scope.entries, function(entry) {
+                angular.forEach(Me.entries, function(entry) {
                     var answer = _.findWhere(entry.answers, {entry_field_id: field.id});
                     if (answer) {
                         var date = new Date(entry.date);
@@ -298,14 +282,9 @@ angular.module('mooddiary.diary', [
     $scope.$watch('timeLimit', function(old_values, new_values) {
         if (old_values == new_values)
             return;
-        if ($scope.timeLimit == '0.a') {
-            $scope.reloadEntries().then(reloadCharts, $scope.errorCallback);
-        } else {
-            Me.entries.$refresh({timespan: $scope.timeLimit, sort_by: 'date', order: 'asc'}).$then(function(data) {
-                $scope.entries = data;
-                reloadCharts();
-            }, $scope.errorCallback);
-        }
+        Me.entries.$refresh({timespan: $scope.timeLimit, sort_by: 'date', order: 'asc'}).$then(function(data) {
+            reloadCharts();
+        }, $scope.errorCallback);
     });
 
     $scope.$on('reloadCharts', reloadCharts);
@@ -316,7 +295,6 @@ angular.module('mooddiary.diary', [
         return field.type != 1;
     });
 
-    $scope.entries = entriesResolved;
     $scope.activeFields = {};
 
     $scope.activeFields[$scope.fields[0].id] = true;
@@ -420,8 +398,6 @@ angular.module('mooddiary.diary', [
     $scope.entryHidden = {};
     $scope.reloadCount = 0;
 
-    //$scope.entries = $scope.me.entries.$collection();
-    //$scope.loadMore();
     $scope.activeFieldsList = $scope.fields;
 }])
 

@@ -14,7 +14,7 @@
         </div>
     </div>
 </div>
-<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="false" infinite-scroll-distance="0.2" infinite-scroll-disabled="stopScroll">
+<div infinite-scroll="loadMore()" infinite-scroll-immediate-check="false" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">
     <div class="panel panel-default panel-body" ng-repeat="entry in entries = (me.entries | orderBy: 'date' : true | limitTo: listLimit)" ng-init="editField[entry.id] = {}">
         <div class="row">
             <div class="col-md-2 col-xs-12">
@@ -71,7 +71,7 @@
 {% endraw %}
 
 {%if config.get('DEBUG') %}
-<div class="panel panel-default panel-body" style="position:fixed;top:10px;left:10px;width:360px;visibility:hidden;">
+<div class="panel panel-default panel-body" style="position:fixed;top:10px;left:10px;width:360px;">
 {% raw %}
     <p>listLimit: {{ listLimit }}</p>
     <p>entries.length: {{ entries.length }}</p>

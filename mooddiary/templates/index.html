@@ -50,7 +50,7 @@
                     <div class="collapse navbar-collapse" id="navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li ng-class="{active: $state.includes('about')}"><a ui-sref="about" data-toggle="collapse" data-target="#navbar-collapse-1"><i class="fa fa-info"></i> <span i18n="common.menu_about"></span></a></li>
-                            <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('diary')}"><a ui-sref="diary.table" data-toggle="collapse" data-target="#navbar-collapse-1"><i class="fa fa-book"></i> <span i18n="common.menu_diary"></span></a></li>
+                            <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('diary')}"><a ui-sref="diary.list" data-toggle="collapse" data-target="#navbar-collapse-1"><i class="fa fa-book"></i> <span i18n="common.menu_diary"></span></a></li>
                             <li ng-show="$root.loggedIn" ng-class="{active: $state.includes('settings')}"><a ui-sref="settings" data-toggle="collapse" data-target="#navbar-collapse-1"><i class="fa fa-cogs"></i> <span i18n="common.menu_settings"></span></a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
