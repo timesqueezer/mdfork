@@ -20,11 +20,11 @@
 @navbar-default-color: @gray;
 
 .spaced-bottom {
-    margin-bottom: 11pt;
+        margin-bottom: 11pt;
 }
 
 body {
-    background: linear-gradient(lighten(#9AC9E0, 20%), lighten(#9AC9E0, 10%));
+        background: linear-gradient(lighten(#9AC9E0, 20%), lighten(#9AC9E0, 10%));
 }
 
 @navbar-default-brand-color: #444;
@@ -32,19 +32,23 @@ body {
 @navbar-default-link-active-color: @brand-primary;
 
 .navbar-brand {
-    font-size: 22pt;
+        font-size: 22pt;
 }
 
 p {
-  font-size: 14pt;
+    font-size: 14pt;
 }
 
 .panel {
-  margin-bottom: 11pt;
+    margin-bottom: 11pt;
 }
 
 .navbar {
-  margin-bottom: 11pt;
+    margin-bottom: 11pt;
+}
+
+.text-white {
+    color: #fefefe;
 }
 
 @dark-info: darken(@brand-info, 10%);
@@ -61,119 +65,121 @@ p {
 @font-size-h6:            14pt;
 
 .navbar-text {
-    padding-left: 15px;
+        padding-left: 15px;
 }
 
 .number-square {
-  display: inline-block;
-  margin-bottom: 0.5em;
-  font-weight: normal;
-  text-align: center;
-  vertical-align: middle;
-  border: none;
-  white-space: nowrap;
-  padding: 6px 16px;
-  font-size: 14pt;
-  line-height: 1.846;
-  border-radius: 2px;
-  background: @brand-primary;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s;
-  color: #fff;
-  min-width: 65px;
+    display: inline-block;
+    margin-bottom: 0.5em;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    border: none;
+    white-space: nowrap;
+    padding: 6px 16px;
+    font-size: 14pt;
+    line-height: 1.846;
+    border-radius: 2px;
+    background: @brand-primary;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    color: #fff;
+    min-width: 65px;
 }
 
 .progress-bar:last-child.progress-bar:before {
-  background-color: #C9E9FF;
+    background-color: #E2E2E2;
 }
 
 p {
-    word-wrap: break-word;
+        word-wrap: break-word;
 }
 
 .row-border-bottom {
-    border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #eee;
 }
 
 .info-text {
-    border-radius: 3px;
-    border-left: 5px solid @brand-info;
-    padding: 1em;
-    box-shadow: 0 0 3px #ddd;
-    background: #fefefe;
+        border-radius: 3px;
+        border-left: 5px solid @brand-danger;
+        padding: 1em;
+        box-shadow: 0 0 3px #ddd;
+        background: #fefefe;
+        margin-bottom: 1em;
 }
 
 h3 {
-    color: @brand-primary;
-    border-bottom: 1px solid #e5e5e5;
-    padding-bottom: 0.2em;
-    margin-bottom: 22pt;
-    margin-top: 11pt;
+        color: @brand-primary;
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 0.2em;
+        margin-bottom: 22pt;
+        margin-top: 11pt;
 }
 
 #alert-container {
-    position: fixed; bottom: 25px; right: 25px;
-    font-size: 14pt;
-    box-shadow: 5px 5px 20px #ddd;
+        position: fixed; bottom: 25px; right: 25px;
+        font-size: 14pt;
+        box-shadow: 5px 5px 20px #ddd;
 }
 
 /* Angular strap stuff */
 
 .am-fade {
-    opacity: 1;
-    transition: opacity .2s linear;
-    &.ng-enter {
-        opacity: 0;
-        &.ng-enter-active {
-            opacity: 1;
-        }
-    }
-    &.ng-leave {
         opacity: 1;
-        &.ng-leave-active {
-            opacity: 0;
+        transition: opacity .2s linear;
+        &.ng-enter {
+                opacity: 0;
+                &.ng-enter-active {
+                        opacity: 1;
+                }
         }
-    }
+        &.ng-leave {
+                opacity: 1;
+                &.ng-leave-active {
+                        opacity: 0;
+                }
+        }
 }
 
 .datepicker.dropdown-menu {
-  width: 250px;
-  height: 270px;
-  button {
-    outline: none;
-    border: 0px;
-  }
-  tbody {
-    height: 180px;
-  }
-  tbody button {
-    padding: 6px;
-  }
-  &.datepicker-mode-1, &.datepicker-mode-2 {
-    tbody button {
-      height: 65px;
+    width: 250px;
+    height: 270px;
+    button {
+        outline: none;
+        border: 0px;
     }
-  }
+    tbody {
+        height: 180px;
+    }
+    tbody button {
+        padding: 6px;
+    }
+    &.datepicker-mode-1, &.datepicker-mode-2 {
+        tbody button {
+            height: 65px;
+        }
+    }
 }
 
 .ng-hide-add, .ng-hide-remove, .ng-hide-add-active, .ng-hide-remove-active {
-  transition: all linear 0.5s;
+    transition: all linear 0.5s;
 }
 
 label {
-    color: #111;
+        color: #111;
 }
-@track-color: #fff;
-@thumb-color: #fafafa;
+
+@track-color: #FFFFFF;
+@thumb-color: #F1F1F1;
 
 @thumb-radius: 3px;
 @thumb-height: 30px;
 @thumb-width: 14px;
 @thumb-shadow-size: 1px;
 @thumb-shadow-blur: 2px;
-@thumb-shadow-color: #ccc;
-@thumb-border-width: 0px;
-@thumb-border-color: @brand-primary;
+@thumb-shadow-color: #9E9E9E;
+@thumb-border-width: 1px;
+@thumb-border-color: #838383;
 
 @track-width: 100%;
 @track-height: 8px;
@@ -181,181 +187,210 @@ label {
 @track-shadow-blur: 0px;
 @track-shadow-color: #bbb;
 @track-border-width: 1px;
-@track-border-color: #f0f0f0;
+@track-border-color: #C1C1C1;
 
 @track-radius: 2px;
 @contrast: 1%;
 
 .shadow(@shadow-size,@shadow-blur,@shadow-color) {
-  box-shadow: @shadow-size @shadow-size @shadow-blur @shadow-color, 0px 0px @shadow-size lighten(@shadow-color,5%);
+    box-shadow: @shadow-size @shadow-size @shadow-blur @shadow-color, 0px 0px @shadow-size lighten(@shadow-color,5%);
 }
 
 .track() {
-  width: @track-width;
-  height: @track-height;
-  cursor: pointer;
-  animate: 0.2s;
+    width: @track-width;
+    height: @track-height;
+    cursor: pointer;
+    animate: 0.2s;
 }
 
 .thumb() {
-  .shadow(@thumb-shadow-size,@thumb-shadow-blur,@thumb-shadow-color);
-  border: @thumb-border-width solid @thumb-border-color;
-  height: @thumb-height;
-  width: @thumb-width;
-  border-radius: @thumb-radius;
-  background: @thumb-color;
-  cursor: pointer;
+    .shadow(@thumb-shadow-size,@thumb-shadow-blur,@thumb-shadow-color);
+    border: @thumb-border-width solid @thumb-border-color;
+    background: @thumb-color;
+    height: @thumb-height;
+    width: @thumb-width;
+    border-radius: @thumb-radius;
+    cursor: pointer;
 }
 
 .form-control {
-  font-size: 14pt !important;
+    font-size: 14pt !important;
 }
 
 input[type=range] {
-  -webkit-appearance: none;
-  margin: 0;
-  width: @track-width;
-
-  &:focus {
-    outline: none;
-  }
-
-  &::-webkit-slider-runnable-track {
-    .track();
-    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
-    background: @track-color;
-    border-radius: @track-radius;
-    border: @track-border-width solid @track-border-color;
-  }
-
-  &::-webkit-slider-thumb {
-    .thumb();
     -webkit-appearance: none;
-    margin-top: ((-@track-border-width * 2 + @track-height) / 2) - (@thumb-height / 2);
-  }
+    margin: 0;
+    width: @track-width;
 
-  &:focus::-webkit-slider-thumb {
-    border: 1px solid @thumb-border-color;
-  }
+    &:focus {
+        outline: none;
+    }
 
-  &:focus::-webkit-slider-runnable-track {
-    background: lighten(@track-color, @contrast);
-  }
+    &::-webkit-slider-runnable-track {
+        .track();
+        .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+        border-radius: @track-radius;
+        border: @track-border-width solid @track-border-color;
+        background: @track-color;
+    }
 
-  &::-moz-range-track {
-    .track();
-    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
-    background: @track-color;
-    border-radius: @track-radius;
-     border: @track-border-width solid @track-border-color;
-  }
-  &::-moz-range-thumb {
-     .thumb();
-  }
+    &::-webkit-slider-thumb {
+        .thumb();
+        -webkit-appearance: none;
+        margin-top: ((-@track-border-width * 2 + @track-height) / 2) - (@thumb-height / 2);
+    }
 
-  &::-ms-track {
-    .track();
-    background: transparent;
-    border-color: transparent;
-    border-width: @thumb-width 0;
-    color: transparent;
-  }
+    &:focus::-webkit-slider-thumb {
+        border: 1px solid @thumb-border-color;
+    }
 
-  &::-ms-fill-lower {
-    background: darken(@track-color, @contrast);
-    border: @track-border-width solid @track-border-color;
-    border-radius: @track-radius*2;
-    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
-  }
-  &::-ms-fill-upper {
-    background: @track-color;
-    border: @track-border-width solid @track-border-color;
-    border-radius: @track-radius*2;
-    .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
-  }
-  &::-ms-thumb {
-    .thumb();
-  }
-  &:focus::-ms-fill-lower {
-    background: @track-color;
-  }
-  &:focus::-ms-fill-upper {
-    background: lighten(@track-color, @contrast);
-  }
+    &:focus::-webkit-slider-runnable-track {
+    }
+
+    &::-moz-range-track {
+        .track();
+        .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+        background: @track-color;
+        border-radius: @track-radius;
+         border: @track-border-width solid @track-border-color;
+    }
+    &::-moz-range-thumb {
+         .thumb();
+    }
+
+    &::-ms-track {
+        .track();
+        background: transparent;
+        border-color: transparent;
+        border-width: @thumb-width 0;
+        color: transparent;
+    }
+
+    &::-ms-fill-lower {
+        background: darken(@track-color, @contrast);
+        border: @track-border-width solid @track-border-color;
+        border-radius: @track-radius*2;
+        .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+    }
+    &::-ms-fill-upper {
+        background: @track-color;
+        border: @track-border-width solid @track-border-color;
+        border-radius: @track-radius*2;
+        .shadow(@track-shadow-size,@track-shadow-blur,@track-shadow-color);
+    }
+    &::-ms-thumb {
+        .thumb();
+    }
+    &:focus::-ms-fill-lower {
+        background: @track-color;
+    }
+    &:focus::-ms-fill-upper {
+        background: lighten(@track-color, @contrast);
+    }
 }
 
 /* Animation stuff */
 
 .ng-enter, .ng-move {
-  -webkit-transition:0.5s linear all;
-  -moz-transition:0.5s linear all;
-  -o-transition:0.5s linear all;
-  transition:0.5s linear all;
-  opacity:0;
+    -webkit-transition:0.5s linear all;
+    -moz-transition:0.5s linear all;
+    -o-transition:0.5s linear all;
+    transition:0.5s linear all;
+    opacity:0;
 }
 
 .ng-enter.ng-enter-active,
 .ng-move.ng-move-active {
-  opacity:1;
+    opacity:1;
 }
 
 .ng-leave {
-  -webkit-animation:0.5s my_animation;
-  -moz-animation:0.5s my_animation;
-  -o-animation:0.5s my_animation;
-  animation:0.5s my_animation;
+    -webkit-animation:0.5s my_animation;
+    -moz-animation:0.5s my_animation;
+    -o-animation:0.5s my_animation;
+    animation:0.5s my_animation;
 }
 
 .ng-hide-add {
-  -webkit-animation:0.5s my_animation;
-  -moz-animation:0.5s my_animation;
-  -o-animation:0.5s my_animation;
-  animation:0.5s my_animation;
+    -webkit-animation:0.5s my_animation;
+    -moz-animation:0.5s my_animation;
+    -o-animation:0.5s my_animation;
+    animation:0.5s my_animation;
 }
 
 .ng-hide-remove {
-  -webkit-animation:0.5s my_animation_out;
-  -moz-animation:0.5s my_animation_out;
-  -o-animation:0.5s my_animation_out;
-  animation:0.5s my_animation_out;
+    -webkit-animation:0.5s my_animation_out;
+    -moz-animation:0.5s my_animation_out;
+    -o-animation:0.5s my_animation_out;
+    animation:0.5s my_animation_out;
 }
 
 @keyframes my_animation {
-  from { opacity:1; }
-  to { opacity:0; }
+    from { opacity:1; }
+    to { opacity:0; }
 }
 
 @-webkit-keyframes my_animation {
-  from { opacity:1; }
-  to { opacity:0; }
+    from { opacity:1; }
+    to { opacity:0; }
 }
 
 @-moz-keyframes my_animation {
-  from { opacity:1; }
-  to { opacity:0; }
+    from { opacity:1; }
+    to { opacity:0; }
 }
 
 @-o-keyframes my_animation {
-  from { opacity:1; }
-  to { opacity:0; }
+    from { opacity:1; }
+    to { opacity:0; }
 }
 
 @keyframes my_animation_out {
-  from { opacity:0; }
-  to { opacity:1; }
+    from { opacity:0; }
+    to { opacity:1; }
 }
 
 @-webkit-keyframes my_animation_out {
-  from { opacity:0; }
-  to { opacity:1; }
+    from { opacity:0; }
+    to { opacity:1; }
 }
 
 @-moz-keyframes my_animation_out {
-  from { opacity:0; }
-  to { opacity:1; }
+    from { opacity:0; }
+    to { opacity:1; }
 }
 
 @-o-keyframes my_animation_out {
-  from { opacity:0; }
-  to { opacity:1; }
+    from { opacity:0; }
+    to { opacity:1; }
+}
+
+/* Color stuff */
+input.input-color, textarea.input-color {
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 5px 10px;
+    box-shadow: 0 0 0;
+}
+
+input.input-color:focus, textarea.input-color:focus {
+    box-shadow: inset 0 0 2px;
+}
+
+.input-group-color {
+    border-radius: 5px 0 0 5px;
+    box-shadow: 0 0 0;
+}
+
+input[type=range].input-color::-webkit-slide-thumb {
+    border: 1px solid;
+    background: none;
+}
+
+input[type=range].input-color:focus::-webkit-slider-thumb {
+    border: 1px solid;
+}
+
+input[type=range].input-color::-webkit-slider-runnable-track {
+    border: 1px solid;
 }

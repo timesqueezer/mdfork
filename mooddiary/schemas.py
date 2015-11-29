@@ -27,4 +27,4 @@ class EntrySchema(IdMixin):
 
 class UserSchema(IdDateMixin):
     class Meta:
-        additional = ['email', 'first_name', 'last_name', 'language', 'is_admin']
+        additional = ['email', 'first_name', 'last_name', 'language', 'is_admin', 'use_colors']

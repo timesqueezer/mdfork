@@ -15,17 +15,22 @@ angular.module('mooddiary.diary', [
         controller: 'DiaryCtrl',
         resolve: {
             fieldsResolved: ['Me', function(Me) {
-                return Me.fields.$refresh().$asPromise().then(function(fields) {
-                    return _.map(fields, function(field) {
-                        field.colorStyle = {'background-color': field.color, 'border-color': field.color};
-                        var bigint = parseInt(field.color.slice(1), 16),
-                            r = (bigint >> 16) & 255,
-                            g = (bigint >> 8) & 255,
-                            b = bigint & 255;
-                        field.colorStyleRGBA = {'background-color': 'rgba('+r+','+g+','+b+', 0.1)'};
-
-                        return field;
-                    });
+                return Me.fields.$resolve().$asPromise().then(function(fields) {
+                    if (Me.use_colors) {
+                        return _.map(fields, function(field) {
+                            field.colorStyle = {'background-color': '#'+field.color, 'border-color': '#'+field.color};
+                            field.colorStyleBorder = {'border-color': '#'+field.color, 'color': '#'+field.color};
+                            var bigint = parseInt(field.color, 16),
+                                r = (bigint >> 16) & 255,
+                                g = (bigint >> 8) & 255,
+                                b = bigint & 255;
+                            field.colorStyleRGBA = {'background-color': 'rgba('+r+','+g+','+b+', 0.2)'};
+                            field.colorStyleInput = {'background-color': 'rgba('+r+','+g+','+b+', 0.9)', 'padding': '5px', 'border-radius': '5px', 'color': '#FFF'};
+                            return field;
+                        });
+                    } else {
+                        return fields;
+                    }
                 });
             }]
         }
@@ -40,7 +45,7 @@ angular.module('mooddiary.diary', [
                     if (Me.entries.length > 0) {
                         return $q.when(true);
                     } else {
-                        return Me.entries.$resolve({'page': 1, 'per_page': 2}).$asPromise();
+                        return Me.entries.$resolve({'page': 1, 'per_page': 2, sort_by: 'date', order: 'desc'}).$asPromise();
                     }
                 }]
             }
@@ -55,7 +60,7 @@ angular.module('mooddiary.diary', [
                     if (Me.entries.length > 0) {
                         return $q.when(true);
                     } else {
-                        return Me.entries.$resolve({'page': 1, 'per_page': 12}).$asPromise();
+                        return Me.entries.$resolve({'page': 1, 'per_page': 12, sort_by: 'date', order: 'desc'}).$asPromise();
                     }
                 }]
             }
@@ -101,6 +106,8 @@ angular.module('mooddiary.diary', [
         $scope.newEntry.$save().$then(function(created_entry) {
             $scope.entrySaving = false;
             $scope.entryAdding = false;
+
+            created_entry.answersSorted = {};
             var promises = [];
             angular.forEach($scope.fields, function(field) {
                 var answer = created_entry.answers.$build();
@@ -114,7 +121,9 @@ angular.module('mooddiary.diary', [
                     answer.content = $scope.newEntryAnswers[field.id].toString();
                 } else
                     answer.content = $scope.newEntryAnswers[field.id];
-                promises.push(answer.$save().$asPromise());
+                promises.push(answer.$save().$asPromise().then(function(answer) {
+                    created_entry.answersSorted[field.id] = answer;
+                }));
             });
             $q.all(promises).then(function() {
                 $scope.newEntry = Me.entries.$build();

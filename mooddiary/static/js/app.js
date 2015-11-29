@@ -72,7 +72,7 @@ angular.module('mooddiary', [
     $httpProvider.interceptors.push('authInterceptor');
 }])
 
-.run(['AuthService', '$rootScope', 'locale', function(AuthService, $rootScope, locale) {
+.run(['AuthService', '$rootScope', 'locale', '$anchorScroll', function(AuthService, $rootScope, locale, $anchorScroll) {
     AuthService.checkAndSetLogin().then(function() {
         locale.setLocale($rootScope.me.language);
     }, function() {
@@ -80,6 +80,10 @@ angular.module('mooddiary', [
     });
 
     moment().utc();
+
+    $rootScope.$on('$viewContentLoaded', function() {
+        $anchorScroll();
+    });
 
     $rootScope.isMobile = false; //initiate as false
     // device detection
@@ -213,8 +217,10 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
             $alert({content: locale.getString('common.password_differ')});
             return;
         }
+        var colorsChanged = $rootScope.me.$dirty().indexOf('use_colors') != -1;
         $rootScope.me.$save($rootScope.me.$dirty()).$then(function() {
             $alert({content: locale.getString('common.changes_saved')});
+            $scope.showReloadAlert = colorsChanged;
         });
     };
 

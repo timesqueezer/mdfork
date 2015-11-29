@@ -1,9 +1,6 @@
 {% raw %}
 
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Tagebuch</h4>
-    </div>
     <div class="panel-body">
         <div class="row">
             <div class="col-xs-10">
@@ -14,8 +11,8 @@
                 </ul>
             </div>
             <div class="col-xs-2">
-                <a class="btn btn btn-primary pull-right hidden-xs" style="margin-top: 1em;" ng-click="showEntryAddContainer()" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i> <span i18n="diary.add_entry"></span></a>
-                <a class="btn btn btn-primary pull-right visible-xs" style="margin-top: 1em; padding: 10px 12px;" ng-click="showEntryAddContainer()" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i></a>
+                <a class="btn btn btn-primary pull-right hidden-xs" ng-click="showEntryAddContainer()" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i> <span i18n="diary.add_entry"></span></a>
+                <a class="btn btn btn-primary pull-right visible-xs" style="padding: 10px 12px;" ng-click="showEntryAddContainer()" ng-hide="entryAdding || entryAddedToday"><i class="fa fa-file-text-o"></i></a>
             </div>
         </div>
     </div>
@@ -33,13 +30,13 @@
         <div class="row" ng-repeat="row in (fields.length/2 | array)">
             <div class="col-md-6" ng-repeat="field in fields.slice(2*$index, 2*$index + 2)">
                 <div class="form-group" ng-switch="field.type">
-                    <label>{{ field.name }}</label>
-                    <textarea ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]"></textarea>
+                    <label ng-style="field.colorStyleInput">{{ field.name }}</label>
+                    <textarea ng-class="{'input-color': me.use_colors}" ng-style="field.colorStyleBorder" ng-switch-when="1" class="form-control" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]"></textarea>
                     <div class="input-group" ng-switch-when="2">
-                        <div class="input-group-addon">{{ newEntryAnswers[field.id] }}</div>
-                        <input class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]" ng-init="newEntryAnswers[field.id] = 0">
+                        <div class="input-group-addon" ng-class="{'input-group-color': me.use_colors}" ng-style="field.colorStyleBorder">{{ newEntryAnswers[field.id] }}</div>
+                        <input ng-class="{'input-color': me.use_colors}" ng-style="field.colorStyleBorder" class="form-control" type="range" min="0" max="10" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]" ng-init="newEntryAnswers[field.id] = 0">
                     </div>
-                    <input ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]">
+                    <input ng-class="{'input-color': me.use_colors}" ng-style="field.colorStyleBorder" ng-switch-when="3" class="form-control" type="number" min="0" placeholder="{{ field.name }}" ng-model="newEntryAnswers[field.id]">
                 </div>
             </div>
         </div>

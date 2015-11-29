@@ -28,10 +28,10 @@
                 <div class="row row-border-bottom" ng-repeat="row in (activeFieldsList.length/2 | array)">
                     <div class="col-md-6" ng-repeat="field in activeFieldsList.slice(2*$index, 2*$index + 2)">
                         <h5>{{ field.name }}</h5>
-                        <div style="font-size: 16pt">
+                        <div style="font-size: 16pt" ng-if="entry.answersSorted[field.id].content">
                             <p ng-show="field.type == 1">{{ entry.answersSorted[field.id].content }}</p>
                             <div ng-show="field.type == 2">
-                                <div class="progress pull-right" style="width:65%;margin-top:1em;">
+                                <div class="progress pull-right" style="width:75%;margin-top:1em;">
                                     <div class="progress-bar" ng-style="getProgressBarStyle(entry, field)"></div>
                                 </div>
                                 <div class="number-square" ng-style="field.colorStyle">{{ entry.answersSorted[field.id].content }}</div>

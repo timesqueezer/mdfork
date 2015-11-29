@@ -4,7 +4,7 @@
         <thead>
             <tr>
                 <th>Date</th>
-                <th ng-repeat="field in fields" style="color: #fefefe" ng-style="field.colorStyle">{{ field.name }}</th>
+                <th ng-repeat="field in fields" ng-class="{'text-white': me.use_colors}" ng-style="field.colorStyle">{{ field.name }}</th>
             </tr>
         </thead>
         <tbody infinite-scroll="loadMore()" infinite-scroll-immediate-check="true" infinite-scroll-distance="1" infinite-scroll-disabled="stopScroll">

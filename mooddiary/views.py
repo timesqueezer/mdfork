@@ -1,5 +1,6 @@
-import os
-from flask import flash, request, render_template, Blueprint, abort, send_file
+from flask import render_template, Blueprint, abort, send_file
+from flask_jwt import verify_jwt
+from flask.ext.jwt import current_user
 
 
 main = Blueprint('main', __name__, template_folder='templates', static_folder='static/gen', static_url_path='/static')

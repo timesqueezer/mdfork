@@ -301,6 +301,7 @@ class UserMe(Resource):
             last_name = fields.String(validate=Length(min=2, max=40))
             password = fields.String(validate=Length(min=7))
             language = fields.String(validate=Length(min=5, max=5))
+            use_colors = fields.Boolean()
 
         schema = UserInputSchema()
         result, errors = schema.load(request.json)
@@ -319,6 +320,9 @@ class UserMe(Resource):
             user.language = result['language']
         if result.get('password'):
             user.set_password(result['password'])
+        if 'use_colors' in result:
+            print(result['use_colors'])
+            user.use_colors = result['use_colors']
 
         db.session.commit()
 

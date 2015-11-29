@@ -46,5 +46,10 @@
     "custom_color": "Eigene Farbe",
     "selected_color": "Ausgewählte Farbe",
     "change_color": "Farbe ändern",
-    "default_error": "Da lief wohl etwas schief; überprüfe bitte deine Eingaben"
+    "default_error": "Da lief wohl etwas schief; überprüfe bitte deine Eingaben",
+    "colors": "Farben",
+    "yes": "Ja",
+    "no": "Nein",
+    "reload_alert": "Bitte lade die Seite neu, um die Änderungen an den Farbeinstellungen zu übernehmen",
+    "reload": "Neu laden"
 }

@@ -46,5 +46,10 @@
     "custom_color": "Custom Color",
     "selected_color": "Selected Color",
     "change_color": "Change Color",
-    "default_error": "Something went wrong, please check your input"
+    "default_error": "Something went wrong, please check your input",
+    "colors": "Colors",
+    "yes": "Yes",
+    "no": "No",
+    "reload_alert": "Please reload the page to apply the changes to your color settings",
+    "reload": "Reload"
 }

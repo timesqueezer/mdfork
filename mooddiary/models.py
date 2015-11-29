@@ -76,6 +76,7 @@ class User(db.Model):
     last_name = db.Column(db.String(40))
 
     language = db.Column(db.String(5), default='de-DE', nullable=False)
+    use_colors = db.Column(db.Boolean, default=True, nullable=False)
 
     #facebook_id = db.Column(db.String(50))
     #facebook_token = db.Column(db.String(300))

@@ -19,6 +19,17 @@
                     <label i18n="common.user_lastname"></label>
                     <input class="form-control" name="last_name" type="text" i18n-attr="{placeholder: 'common.user_lastname'}" ng-model="me.last_name">
                 </div>
+                <legend i18n="common.colors"></legend>
+                <div class="form-group">
+                    <div class="btn-group" ng-model="me.use_colors" bs-radio-group>
+                        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="true"><span i18n="common.yes"></span></label>
+                        <label class="btn btn-default"><input type="radio" class="btn btn-default" value="false"><span i18n="common.no"></span></label>
+                    </div>
+                </div>
+                <div ng-show="showReloadAlert" class="info-text">
+                    <p i18n="common.reload_alert"></p>
+                    <a href="/" class="btn btn-danger" i18n="common.reload"></a>
+                </div>
             </div>
             <div class="col-md-6">
                 <legend i18n="common.password"></legend>
