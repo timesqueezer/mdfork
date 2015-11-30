@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, timezone
 import requests
 from flask import Blueprint, current_app, request, json, abort
 from flask.ext.restful import Api, Resource
@@ -61,7 +61,7 @@ class UserMeEntryList(Resource):
     @jwt_required()
     def post(self):
         class EntryInputSchema(Schema):
-            date = fields.DateTime(required=True)
+            date = fields.Date(required=True)
 
         schema = EntryInputSchema()
 

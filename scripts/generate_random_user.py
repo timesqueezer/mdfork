@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import random
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 from mooddiary import create_app
 from mooddiary.core import db
 from mooddiary.models import *
@@ -58,7 +58,7 @@ with app.app_context():
     db.session.commit()
 
     for i in range(150, 0, -1):
-        new_entry = Entry(date=datetime.utcnow() - timedelta(days=i), user_id=demo_account.id)
+        new_entry = Entry(date=date.today() - timedelta(days=i), user_id=demo_account.id)
         db.session.add(new_entry)
         for field in EntryField.query:
             if field.type == EntryFieldType.STRING.value:
