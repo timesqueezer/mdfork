@@ -321,7 +321,6 @@ class UserMe(Resource):
         if result.get('password'):
             user.set_password(result['password'])
         if 'use_colors' in result:
-            print(result['use_colors'])
             user.use_colors = result['use_colors']
 
         db.session.commit()

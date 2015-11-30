@@ -206,7 +206,7 @@ angular.module('mooddiary.diary', [
         } else if ($scope.timeLimit == '1.m') {
             $scope.chartOptions.pointDotRadius = 2;
         } else if ($scope.timeLimit == '2.m') {
-            $scope.chartOptions.pointDotRadius = $rootScope.isMobile ? 0: 1;
+            $scope.chartOptions.pointDotRadius = $rootScope.isMobile ? 0: 2;
         } else if ($scope.timeLimit == '4.m') {
             $scope.chartOptions.pointDotRadius = 0;
         } else {
@@ -313,7 +313,7 @@ angular.module('mooddiary.diary', [
             $scope.stopScroll = true;
             var lastLength = Me.entries.length;
             Me.entries.$fetch($scope.args).$then(function(entries) {
-                $scope.stopScroll = entries.length == 0 ? true : false;
+                $scope.stopScroll = entries.length == 0;
                 if ($rootScope.isMobile) {
                     angular.forEach(entries.slice(lastLength), function(entry) {
                         $scope.entryHidden[entry.id] = true;
@@ -399,6 +399,7 @@ angular.module('mooddiary.diary', [
     $scope.edittingEntry = {};
     $scope.entryHidden = {};
     $scope.reloadCount = 0;
+    $scope.stopScroll = firstPage.length == 0;
 
     $scope.activeFieldsList = $scope.fields;
 }])
