@@ -148,7 +148,9 @@ angular.module('mooddiary.diary', [
     $scope.$state = $state;
 }])
 
-.controller('DiaryChartCtrl', ['$scope', '$rootScope', '$filter', 'Me', 'entriesResolved', 'locale', function($scope, $rootScope, $filter, Me, entriesResolved, locale) {
+.controller('DiaryChartCtrl',
+['$scope', '$rootScope', '$filter', 'Me', 'entriesResolved', 'locale', '$timeout',
+function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout) {
     Chart.defaults.global.scaleBeginAtZero = true;
 
     $scope.chartOptions = {
@@ -280,9 +282,18 @@ angular.module('mooddiary.diary', [
     $scope.$watch('timeLimit', function(old_values, new_values) {
         if (old_values == new_values)
             return;
+        $timeout(function() {
+            $scope.entriesLoading = !$scope.dontSetLoading;
+        }, 400);
+        $scope.dontSetLoading = false;
         Me.entries.$refresh({timespan: $scope.timeLimit, sort_by: 'date', order: 'asc'}).$then(function(data) {
+            $scope.dontSetLoading = true;
             reloadCharts();
-        }, $scope.errorCallback);
+            $scope.entriesLoading = false;
+        }, function() {
+            $scope.errorCallback();
+            $scope.entriesLoading = false;
+        });
     });
 
     $scope.$on('reloadCharts', reloadCharts);
