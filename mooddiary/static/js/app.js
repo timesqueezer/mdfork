@@ -72,7 +72,7 @@ angular.module('mooddiary', [
     $httpProvider.interceptors.push('authInterceptor');
 }])
 
-.run(['AuthService', '$rootScope', 'locale', '$anchorScroll', function(AuthService, $rootScope, locale, $anchorScroll) {
+.run(['AuthService', '$rootScope', 'locale', '$anchorScroll', '$state', '$window', function(AuthService, $rootScope, locale, $anchorScroll, $state, $window) {
     AuthService.checkAndSetLogin().then(function() {
         locale.setLocale($rootScope.me.language);
     }, function() {
@@ -83,6 +83,22 @@ angular.module('mooddiary', [
 
     $rootScope.$on('$viewContentLoaded', function() {
         $anchorScroll();
+    });
+
+    $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+        if (error && error.status == 404) {
+            $state.go('about');
+        } else if (error && error.status == 401) {
+            $state.go('about');
+        }
+
+        console.log(error); //Do not remove this!
+    });
+
+    $rootScope.$on('logout', function() {
+        $state.go('about').then(function() {
+            $window.location.reload(true);
+        });
     });
 
     $rootScope.isMobile = false; //initiate as false
@@ -328,7 +344,6 @@ function($scope, AuthService, $http, $state, locale) {
     $scope.logout = function() {
         AuthService.logout();
         locale.setLocale('de-DE');
-        $state.go('about');
     };
 
     $scope.$state = $state;

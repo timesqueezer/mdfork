@@ -2,7 +2,7 @@ angular.module('mooddiary.utils', [
     'restmod'
 ])
 
-.service('AuthService', ['$window', '$http', '$q', '$rootScope', 'Me', function($window, $http, $q, $rootScope, Me) {
+.service('AuthService', ['$window', '$http', '$q', '$rootScope', 'Me', '$state', function($window, $http, $q, $rootScope, Me, $state) {
     return {
         login: function(email, pw) {
             return $q(function(resolve, reject) {
@@ -10,9 +10,7 @@ angular.module('mooddiary.utils', [
                     $window.localStorage.token = data.token;
                     $window.localStorage.exp = JSON.parse(atob(data.token.split('.')[0])).exp;
                     $rootScope.loggedIn = true;
-                    $rootScope.me = Me.$fetch().$then(function() {
-                        resolve();
-                    });
+                    $rootScope.me = Me.$fetch().$then(resolve);
                 }).error(function(data, status, headers, config) {
                     reject(data);
                 });
@@ -20,11 +18,7 @@ angular.module('mooddiary.utils', [
         },
         logout: function() {
             $window.localStorage.removeItem('token');
-            $rootScope.loggedIn = false;
-            Me.$reset();
-            delete Me.entries;
-            delete Me.fields;
-            $rootScope.me = undefined;
+            $rootScope.$broadcast('logout');
         },
         checkAndSetLogin: function() {
             return $q(function(resolve, reject) {

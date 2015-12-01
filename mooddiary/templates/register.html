@@ -13,6 +13,10 @@
                 <div class="form-group">
                     <input name="password2" type="password" class="form-control" ng-model="password2Register" i18n-attr="{placeholder: 'common.password_repeat'}">
                 </div>
+                <div class="alert alert-danger alert-dismissible" role="alert" ng-show="errorMessage">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {{ errorMessage }}
+                </div>
                 <div class="info-text spaced-bottom" i18n="common.cookie_policy"></div>
                 <div class="form-group">
                     <div grecaptcha ng-model="captcha" class="spaced-bottom"></div>

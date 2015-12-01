@@ -350,7 +350,7 @@ class UserList(Resource):
         result, errors = schema.load(request.json)
 
         if errors:
-            return resp({'message': 'form error'}, status_code=400)
+            return resp({'message': 'Fehler im Formular :('}, status_code=400)
 
         # captcha stuff
         if not current_app.debug:
@@ -367,7 +367,7 @@ class UserList(Resource):
                 return resp({'message': 'Invalid captcha'})
 
         if User.query.filter_by(email=result['email']).count() >= 1:
-            return resp({'message': 'email already in use'}, status_code=400)
+            return resp({'message': 'Diese Email-Adresse wird bereits verwendet.'}, status_code=400)
 
         user = User(email=result['email'])
         user.set_password(result['password'])

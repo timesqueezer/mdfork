@@ -411,6 +411,7 @@ function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout) {
     $scope.entryHidden = {};
     $scope.reloadCount = 0;
     $scope.stopScroll = firstPage.length == 0;
+    $scope.firstPage = firstPage;
 
     $scope.activeFieldsList = $scope.fields;
 }])
