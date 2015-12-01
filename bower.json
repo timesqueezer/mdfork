@@ -28,7 +28,8 @@
     "ngInfiniteScroll": "https://github.com/timesqueezer/ngInfiniteScroll.git#master",
     "moment": "~2.10.6",
     "Chart.Scatter": "https://github.com/timesqueezer/Chart.Scatter.git#master",
-    "ngSmoothScroll": "~2.0.0"
+    "ngSmoothScroll": "~2.0.0",
+    "angular-spectrum-colorpicker": "~1.4.2"
   },
   "ignore": [
     "**/.*",

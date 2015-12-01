@@ -119,7 +119,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label i18n="common.custom_color"></label>
-                            <input disabled class="form-control" placeholder="Comming soon...">
+                            <spectrum-colorpicker ng-model="tmpColor" format="'hex'" on-change="colorFromPicker(color)" options="{showInput: false, showAlpha:false, flat: true, showButtons: false, color: '#'+newField.color}">
                         </div>
                     </div>
                     <div class="col-md-2">

@@ -15,7 +15,8 @@ angular.module('mooddiary', [
     'grecaptcha',
     'restmod',
     'infinite-scroll',
-    'smoothScroll'
+    'smoothScroll',
+    'angularSpectrumColorpicker'
 ])
 
 .controller('myAppControl', ['$scope', 'localeEvents',
@@ -240,7 +241,12 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         });
     };
 
+    $scope.colorFromPicker = function(color) {
+        $scope.setStyle($scope.getColorStyle(color.slice(1)));
+    };
+
     $scope.setStyle = function(style) {
+        $scope.tmpColor = '#'+style[1];
         $scope.selectedColorStyle = style[0];
         $scope.newField.color = style[1];
     };

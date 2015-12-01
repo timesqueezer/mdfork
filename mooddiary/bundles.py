@@ -26,6 +26,8 @@ js = Bundle(
     'bower_components/moment/moment.js',
     'bower_components/Chart.Scatter/Chart.Scatter.js',
     'angular-locale_de-de.js',
+    'bower_components/spectrum/spectrum.js',
+    'bower_components/angular-spectrum-colorpicker/dist/angular-spectrum-colorpicker.js',
 
     'js/utils.js',
     'js/diary.js',
@@ -42,6 +44,7 @@ css = Bundle(
     'bower_components/bca-flag-sprite/css/flags.css',
     'bower_components/fontawesome/css/font-awesome.min.css',
     'bower_components/flag-icon-css/css/flag-icon.css',
+    'bower_components/spectrum/spectrum.css',
 
     output='gen/styles.css',
     filters='less,cssmin'
