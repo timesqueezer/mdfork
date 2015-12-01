@@ -51,5 +51,6 @@
     "yes": "Yes",
     "no": "No",
     "reload_alert": "Please reload the page to apply the changes to your color settings",
-    "reload": "Reload"
+    "reload": "Reload",
+    "cancel": "Cancel"
 }

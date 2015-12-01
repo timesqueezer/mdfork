@@ -166,14 +166,14 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
     };
 
     var defaultColors = [
-        '#0a80ba',
-        '#F7464A', // red
-        '#39BF71', // green
-        '#FDB45C', // yellow
-        '#4D5360', // dark grey
-        '#460793',
-        '#390DFA',
-        '#cc3f1a'
+        '0a80ba',
+        'F7464A', // red
+        '39BF71', // green
+        'FDB45C', // yellow
+        '4D5360', // dark grey
+        '460793',
+        '390DFA',
+        'cc3f1a'
     ];
 
     // generic color-style to user e.g. in setStyle(style) or style[0] as 'real' style in ng-style
@@ -226,7 +226,7 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
 
     $scope.setStyle = function(style) {
         $scope.selectedColorStyle = style[0];
-        $scope.newField.color = style[1].slice(1);
+        $scope.newField.color = style[1];
     };
 
     $scope.editField = function(field) { // Or add without parameter
@@ -236,11 +236,20 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
 
         if (field) {
             $scope.newField = field;
+            $scope.edittingField = true;
             $scope.setStyle($scope.getColorStyle(field.color));
-            document.getElementById('typeSelect').setAttribute('disabled', 'disabled');
         } else {
-            document.getElementById('typeSelect').removeAttribute('disabled');
+            $scope.edittingField = false;
         }
+    };
+
+    $scope.resetForm = function() {
+        if ($scope.newField.id) {
+            $scope.newField.$restore();
+        }
+        $scope.newField = Me.fields.$build({type: 2});
+        $scope.setStyle($scope.getColorStyle(defaultColors[0]));
+        $scope.editOrAddField = false;
     };
 
     // Init-stuff
@@ -257,6 +266,7 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
     $scope.fields = fieldsResolved;
     $scope.newField = fieldsResolved.$build({type: 2});
     $scope.setStyle($scope.defaultColorStyles[0]);
+    $scope.edittingField = false;
 
 }])
 

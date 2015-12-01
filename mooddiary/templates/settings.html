@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group" ng-hide="edittingField">
                     <label i18n="common.type"></label>
                     <select class="form-control" name="type" ng-model="newField.type" id="typeSelect">
                         <option value="1" i18n="common.field_string"></option>
@@ -131,7 +131,8 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button class="btn btn-primary" type="submit" ng-click="addField()"><span i18n="common.save"></span></button>
+                <button class="btn btn-block btn-primary" type="submit" ng-click="addField()"><span i18n="common.save"></span></button>
+                <button class="btn btn-block btn-danger" type="reset" ng-click="resetForm()"><span i18n="common.cancel"></span></button>
             </div>
         </div>
     </form>
