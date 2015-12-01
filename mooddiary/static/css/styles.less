@@ -12,6 +12,17 @@
 @brand-info:            #FFA340;
 @brand-warning:         #FA7921;
 @brand-danger:          #E55934;
+@brand-dark:            #333;
+
+.btn-dark {
+  .button-variant(#eee; @brand-dark; transparent);
+  &.active {
+    .button-variant(@brand-dark; #fff; transparent);
+  }
+}
+
+#btn(dark,@brand-dark);
+
 
 @border-radius-base:        2px;
 @border-radius-large:       2px;

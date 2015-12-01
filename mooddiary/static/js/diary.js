@@ -149,8 +149,8 @@ angular.module('mooddiary.diary', [
 }])
 
 .controller('DiaryChartCtrl',
-['$scope', '$rootScope', '$filter', 'Me', 'entriesResolved', 'locale', '$timeout',
-function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout) {
+['$scope', '$rootScope', '$filter', 'Me', 'entriesResolved', 'locale', '$timeout', '$window',
+function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout, $window) {
     Chart.defaults.global.scaleBeginAtZero = true;
 
     $scope.chartOptions = {
@@ -295,6 +295,41 @@ function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout) {
             $scope.entriesLoading = false;
         });
     });
+
+    $scope.$watch('chartTheme', function(value) {
+        if (value) {
+            $scope.chartOptions.scaleFontColor = '#eee';
+            $scope.chartOptions.datasetPointStrokeColor = '#333';
+            $scope.chartOptions.scaleGridLineColor = 'rgba(255,255,255,0.05)';
+            $scope.chartOptions.backgroundColor = '#111';
+            $scope.chartPanelStyle = {'background-color': '#111'};
+        } else {
+            delete $scope.chartOptions.scaleFontColor;
+            delete $scope.chartOptions.datasetPointStrokeColor;
+            delete $scope.chartOptions.scaleGridLineColor;
+            delete $scope.chartOptions.backgroundColor;
+            $scope.chartPanelStyle = {};
+        }
+        reloadCharts();
+    });
+
+    $scope.export = function() {
+        $window.open(document.getElementById('theCanvas').toDataURL('image/png'), '_blank');
+        /*var canvasElement = document.getElementById('theCanvas');
+
+        var MIME_TYPE = "image/png";
+
+        var imgURL = canvasElement.toDataURL(MIME_TYPE);
+
+        var dlLink = document.createElement('a');
+        dlLink.download = 'export';
+        dlLink.href = imgURL;
+        dlLink.dataset.downloadurl = [MIME_TYPE, dlLink.download, dlLink.href].join(':');
+
+        document.body.appendChild(dlLink);
+        dlLink.click();
+        document.body.removeChild(dlLink);*/
+    };
 
     $scope.$on('reloadCharts', reloadCharts);
 
