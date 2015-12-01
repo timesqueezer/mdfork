@@ -384,3 +384,26 @@ class UserList(Resource):
         schema = UserSchema()
         return resp(user, schema)
 restful.add_resource(UserList, '/users')
+
+
+class UserDetail(Resource):
+    @jwt_required()
+    def delete(self, id):
+        if not current_user.is_admin:
+            abort(401)
+
+        user = User.query.get_or_404(id)
+        for entry in user.entries:
+
+            for answer in entry.answers:
+                db.session.delete(answer)
+
+            db.session.delete(entry)
+
+            for field in user.fields:
+                db.session.delete(field)
+
+        db.session.delete(user)
+        db.session.commit()
+        return "", 204
+restful.add_resource(UserDetail, '/users/<int:id>')

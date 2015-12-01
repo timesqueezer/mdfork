@@ -394,6 +394,11 @@ function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
             $scope.selectedUser = user;
         });
     };
+
+    $scope.deleteUser = function(user) {
+        $scope.selectedUser = false;
+        user.$destroy();
+    };
 }])
 
 ;

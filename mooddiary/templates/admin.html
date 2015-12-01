@@ -10,13 +10,15 @@
             <th>Name</th>
             <th>Created at</th>
             <th>Updated at</th>
+            <th class="text-danger">Delete</th>
         </tr>
-        <tr ng-repeat="user in users" ng-click="loadUser(user)" style="cursor: pointer">
+        <tr ng-repeat="user in users">
             <td>{{ user.id }}</td>
-            <td>{{ user.email }}</td>
+            <td ng-click="loadUser(user)" style="cursor: pointer">{{ user.email }}</td>
             <td>{{ user.first_name }} {{ user.last_name }}</td>
             <td>{{ user.created_at | date : 'medium' }}</td>
             <td>{{ user.updated_at | date : 'medium' }}</td>
+            <td><button class="btn btn-lg btn-link" ng-click="deleteUser(user)"><i class="fa fa-times text-danger"></i></button></td>
         </tr>
     </table>
 </div>
