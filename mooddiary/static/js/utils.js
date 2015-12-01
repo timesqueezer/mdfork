@@ -21,6 +21,9 @@ angular.module('mooddiary.utils', [
         logout: function() {
             $window.localStorage.removeItem('token');
             $rootScope.loggedIn = false;
+            Me.$reset();
+            delete Me.entries;
+            delete Me.fields;
             $rootScope.me = undefined;
         },
         checkAndSetLogin: function() {

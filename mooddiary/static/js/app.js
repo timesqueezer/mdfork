@@ -324,8 +324,8 @@ function($scope, AuthService, $http, $state, locale) {
     $scope.$state = $state;
 }])
 
-.controller('LoginCtrl', ['$scope', '$state', 'Me', '$rootScope', 'AuthService', 'locale',
-function($scope, $state, Me, $rootScope, AuthService, locale) {
+.controller('LoginCtrl', ['$scope', '$state', 'Me', '$rootScope', 'AuthService', 'locale', '$alert',
+function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
     $scope.login = function(email, password) {
         AuthService.login(email, password).then(function() {
             locale.setLocale($rootScope.me.language);
