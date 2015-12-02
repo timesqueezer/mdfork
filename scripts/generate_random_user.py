@@ -36,7 +36,7 @@ with app.app_context():
     print("Creating random data")
 
     demo_account = User(email='demo@mooddiary.org', first_name='Demo',
-                        last_name='Demo', is_admin=True)
+                        last_name='Demo', is_admin=False)
     demo_account.set_password('demo123')
     db.session.add(demo_account)
     db.session.commit()
