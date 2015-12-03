@@ -1,4 +1,14 @@
 CACHE MANIFEST
+
+# VERSION: {{ version }}
+
+FALLBACK:
+favicon.ico static/favicon.ico
+
+NETWORK:
+*
+
+CACHE:
 index.html
 static/favicon.ico
 static/img/icon.png
@@ -28,9 +38,8 @@ static/fonts/josefin-sans-600-latin.woff2
 static/fonts/josefin-sans-700-latin-ext.woff2
 static/fonts/josefin-sans-700-latin.woff2
 
+https://fonts.googleapis.com/css?family=Noto+Sans
+
 {% for template in template_list %}
 templates/{{ template }}
 {% endfor %}
-
-FALLBACK:
-favicon.ico static/favicon.ico

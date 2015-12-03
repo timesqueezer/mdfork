@@ -67,7 +67,7 @@ angular.module('mooddiary.utils', [
 }])
 
 .factory('User', ['restmod', function(restmod) {
-    return restmod.model('users').mix('DirtyModel', {
+    return restmod.model('users').mix('DirtyModel', 'CachedModel', {
         entries: { hasMany: 'Entry' },
         fields: { hasMany: 'Field' }
     });
@@ -78,7 +78,7 @@ angular.module('mooddiary.utils', [
 }])
 
 .factory('Entry', ['restmod', function(restmod) {
-    return restmod.model('entries').mix('DirtyModel', {
+    return restmod.model('entries').mix('DirtyModel', 'CachedModel', {
         user: { belongsTo: 'User' },
         answers: { hasMany: 'Answer' },
         $hooks: {
@@ -94,17 +94,87 @@ angular.module('mooddiary.utils', [
 }])
 
 .factory('Field', ['restmod', function(restmod) {
-    return restmod.model('fields').mix('DirtyModel', {
+    return restmod.model('fields').mix('DirtyModel', 'CachedModel', {
         user: { belongsTo : 'User' },
         answers: { hasMany: 'Answer' }
     });
 }])
 
 .factory('Answer', ['restmod', function(restmod) {
-    return restmod.model('answers').mix('DirtyModel', {
+    return restmod.model('answers').mix('DirtyModel', 'CachedModel', {
         entry: { belongsTo: 'Entry' },
         field: { belongsTo: 'Field' }
     });
+}])
+
+.factory('OfflineHelper', ['$http', '$interval', '$q', function($http, $interval, $q) {
+    var instance = {online: true};
+
+    instance.callbacks = [];
+    instance.registerCallback = function(_fun) {
+        instance.callbacks.push(_fun);
+    };
+
+    var checkOnlineStatus = function() {
+        return $q(function(resolve, reject) {
+            $http.get('/empty')
+                .success(function() {
+                    if (!instance.online) {
+                        angular.forEach(instance.callbacks, function(_fun) {
+                            _fun.call(this, 'online');
+                        });
+                        instance.online = true;
+                        resolve();
+                    }
+                })
+                .error(function() {
+                    if (instance.online) {
+                        angular.forEach(instance.callbacks, function(_fun) {
+                            _fun.call(this, 'offline');
+                        });
+                        instance.online = false;
+                        reject();
+                    }
+                }
+            );
+        });
+    };
+
+    $interval(function() {
+        checkOnlineStatus();
+    }, 5000);
+
+    return instance;
+}])
+
+.factory('OfflineStorage', ['$window', function($window) {
+    var instance = {};
+    instance.storages = {};
+
+    var storage = function(_id) {
+        this.prefix = _id;
+        this.get = function(_name) {
+            return $window.localStorage.getItem(this.prefix + _name);
+        };
+
+        this.put = function(_name, _value) {
+            return $window.localStorage.setItem(this.prefix + _name, _value);
+        };
+
+        this.remove = function(_name) {
+            $window.localStorage.removeItem(this.prefix + _name);
+        };
+    };
+
+    instance.create = function(_id) {
+        this.storages[_id] = new storage(_id);
+        return this.storages[_id];
+    };
+
+    instance.get = function(_id) {
+        return this.storages[_id];
+    };
+    return instance;
 }])
 
 ;

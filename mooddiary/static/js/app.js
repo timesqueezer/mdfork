@@ -387,13 +387,16 @@ function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
 }])
 
 .controller('AboutCtrl', function() {
-    var notification = new Notification("Hi there!");
 })
 
-.controller('DebugCtrl', ['$scope', function($scope) {
+.controller('DebugCtrl', ['$scope', '$window', 'OfflineHelper', function($scope, $window, OfflineHelper) {
     $scope.lol = function() {
-        $scope.online = navigator.onLine;
+        OfflineHelper.registerCallback(function(status) {
+            console.log(status);
+            $scope.online = status;
+        });
     };
+
 }])
 
 .controller('AdminCtrl', ['$scope', '$state', 'User', 'Me', '$q', function($scope, $state, User, Me, $q) {

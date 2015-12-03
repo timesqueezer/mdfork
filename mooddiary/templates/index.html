@@ -1,5 +1,5 @@
 <!doctype html>
-<html manifest="{{ url_for('main.send_offline_manifest') }}" ng-app="mooddiary" ng-cloak>
+<html {% if 1 == 2 %}manifest="{{ url_for('main.send_offline_manifest') }}"{% endif %} ng-app="mooddiary" ng-cloak>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -48,7 +48,7 @@
                             <span class="icon-bar"></span>
                         </button>
                         <a class="navbar-brand" ui-sref="about">
-                            MoodDiary {% endraw %}{% if user_use_colors %}WOHOHOHOHLLLLLLLLL{% endif %}{% raw %}
+                            MoodDiary
                         </a>
                     </div>
                     <div class="collapse navbar-collapse" id="navbar-collapse-1">

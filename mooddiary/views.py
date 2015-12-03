@@ -42,6 +42,11 @@ def send_offline_manifest():
     return resp
 
 
+@main.route('/empty')
+def empty_response():
+    return '', 204
+
+
 @main.route('/')
 @main.route('/<path:path>')
 def index(path=None):

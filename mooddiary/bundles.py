@@ -29,6 +29,8 @@ js = Bundle(
     'bower_components/spectrum/spectrum.js',
     'bower_components/angular-spectrum-colorpicker/dist/angular-spectrum-colorpicker.js',
 
+    'js/cached.js',
+
     'js/utils.js',
     'js/diary.js',
     'js/app.js',
