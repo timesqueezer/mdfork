@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="mooddiary" ng-cloak>
+<html manifest="{{ url_for('main.send_offline_manifest') }}" ng-app="mooddiary" ng-cloak>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +12,7 @@
         {% endassets %}
 
         {% assets "js" %}
-            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
         {% endassets %}
 
         <link rel="shortcut icon" href="{{ url_for('main.send_favicon') }}">
