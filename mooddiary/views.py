@@ -30,6 +30,11 @@ def send_favicon():
     return send_file('static/favicon.ico')
 
 
+@main.route('/manifest.json')
+def send_manifest():
+    return send_file('static/manifest.json')
+
+
 @main.route('/')
 @main.route('/<path:path>')
 def index(path=None):

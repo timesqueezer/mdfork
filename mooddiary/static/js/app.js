@@ -74,6 +74,7 @@ angular.module('mooddiary', [
 }])
 
 .run(['AuthService', '$rootScope', 'locale', '$anchorScroll', '$state', '$window', function(AuthService, $rootScope, locale, $anchorScroll, $state, $window) {
+    Notification.requestPermission();
     AuthService.checkAndSetLogin().then(function() {
         locale.setLocale($rootScope.me.language);
     }, function() {
@@ -162,6 +163,12 @@ angular.module('mooddiary', [
         url: '/admin',
         templateUrl: '/templates/admin',
         controller: 'AdminCtrl'
+    })
+
+    .state('debug', {
+        url: '/debug',
+        templateUrl: '/templates/debug',
+        controller: 'DebugCtrl'
     })
 
     ;
@@ -379,7 +386,15 @@ function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
     };
 }])
 
-.controller('AboutCtrl', function() {})
+.controller('AboutCtrl', function() {
+    var notification = new Notification("Hi there!");
+})
+
+.controller('DebugCtrl', ['$scope', function($scope) {
+    $scope.lol = function() {
+        $scope.online = navigator.onLine;
+    };
+}])
 
 .controller('AdminCtrl', ['$scope', '$state', 'User', 'Me', '$q', function($scope, $state, User, Me, $q) {
     if (!Me.is_admin) {
