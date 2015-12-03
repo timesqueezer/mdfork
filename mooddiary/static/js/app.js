@@ -22,10 +22,10 @@ angular.module('mooddiary', [
 .controller('myAppControl', ['$scope', 'localeEvents',
     function ($scope, localeEvents) {
         $scope.$on(localeEvents.resourceUpdates, function () {
-            console.log('locale resource update');
+            console.info('locale resource update');
         });
         $scope.$on(localeEvents.localeChanges, function (event, data) {
-            console.log('new locale chosen: ' + data);
+            console.info('new locale chosen: ' + data);
         });
     }
 ])

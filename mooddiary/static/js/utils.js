@@ -158,6 +158,7 @@ angular.module('mooddiary.utils', [
         };
 
         this.put = function(_name, _value) {
+            console.log('PUT', this.prefix, _name, _value);
             return $window.localStorage.setItem(this.prefix + _name, _value);
         };
 
