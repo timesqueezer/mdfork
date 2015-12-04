@@ -84,6 +84,20 @@
                 </button>
             </div>
         </div>
+{% endraw %}
+{%if config.get('DEBUG') %}
+<div class="panel panel-danger panel-body" style="position:fixed;top:91px;left:10px;width:360px;">
+{% raw %}
+    <a class="btn btn-dark" ui-sref="debug" ng-class="{'active': $state.includes('debug')}">Debug</a>
+    <hr>
+    <pre>
+online: {{ online }}
+status: {{ status }}
+    </pre>
+</div>
+
+{% endraw %}
+{% endif %}
+
     </body>
 </html>
-{% endraw %}

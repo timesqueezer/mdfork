@@ -6,7 +6,7 @@
  * Enables localStorage-based caching of models
  */
 
-angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', function(restmod, OfflineStorage) {
+angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', 'OfflineHelper', function(restmod, OfflineStorage, OH) {
 
     var getCache = function(_name) {
         if (angular.isUndefined(_name)) {
@@ -39,32 +39,42 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', f
                 cache.remove(this.$pk);
             })
 
-            .define('Resource.$fetch', function() {
-                var _id = this.$pk ? this.$pk : this.$url();
+            .define('$fetch', function() {
+                console.log('$fetch');
                 var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
-                    var instance = cache.get(_id);
-                    if (instance) {
-                        return instance;
-                    } else {
-                        this.$super.apply(this, arguments);
-                        cache.put(_id, this);
-                        return this;
+                    var _id = this.$pk || this.id;
+                    if (_id) {
+                        var cached = cache.get(_id);
+                        if (cached) {
+                            return this.$unwrap(cached);
+                        }
                     }
+                    return this.$super.apply(this, arguments).$asPromise().then(function(instance) {
+                        cache.put(instance.id, instance.$wrap());
+                    });
                 });
             })
 
-            .define('Resource.$find', function(_pk) {
-                console.log('$find');
+            .define('Collection.$fetch', function() {
+                console.log('Collection.$fetch');
                 var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
-                    var instance = cache.get(_pk);
-                    if (instance) {
-                        return instance;
+                    console.debug('online:', OH.online, 'resolved:', this.$dmStatus);
+                    if (!OH.online) {
+                        var cachedList = cache.getAll();
+                        if (cachedList.length) {
+                            var lastResolved = this.$resolved;
+                            this.$decode(cachedList);
+                            this.$resolved = lastResolved;
+                        }
                     } else {
-                        instance = this.$super.apply(this, arguments);
-                        cache.put(_pk, instance);
-                        return instance;
+                        this.$super.apply(this, arguments).$asPromise().then(function(data) {
+                            console.debug('resolved:', data.$resolved);
+                            angular.forEach(data, function(instance) {
+                                cache.put(instance.id, instance.$wrap());
+                            });
+                        });
                     }
                 });
             })

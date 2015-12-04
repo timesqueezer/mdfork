@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from flask import flash, request, render_template, Blueprint, current_app, json
+from flask import Blueprint
 from mooddiary.core import jwt
 from mooddiary.models import User
 
@@ -13,6 +11,11 @@ def authenticate(username, password):
     user = User.query.filter_by(email=username.lower()).first()
     if user and user.check_password(password):
         return user
+
+
+@jwt.payload_handler
+def make_payload(identity):
+    return {'user_id': identity.id}
 
 
 @jwt.user_handler

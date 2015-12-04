@@ -13,7 +13,7 @@
     "angular-localization": "~1.2.1",
     "angular-recaptcha": "~2.2.5",
     "angular-resource": "latest",
-    "angular-restmod": "~1.1.9",
+    "angular-restmod": "~1.1.11",
     "angular-sanitize": "~1.4.4",
     "angular-strap": "2.2.4",
     "angular-ui-router": "latest",

@@ -1,6 +1,11 @@
 {% raw %}
 <div class="panel panel-default panel-body">
     <p>online: {{ online }}</p>
-    <button class="btn btn-default" ng-click="lol()">LOL</button>
+    <button class="btn btn-default" ng-click="lol()">Activate OfflineHelper Callback</button>
+    <button class="btn btn-dark" ng-click="fetchSingle()">Fetch Single</button>
+    <button class="btn btn-dark" ng-click="refreshCollection()">Refresh collection</button>
+    <button class="btn btn-dark" ng-click="fetchSingle()" disabled>Fetch Single</button>
+    <hr>
+    <pre>{{ $root.me.fields.$resolved }}</pre>
 </div>
 {% endraw %}

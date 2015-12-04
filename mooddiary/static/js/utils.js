@@ -2,15 +2,16 @@ angular.module('mooddiary.utils', [
     'restmod'
 ])
 
-.service('AuthService', ['$window', '$http', '$q', '$rootScope', 'Me', '$state', function($window, $http, $q, $rootScope, Me, $state) {
+.service('AuthService', ['$window', '$http', '$q', 'User', '$rootScope', '$state', function($window, $http, $q, User, $rootScope, $state) {
     return {
         login: function(email, pw) {
             return $q(function(resolve, reject) {
                 $http.post('/auth', {username: email, password: pw}).success(function(data, status, headers, config) {
+                    var myUserId = $window.localStorage.myUserId = JSON.parse(atob(data.token.split('.')[1])).user_id;
                     $window.localStorage.token = data.token;
                     $window.localStorage.exp = JSON.parse(atob(data.token.split('.')[0])).exp;
                     $rootScope.loggedIn = true;
-                    $rootScope.me = Me.$fetch().$then(resolve);
+                    $rootScope.me = User.$find(myUserId).$then(resolve);
                 }).error(function(data, status, headers, config) {
                     reject(data);
                 });
@@ -22,6 +23,7 @@ angular.module('mooddiary.utils', [
         },
         checkAndSetLogin: function() {
             return $q(function(resolve, reject) {
+                var myUserId = $window.localStorage.getItem('myUserId');
                 var token = $window.localStorage.getItem('token');
                 var exp = $window.localStorage.getItem('exp');
                 if (token) {
@@ -30,7 +32,7 @@ angular.module('mooddiary.utils', [
                     then.setUTCSeconds(exp);
                     if (now < then) {
                         $rootScope.loggedIn = true;
-                        $rootScope.me = Me.$fetch().$then(function() {
+                        $rootScope.me = User.$find(myUserId).$then(function() {
                             resolve();
                         });
                     } else { reject() }
@@ -66,15 +68,15 @@ angular.module('mooddiary.utils', [
     };
 }])
 
+.factory('Me', ['$rootScope', function($rootScope) {
+    return $rootScope.me;
+}])
+
 .factory('User', ['restmod', function(restmod) {
     return restmod.model('users').mix('DirtyModel', 'CachedModel', {
         entries: { hasMany: 'Entry' },
         fields: { hasMany: 'Field' }
     });
-}])
-
-.factory('Me', ['restmod', 'User', function(restmod, User) {
-    return User.single('me');
 }])
 
 .factory('Entry', ['restmod', function(restmod) {
@@ -120,19 +122,19 @@ angular.module('mooddiary.utils', [
             $http.get('/empty')
                 .success(function() {
                     if (!instance.online) {
+                        instance.online = true;
                         angular.forEach(instance.callbacks, function(_fun) {
                             _fun.call(this, 'online');
                         });
-                        instance.online = true;
                         resolve();
                     }
                 })
                 .error(function() {
                     if (instance.online) {
+                        instance.online = false;
                         angular.forEach(instance.callbacks, function(_fun) {
                             _fun.call(this, 'offline');
                         });
-                        instance.online = false;
                         reject();
                     }
                 }
@@ -142,7 +144,7 @@ angular.module('mooddiary.utils', [
 
     $interval(function() {
         checkOnlineStatus();
-    }, 5000);
+    }, 2000);
 
     return instance;
 }])
@@ -153,17 +155,42 @@ angular.module('mooddiary.utils', [
 
     var storage = function(_id) {
         this.prefix = _id;
+
+        this.getAll = function() {
+            var values = [];
+            for (key in $window.localStorage) {
+                if (key.split('/')[0] == this.prefix) {
+                    var value = $window.localStorage.getItem(key);
+                    values.push(JSON.parse(value));
+                }
+            }
+            console.log('GETALL', this.prefix, values.length);
+            return values;
+        };
+
         this.get = function(_name) {
-            return $window.localStorage.getItem(this.prefix + _name);
+            var value = $window.localStorage.getItem(this.prefix + '/' + _name);
+            console.log('GET', this.prefix, _name, value);
+            return JSON.parse(value);/*, function (key, value) {
+                var type;
+                if (value && typeof value === 'object') {
+                    type = value.type;
+                    if (typeof type === 'string' && typeof window[type] === 'function') {
+                        return new (window[type])(value);
+                    }
+                }
+                return value;
+            });*/
         };
 
         this.put = function(_name, _value) {
-            console.log('PUT', this.prefix, _name, _value);
-            return $window.localStorage.setItem(this.prefix + _name, _value);
+            console.log('PUT', this.prefix, _name, _value, JSON.stringify(_value));
+            return $window.localStorage.setItem(this.prefix + '/' + _name, JSON.stringify(_value));
         };
 
         this.remove = function(_name) {
-            $window.localStorage.removeItem(this.prefix + _name);
+            console.log('REMOVE', _name);
+            $window.localStorage.removeItem(this.prefix + '/' + _name);
         };
     };
 

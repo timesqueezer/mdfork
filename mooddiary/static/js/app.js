@@ -19,13 +19,18 @@ angular.module('mooddiary', [
     'angularSpectrumColorpicker'
 ])
 
-.controller('myAppControl', ['$scope', 'localeEvents',
-    function ($scope, localeEvents) {
+.controller('myAppControl', ['$scope', 'localeEvents', 'OfflineHelper',
+    function ($scope, localeEvents, OH) {
         $scope.$on(localeEvents.resourceUpdates, function () {
             console.info('locale resource update');
         });
         $scope.$on(localeEvents.localeChanges, function (event, data) {
             console.info('new locale chosen: ' + data);
+        });
+        $scope.online = OH.online;
+        OH.registerCallback(function(status) {
+            $scope.online = OH.online;
+            $scope.status = status;
         });
     }
 ])
@@ -362,8 +367,8 @@ function($scope, AuthService, $http, $state, locale) {
     $scope.$state = $state;
 }])
 
-.controller('LoginCtrl', ['$scope', '$state', 'Me', '$rootScope', 'AuthService', 'locale', '$alert',
-function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
+.controller('LoginCtrl', ['$scope', '$state', '$rootScope', 'AuthService', 'locale', '$alert',
+function($scope, $state, $rootScope, AuthService, locale, $alert) {
     $scope.login = function(email, password) {
         AuthService.login(email, password).then(function() {
             locale.setLocale($rootScope.me.language);
@@ -378,6 +383,8 @@ function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
             $alert({content: locale.getString('common.password_differ')});
         } else {
             AuthService.register($scope.emailRegister, $scope.passwordRegister, $scope.captcha).then(function() {
+                $scope.passwordRegister = undefined;
+                $scope.password2Register = undefined;
                 $state.go('settings', {newUser: true});
             }, function(resp) {
                 $scope.errorMessage = resp.message;
@@ -389,12 +396,22 @@ function($scope, $state, Me, $rootScope, AuthService, locale, $alert) {
 .controller('AboutCtrl', function() {
 })
 
-.controller('DebugCtrl', ['$scope', '$window', 'OfflineHelper', function($scope, $window, OfflineHelper) {
+.controller('DebugCtrl', ['$scope', 'Field', 'OfflineHelper', 'Me', function($scope, Field, OfflineHelper, Me) {
     $scope.lol = function() {
         OfflineHelper.registerCallback(function(status) {
             console.log(status);
             $scope.online = status;
         });
+    };
+
+    $scope.fetchSingle = function() {
+        Field.$find(1).$then(function(data) {
+            $scope.result = data;
+        });
+    };
+
+    $scope.refreshCollection = function() {
+        Me.fields.$resolve();
     };
 
 }])
