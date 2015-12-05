@@ -390,7 +390,7 @@ function($scope, $state, $rootScope, AuthService, locale, $alert) {
 .controller('AboutCtrl', function() {
 })
 
-.controller('DebugCtrl', ['$scope', 'Field', 'OfflineHelper', 'Me', function($scope, Field, OfflineHelper, Me) {
+.controller('DebugCtrl', ['$scope', 'Field', 'OfflineHelper', 'Me', 'Entry', function($scope, Field, OfflineHelper, Me, Entry) {
     $scope.lol = function() {
         OfflineHelper.registerCallback(function(status) {
             console.log(status);
@@ -399,8 +399,10 @@ function($scope, $state, $rootScope, AuthService, locale, $alert) {
     };
 
     $scope.fetchSingle = function() {
-        Field.$find(1).$then(function(data) {
-            $scope.result = data;
+        $scope.entry = Entry.$find(1).$then(function(entry) {
+            if (entry.answers.length==0) {
+                entry.answers.$resolve();
+            }
         });
     };
 

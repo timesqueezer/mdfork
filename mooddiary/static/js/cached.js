@@ -50,13 +50,14 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                             return this.$unwrap(cached);
                         }
                     }
+                    console.log('NETWORK Loading', this.$type.getProperty('name'));
                     return this.$super.apply(this, arguments).$asPromise().then(function(instance) {
                         cache.put(instance.id, instance.$wrap());
                     });
                 });
             })
 
-            .define('Model.$new', function(_key, _scope) {
+            /*.define('Model.$new', function(_key, _scope) {
                 console.log('$new', this.$type.getProperty('name'));
                 var self = this;
 
@@ -65,12 +66,12 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                     var cache = getCache(this.$type.getProperty('name'));
                     var cached = cache.get(_key);
                     if(cached) {
-                        this.$super(_key, _scope).$extend(cached);
+                        this.$build(_key, _scope).$extend(cached);
                     }
                 }
                 return this.$super(_key, _scope);
-            })
-
+            })*/
+            /*
             .define('$decode', function(_raw, _mask) {
                 console.log('$decode', this.$type.getProperty('name'));
                 var self = this,
@@ -82,25 +83,24 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                 }
 
                 return this.$super(_raw, _mask);
-            })
+            })*/
 
             .define('Collection.$fetch', function(_args) {
                 console.log('Collection.$fetch', this.$type.getProperty('name'));
                 var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
-                    console.debug('offline:', !OH.online);
-                    if (1==1) {
-                        var cachedList = cache.getAll(_args);
-                        if (cachedList.length) {
-                            var lastResolved = this.$resolved;
-                            this.$decode(cachedList);
-                            this.$resolved = lastResolved;
-                        }
+                    //console.debug('offline:', !OH.online);
+                    var cachedList = cache.getAll(_args);
+                    if (cachedList.length) {
+                        var lastResolved = this.$resolved;
+                        this.$decode(cachedList);
+                        this.$resolved = lastResolved;
                     } else {
+                        console.log('NETWORK Loading', this.$type.getProperty('name'));
                         this.$super.apply(this, _args).$asPromise().then(function(data) {
                             console.debug('resolved:', data.$resolved);
                             angular.forEach(data, function(instance) {
-                                //cache.put(instance.id, instance.$wrap());
+                                cache.put(instance.id, instance.$wrap());
                             });
                         });
                     }
@@ -110,39 +110,11 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
             .define('Resource.$eject', function() {
                 console.log('$eject');
                 var cache = getCache(this.$type.getProperty('name'));
-                angular.forEach(cache.info(), function(key, value) {
+                angular.forEach(cache.keys(), function(key, value) {
                     cache.remove(key);
                 });
             })
 
         ;
     });
-}]);
-
-angular.module('restmod').factory('SharedModel', ['restmod', function(restmod) {
-  return restmod.mixin({
-    $extend : {
-      Model: {
-        cache: {},
-      }
-    }
-  }, function() {
-
-    this
-        // this will cache record by its type within cache, as apparently cache
-        // variable as assigned above will be shared between models
-        .define('Model.$cache', function(){
-          var self = this;
-
-          if(self.cache.hasOwnProperty(self.identity())) {
-            return self.cache[self.identity()];
-          } else {
-            return self.cache[self.identity()] = {};
-          }
-        })
-        
-
-        // override $decode to update cache on decoding.
-        
-  });
 }]);

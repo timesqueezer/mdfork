@@ -5,7 +5,9 @@
     <button class="btn btn-dark" ng-click="fetchSingle()">Fetch Single</button>
     <button class="btn btn-dark" ng-click="refreshCollection()">Refresh collection</button>
     <button class="btn btn-dark" ng-click="fetchSingle()" disabled>Fetch Single</button>
+    <button class="btn btn-dark" ng-click="entry.$eject()">Eject entry from cache</button>
     <hr>
-    <pre>{{ $root.me.fields.$resolved }}</pre>
+    <p>{{ entry.date }} {{ entry.answers.length }}</p>
+    <i ng-repeat="answer in entry.answers">{{ answer.content }}</i>
 </div>
 {% endraw %}

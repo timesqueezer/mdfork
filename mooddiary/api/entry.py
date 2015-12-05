@@ -12,6 +12,15 @@ from mooddiary.utils import resp
 
 class EntryDetail(Resource):
     @jwt_required()
+    def get(self, id):
+        entry = Entry.query.get_or_404(id)
+        if entry.user_id is not current_user.id:
+            abort(401)
+
+        schema = EntrySchema()
+        return resp(entry, schema)
+
+    @jwt_required()
     def patch(self, id):
         entry = Entry.query.get_or_404(id)
 
@@ -52,6 +61,15 @@ class EntryDetail(Resource):
 
 
 class EntryAnswerList(Resource):
+    @jwt_required()
+    def get(self, id):
+        entry = Entry.query.get_or_404(id)
+        if entry.user_id != current_user.id:
+            abort(401)
+
+        schema = EntryFieldAnswerSchema(many=True)
+        return resp(entry.answers, schema)
+
     @jwt_required()
     def post(self, id):
         entry = Entry.query.get_or_404(id)

@@ -148,12 +148,19 @@ angular.module('mooddiary.utils', [
         this.prefix = _id;
 
         this.getAll = function(_args) {
-            console.info(_args)
-            var values = [];
+            var values = [],
+                counter = 1,
+                start = _args && _args.page ? 1 + ( (_args.page - 1) * _args.per_page) : 1,
+                end = _args && _args.page ? _args.page * _args.per_page : Infinity;
+            console.info(this.prefix, start, end, _args)
+
             for (key in $window.localStorage) {
-                if (key.split('/')[0] == this.prefix) {
-                    var value = $window.localStorage.getItem(key);
-                    values.push(JSON.parse(value));
+                if (counter >= start && counter <= end) {
+                    if (key.split('/')[0] == this.prefix) {
+                        var value = $window.localStorage.getItem(key);
+                        values.push(JSON.parse(value));
+                        counter += 1;
+                    }
                 }
             }
             console.debug('CACHE GETALL', this.prefix, values.length);
@@ -181,8 +188,17 @@ angular.module('mooddiary.utils', [
         };
 
         this.remove = function(_name) {
-            console.log('REMOVE', _name);
+            console.debug('CACHE REMOVE', this.prefix, _name);
             $window.localStorage.removeItem(this.prefix + '/' + _name);
+        };
+
+        this.keys = function() {
+            var keyList = [];
+            for (key in $window.localStorage) {
+                if (key.split('/')[0] == this.prefix)
+                    keyList.push(key.split('/')[1]);
+            }
+            return keyList;
         };
     };
 
