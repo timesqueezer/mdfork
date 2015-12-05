@@ -129,7 +129,7 @@ angular.module('mooddiary', [
         controller: 'SettingsCtrl',
         resolve: {
             fieldsResolved: ['Me', function(Me) {
-                return Me.fields.$refresh().$asPromise();
+                return Me.fields.$resolve().$asPromise();
             }]
         }
     })
@@ -188,12 +188,6 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
         $alert({content: locale.getString('common.default_error')});
     };
 
-    var reloadFields = function() {
-        Me.fields.$refresh().$then(function(data) {
-            $scope.fields = data;
-        }, errorCallback);
-    };
-
     var defaultColors = [
         '0a80ba',
         'F7464A', // red
@@ -209,14 +203,14 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
     $scope.getColorStyle = function(color, clickable) {
         clickable = clickable || false;
         if (clickable)
-            return [{'background-color': color, 'height': '80px', 'width': '100%', 'cursor': 'pointer'}, color];
+            return [{'background-color': '#' + color, 'height': '80px', 'width': '100%', 'cursor': 'pointer'}, color];
         else
-            return [{'background-color': color, 'height': '80px', 'width': '100%', 'border-radius': '3px'}, color];
+            return [{'background-color': '#' + color, 'height': '80px', 'width': '100%', 'border-radius': '3px'}, color];
     };
 
     // Field circle-dots
     $scope.getFieldStyle = function(color) {
-        return {'background-color': color, 'height': '30px', 'width': '30px', 'vertical-align': 'middle', 'border-radius': '30px'};
+        return {'background-color': '#' + color, 'height': '30px', 'width': '30px', 'vertical-align': 'middle', 'border-radius': '30px'};
     };
 
     $scope.addField = function() {
@@ -237,7 +231,7 @@ function($scope, $alert, $rootScope, fieldsResolved, Me, locale, localeSupported
 
     $scope.deleteField = function(field) {
         if (confirm(locale.getString('common.delete_field_confirm'))) {
-            field.$destroy().$then(reloadFields);
+            field.$destroy();
         }
     };
 
@@ -411,7 +405,7 @@ function($scope, $state, $rootScope, AuthService, locale, $alert) {
     };
 
     $scope.refreshCollection = function() {
-        Me.fields.$resolve();
+        Me.fields.$refresh();
     };
 
 }])

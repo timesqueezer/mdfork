@@ -40,7 +40,7 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
             })
 
             .define('$fetch', function() {
-                console.log('$fetch');
+                console.log('$fetch', this.$type.getProperty('name'));
                 var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
                     var _id = this.$pk || this.id;
@@ -56,23 +56,51 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                 });
             })
 
-            .define('Collection.$fetch', function() {
-                console.log('Collection.$fetch');
+            .define('Model.$new', function(_key, _scope) {
+                console.log('$new', this.$type.getProperty('name'));
+                var self = this;
+
+                if(_key) {
+                    // search for instance with same key, if key is found then return instance
+                    var cache = getCache(this.$type.getProperty('name'));
+                    var cached = cache.get(_key);
+                    if(cached) {
+                        this.$super(_key, _scope).$extend(cached);
+                    }
+                }
+                return this.$super(_key, _scope);
+            })
+
+            .define('$decode', function(_raw, _mask) {
+                console.log('$decode', this.$type.getProperty('name'));
+                var self = this,
+                    result = this.$super(_raw, _mask);
+
+                if(result.$pk) {
+                    var cache = getCache(this.$type.getProperty('name'));
+                    cache.put(result.$pk, this.$wrap());
+                }
+
+                return this.$super(_raw, _mask);
+            })
+
+            .define('Collection.$fetch', function(_args) {
+                console.log('Collection.$fetch', this.$type.getProperty('name'));
                 var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
-                    console.debug('online:', OH.online, 'resolved:', this.$dmStatus);
-                    if (!OH.online) {
-                        var cachedList = cache.getAll();
+                    console.debug('offline:', !OH.online);
+                    if (1==1) {
+                        var cachedList = cache.getAll(_args);
                         if (cachedList.length) {
                             var lastResolved = this.$resolved;
                             this.$decode(cachedList);
                             this.$resolved = lastResolved;
                         }
                     } else {
-                        this.$super.apply(this, arguments).$asPromise().then(function(data) {
+                        this.$super.apply(this, _args).$asPromise().then(function(data) {
                             console.debug('resolved:', data.$resolved);
                             angular.forEach(data, function(instance) {
-                                cache.put(instance.id, instance.$wrap());
+                                //cache.put(instance.id, instance.$wrap());
                             });
                         });
                     }
@@ -89,4 +117,32 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
 
         ;
     });
+}]);
+
+angular.module('restmod').factory('SharedModel', ['restmod', function(restmod) {
+  return restmod.mixin({
+    $extend : {
+      Model: {
+        cache: {},
+      }
+    }
+  }, function() {
+
+    this
+        // this will cache record by its type within cache, as apparently cache
+        // variable as assigned above will be shared between models
+        .define('Model.$cache', function(){
+          var self = this;
+
+          if(self.cache.hasOwnProperty(self.identity())) {
+            return self.cache[self.identity()];
+          } else {
+            return self.cache[self.identity()] = {};
+          }
+        })
+        
+
+        // override $decode to update cache on decoding.
+        
+  });
 }]);

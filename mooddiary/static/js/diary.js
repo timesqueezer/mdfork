@@ -95,6 +95,15 @@ angular.module('mooddiary.diary', [
         })
     };
 
+    $scope.sortAnswers = function(entries) {
+        angular.forEach(entries, function(entry) {
+            entry.answersSorted = {};
+            angular.forEach(entry.answers, function(answer) {
+                entry.answersSorted[answer.entry_field_id] = answer;
+            });
+        });
+    };
+
     $scope.showEntryAddContainer = function() {
         $scope.entryAdding = true;
         var elem = document.getElementById('AddEntry');
@@ -355,10 +364,11 @@ function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout, $wi
         $scope.reloadCount += 1;
         $scope.listLimit += $scope.args.page == 1 && $state.includes('diary.list') ? 0 : $scope.args.per_page;
         $scope.args.page += 1;
-        if ($scope.me.entries.length < ($scope.args.page * $scope.args.per_page) ) {
+        if (Me.entries.length < ($scope.args.page * $scope.args.per_page) ) {
             $scope.stopScroll = true;
             var lastLength = Me.entries.length;
             Me.entries.$fetch($scope.args).$then(function(entries) {
+                $scope.sortAnswers(entries);
                 $scope.stopScroll = entries.length == 0;
                 if ($rootScope.isMobile) {
                     angular.forEach(entries.slice(lastLength), function(entry) {
@@ -447,6 +457,7 @@ function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout, $wi
     $scope.reloadCount = 0;
     $scope.stopScroll = firstPage.length == 0;
     $scope.firstPage = firstPage;
+    $scope.sortAnswers(firstPage);
 
     $scope.activeFieldsList = $scope.fields;
 }])

@@ -82,16 +82,7 @@ angular.module('mooddiary.utils', [
 .factory('Entry', ['restmod', function(restmod) {
     return restmod.model('entries').mix('DirtyModel', 'CachedModel', {
         user: { belongsTo: 'User' },
-        answers: { hasMany: 'Answer' },
-        $hooks: {
-            'after-feed': function() {
-                this.answersSorted = {};
-                var entry = this;
-                angular.forEach(this.answers, function(answer) {
-                    entry.answersSorted[answer.entry_field_id] = answer;
-                });
-            }
-        }
+        answers: { hasMany: 'Answer' }
     });
 }])
 
@@ -142,9 +133,9 @@ angular.module('mooddiary.utils', [
         });
     };
 
-    $interval(function() {
+    /*$interval(function() {
         checkOnlineStatus();
-    }, 2000);
+    }, 2000);*/
 
     return instance;
 }])
@@ -156,7 +147,8 @@ angular.module('mooddiary.utils', [
     var storage = function(_id) {
         this.prefix = _id;
 
-        this.getAll = function() {
+        this.getAll = function(_args) {
+            console.info(_args)
             var values = [];
             for (key in $window.localStorage) {
                 if (key.split('/')[0] == this.prefix) {
@@ -164,13 +156,13 @@ angular.module('mooddiary.utils', [
                     values.push(JSON.parse(value));
                 }
             }
-            console.log('GETALL', this.prefix, values.length);
+            console.debug('CACHE GETALL', this.prefix, values.length);
             return values;
         };
 
         this.get = function(_name) {
             var value = $window.localStorage.getItem(this.prefix + '/' + _name);
-            console.log('GET', this.prefix, _name, value);
+            console.debug('CACHE GET', this.prefix, _name, value);
             return JSON.parse(value);/*, function (key, value) {
                 var type;
                 if (value && typeof value === 'object') {
@@ -184,7 +176,7 @@ angular.module('mooddiary.utils', [
         };
 
         this.put = function(_name, _value) {
-            console.log('PUT', this.prefix, _name, _value, JSON.stringify(_value));
+            console.debug('CACHE PUT', this.prefix, _name, _value, JSON.stringify(_value));
             return $window.localStorage.setItem(this.prefix + '/' + _name, JSON.stringify(_value));
         };
 
