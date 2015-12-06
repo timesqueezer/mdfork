@@ -96,12 +96,22 @@ angular.module('mooddiary.diary', [
     };
 
     $scope.sortAnswers = function(entries) {
+        var promiseList = [];
         angular.forEach(entries, function(entry) {
-            entry.answersSorted = {};
-            angular.forEach(entry.answers, function(answer) {
-                entry.answersSorted[answer.entry_field_id] = answer;
-            });
+            if (!entry.answersSorted || !entry.answersSorted.length) {
+                promiseList.push($q(function(resolve, reject) {
+                    var promise = entry.answers.length ? $q.when(true) : entry.answers.$resolve().$asPromise();
+                    promise.then(function() {
+                        entry.answersSorted = {};
+                        angular.forEach(entry.answers, function(answer) {
+                            entry.answersSorted[answer.entry_field_id] = answer;
+                        });
+                        resolve();
+                    }, reject);
+                }));
+            }
         });
+        return $q.all(promiseList);
     };
 
     $scope.showEntryAddContainer = function() {
@@ -368,10 +378,12 @@ function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout, $wi
             $scope.stopScroll = true;
             var lastLength = Me.entries.length;
             Me.entries.$fetch($scope.args).$then(function(entries) {
-                $scope.sortAnswers(entries);
-                $scope.stopScroll = entries.length == 0;
+                var newEntries = entries.slice(lastLength);
+                $scope.stopScroll = newEntries.length == 0;
+                // Sort and load answers
+                $scope.sortAnswers(newEntries);
                 if ($rootScope.isMobile) {
-                    angular.forEach(entries.slice(lastLength), function(entry) {
+                    angular.forEach(newEntries, function(entry) {
                         $scope.entryHidden[entry.id] = true;
                     });
                 }
@@ -455,9 +467,12 @@ function($scope, $rootScope, $filter, Me, entriesResolved, locale, $timeout, $wi
     $scope.edittingEntry = {};
     $scope.entryHidden = {};
     $scope.reloadCount = 0;
-    $scope.stopScroll = firstPage.length == 0;
-    $scope.firstPage = firstPage;
-    $scope.sortAnswers(firstPage);
+    $scope.stopScroll = true;
+    if (firstPage.length > 0) {
+        $scope.sortAnswers(Me.entries).then(function() {
+            $scope.stopScroll = false;
+        });
+    }
 
     $scope.activeFieldsList = $scope.fields;
 }])

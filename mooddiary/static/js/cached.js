@@ -6,7 +6,7 @@
  * Enables localStorage-based caching of models
  */
 
-angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', 'OfflineHelper', function(restmod, OfflineStorage, OH) {
+angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', 'OfflineHelper', '$q', function(restmod, OfflineStorage, OH, $q) {
 
     var getCache = function(_name) {
         if (angular.isUndefined(_name)) {
@@ -30,7 +30,7 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
             .on('after-save', function(xhr) {
                 console.log('after-save');
                 var cache = getCache(this.$type.getProperty('name'));
-                cache.put(this.$pk, this);
+                cache.put(this.$pk, this.$wrap());
             })
 
             .on('after-destroy', function(xhr) {
@@ -89,25 +89,26 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                 console.log('Collection.$fetch', this.$type.getProperty('name'));
                 var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
-                    //console.debug('offline:', !OH.online);
-                    var cachedList = cache.getAll(_args);
-                    if (cachedList.length) {
-                        var lastResolved = this.$resolved;
-                        this.$decode(cachedList);
-                        this.$resolved = lastResolved;
-                    } else {
-                        console.log('NETWORK Loading', this.$type.getProperty('name'));
-                        this.$super.apply(this, _args).$asPromise().then(function(data) {
-                            console.debug('resolved:', data.$resolved);
-                            angular.forEach(data, function(instance) {
-                                cache.put(instance.id, instance.$wrap());
+                    //self.$promise = $q(function(resolve, reject) {
+                        //console.debug('offline:', !OH.online);
+                        var cachedList = cache.getAll(_args)
+                        if (cachedList.length) {
+                            var lastResolved = this.$resolved;
+                            this.$decode(cachedList);
+                            this.$resolved = lastResolved;
+                        } else {
+                            console.log('NETWORK Loading', this.$type.getProperty('name'), _args);
+                            this.$super.call(this, _args).$then(function(data) {
+                                angular.forEach(data, function(instance) {
+                                    cache.put(instance.id, instance.$wrap());
+                                });
                             });
-                        });
-                    }
+                        }
+                    //});
                 });
             })
 
-            .define('Resource.$eject', function() {
+            .define('Model.$eject', function() {
                 console.log('$eject');
                 var cache = getCache(this.$type.getProperty('name'));
                 angular.forEach(cache.keys(), function(key, value) {

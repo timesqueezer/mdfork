@@ -89,6 +89,7 @@
 <div class="panel panel-danger panel-body" style="position:fixed;top:91px;left:10px;width:360px;">
 {% raw %}
     <a class="btn btn-dark" ui-sref="debug" ng-class="{'active': $state.includes('debug')}">Debug</a>
+    <a class="btn btn-danger" ng-click="clearCache()">Clear Cache</a>
     <hr>
     <pre>
 online: {{ online }}

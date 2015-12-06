@@ -152,7 +152,7 @@ angular.module('mooddiary.utils', [
                 counter = 1,
                 start = _args && _args.page ? 1 + ( (_args.page - 1) * _args.per_page) : 1,
                 end = _args && _args.page ? _args.page * _args.per_page : Infinity;
-            console.info(this.prefix, start, end, _args)
+            console.info('CACHE GETALL ARGS', this.prefix, start, end, _args)
 
             for (key in $window.localStorage) {
                 if (counter >= start && counter <= end) {
@@ -183,8 +183,18 @@ angular.module('mooddiary.utils', [
         };
 
         this.put = function(_name, _value) {
+            function stripNull(object) {
+                angular.forEach(object, function(value, key) {
+                    if (value === undefined || value === null) {
+                        delete(object[key]);
+                    } else if (typeof value === "object") {
+                        stripNull(value);
+                    }
+                });
+            };
+            stripNull(_value);
             console.debug('CACHE PUT', this.prefix, _name, _value, JSON.stringify(_value));
-            return $window.localStorage.setItem(this.prefix + '/' + _name, JSON.stringify(_value));
+            $window.localStorage.setItem(this.prefix + '/' + _name, JSON.stringify(_value));
         };
 
         this.remove = function(_name) {

@@ -10,4 +10,8 @@
     <p>{{ entry.date }} {{ entry.answers.length }}</p>
     <i ng-repeat="answer in entry.answers">{{ answer.content }}</i>
 </div>
+<div class="panel panel-default">
+    <button class="btn btn-success" ng-click="putIntoCache()">CACHE PUT</button>
+    <button class="btn btn-danger" ng-click="clearCache()">CACHE REMOVE</button>
+</div>
 {% endraw %}

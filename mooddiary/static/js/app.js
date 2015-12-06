@@ -19,8 +19,8 @@ angular.module('mooddiary', [
     'angularSpectrumColorpicker'
 ])
 
-.controller('myAppControl', ['$scope', 'localeEvents', 'OfflineHelper',
-    function ($scope, localeEvents, OH) {
+.controller('myAppControl', ['$scope', 'localeEvents', 'OfflineHelper', 'Entry', 'Answer',
+    function ($scope, localeEvents, OH, Entry, Answer) {
         $scope.$on(localeEvents.resourceUpdates, function () {
             console.info('locale resource update');
         });
@@ -32,6 +32,11 @@ angular.module('mooddiary', [
             $scope.online = OH.online;
             $scope.status = status;
         });
+
+        $scope.clearCache = function() {
+            Entry.$eject();
+            Answer.$eject();
+        };
     }
 ])
 
@@ -390,7 +395,7 @@ function($scope, $state, $rootScope, AuthService, locale, $alert) {
 .controller('AboutCtrl', function() {
 })
 
-.controller('DebugCtrl', ['$scope', 'Field', 'OfflineHelper', 'Me', 'Entry', function($scope, Field, OfflineHelper, Me, Entry) {
+.controller('DebugCtrl', ['$scope', 'Field', 'OfflineHelper', 'OfflineStorage', 'Me', 'Entry', function($scope, Field, OfflineHelper, OS, Me, Entry) {
     $scope.lol = function() {
         OfflineHelper.registerCallback(function(status) {
             console.log(status);
@@ -407,7 +412,21 @@ function($scope, $state, $rootScope, AuthService, locale, $alert) {
     };
 
     $scope.refreshCollection = function() {
-        Me.fields.$refresh();
+        Me.entries.$refresh({page: 3, per_page: 2}).$then(function(data) {
+            console.log(data, 'WTF');
+        }, function() {
+            console.log('YES');
+        });
+    };
+
+    $scope.cache = OS.get('debug') || OS.create('debug');
+
+    $scope.putIntoCache = function() {
+        $scope.cache.put(1, {a: null, b: 1, c: 'String', nested: {a: 1, b: null, c: undefined}});
+    };
+
+    $scope.clearCache = function() {
+        $scope.cache.remove(1);
     };
 
 }])
