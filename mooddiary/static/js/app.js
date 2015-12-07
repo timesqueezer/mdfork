@@ -16,7 +16,8 @@ angular.module('mooddiary', [
     'restmod',
     'infinite-scroll',
     'smoothScroll',
-    'angularSpectrumColorpicker'
+    'angularSpectrumColorpicker',
+    'angular-cache'
 ])
 
 .controller('myAppControl', ['$scope', 'localeEvents', 'OfflineHelper', 'Entry', 'Answer',
