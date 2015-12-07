@@ -28,6 +28,7 @@ js = Bundle(
     'angular-locale_de-de.js',
     'bower_components/spectrum/spectrum.js',
     'bower_components/angular-spectrum-colorpicker/dist/angular-spectrum-colorpicker.js',
+    'bower_components/angular-cache/dist/angular-cache.js',
 
     'js/cached.js',
 

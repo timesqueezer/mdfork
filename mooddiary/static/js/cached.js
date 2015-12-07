@@ -6,18 +6,25 @@
  * Enables localStorage-based caching of models
  */
 
-angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', 'OfflineHelper', '$q', function(restmod, OfflineStorage, OH, $q) {
+angular.module('restmod').factory('CachedModel', ['restmod', 'CacheFactory', 'OfflineHelper', '$q', function(restmod, CacheFactory, OH, $q) {
 
-    var getCache = function(_name) {
+    /*var getCache = function(_name) {
         if (angular.isUndefined(_name)) {
             console.log('WHOOPS');
         } else {
             return OfflineStorage.get(_name) || OfflineStorage.create(_name);
         }
-    };
+    };*/
 
     return restmod.mixin(function() {
         this
+            .define('Resource.$cache', function() {
+                if (!CacheFactory.get(this.$type.getProperty('name'))) {
+                    return CacheFactory(this.$type.getProperty('name'));
+                } else {
+                    return CacheFactory.get(this.$type.getProperty('name'));
+                }
+            })
 
             .on('after-fetch-many', function(xhr) {
                 console.log('after-fetch-many');
@@ -29,30 +36,28 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
 
             .on('after-save', function(xhr) {
                 console.log('after-save');
-                var cache = getCache(this.$type.getProperty('name'));
-                cache.put(this.$pk, this.$wrap());
+                this.$cache().put(this.$pk, this.$wrap());
             })
 
             .on('after-destroy', function(xhr) {
                 console.log('after-destroy');
-                var cache = getCache(this.$type.getProperty('name'));
-                cache.remove(this.$pk);
+                this.$cache().remove(this.$pk);
             })
 
             .define('$fetch', function() {
                 console.log('$fetch', this.$type.getProperty('name'));
-                var cache = getCache(this.$type.getProperty('name'));
+                var self = this;
                 return this.$action(function() {
                     var _id = this.$pk || this.id;
                     if (_id) {
-                        var cached = cache.get(_id);
+                        var cached = this.$cache().get(_id);
                         if (cached) {
                             return this.$unwrap(cached);
                         }
                     }
                     console.log('NETWORK Loading', this.$type.getProperty('name'));
                     return this.$super.apply(this, arguments).$asPromise().then(function(instance) {
-                        cache.put(instance.id, instance.$wrap());
+                        self.$cache().put(instance.id, instance.$wrap());
                     });
                 });
             })
@@ -63,7 +68,6 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
 
                 if(_key) {
                     // search for instance with same key, if key is found then return instance
-                    var cache = getCache(this.$type.getProperty('name'));
                     var cached = cache.get(_key);
                     if(cached) {
                         this.$build(_key, _scope).$extend(cached);
@@ -78,7 +82,6 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                     result = this.$super(_raw, _mask);
 
                 if(result.$pk) {
-                    var cache = getCache(this.$type.getProperty('name'));
                     cache.put(result.$pk, this.$wrap());
                 }
 
@@ -87,11 +90,10 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
 
             .define('Collection.$fetch', function(_args) {
                 console.log('Collection.$fetch', this.$type.getProperty('name'));
-                var cache = getCache(this.$type.getProperty('name'));
                 return this.$action(function() {
                     //self.$promise = $q(function(resolve, reject) {
                         //console.debug('offline:', !OH.online);
-                        var cachedList = cache.getAll(_args)
+                        var cachedList = this.$cache().getAll(_args)
                         if (cachedList.length) {
                             var lastResolved = this.$resolved;
                             this.$decode(cachedList);
@@ -100,7 +102,7 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
                             console.log('NETWORK Loading', this.$type.getProperty('name'), _args);
                             this.$super.call(this, _args).$then(function(data) {
                                 angular.forEach(data, function(instance) {
-                                    cache.put(instance.id, instance.$wrap());
+                                    this.$cache().put(instance.id, instance.$wrap());
                                 });
                             });
                         }
@@ -110,9 +112,8 @@ angular.module('restmod').factory('CachedModel', ['restmod', 'OfflineStorage', '
 
             .define('Model.$eject', function() {
                 console.log('$eject');
-                var cache = getCache(this.$type.getProperty('name'));
-                angular.forEach(cache.keys(), function(key, value) {
-                    cache.remove(key);
+                angular.forEach(this.$cache().keys(), function(key, value) {
+                    this.$cache().remove(key);
                 });
             })
 
