@@ -76,6 +76,7 @@ angular.module('mooddiary', [
 .run(['AuthService', '$rootScope', 'locale', '$anchorScroll', '$state', '$window', function(AuthService, $rootScope, locale, $anchorScroll, $state, $window) {
     AuthService.checkAndSetLogin().then(function() {
         locale.setLocale($rootScope.me.language);
+        $state.go('diary.list');
     }, function() {
         locale.setLocale('de-DE');
         $rootScope.me = null;
