@@ -54,12 +54,13 @@ p {
     font-size: 14pt;
 }
 
-.panel {
+.navbar, .panel {
     margin-bottom: 11pt;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.navbar {
-    margin-bottom: 11pt;
+.footer {
+    font-size: 9pt;
 }
 
 .text-white {
@@ -270,8 +271,28 @@ label {
     cursor: pointer;
 }
 
-.form-control {
+.form-control[type=text],
+.form-control[type=password] {
     font-size: 14pt !important;
+    background: #c4dff3;
+    padding: 5px !important;
+    color: #000;
+    box-shadow: inset 0 0 3px #bbb !important;
+    &::-webkit-input-placeholder {
+        color: #888;
+    }
+
+    &:-moz-placeholder { /* Firefox 18- */
+       color: #888;
+    }
+
+    &::-moz-placeholder {  /* Firefox 19+ */
+       color: #888;
+    }
+
+    &:-ms-input-placeholder {
+       color: #888;
+    }
 }
 
 input[type=range] {
