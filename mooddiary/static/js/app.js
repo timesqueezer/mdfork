@@ -73,10 +73,9 @@ angular.module('mooddiary', [
     $httpProvider.interceptors.push('authInterceptor');
 }])
 
-.run(['AuthService', '$rootScope', 'locale', '$anchorScroll', '$state', '$window', function(AuthService, $rootScope, locale, $anchorScroll, $state, $window) {
+.run(['AuthService', '$rootScope', 'locale', '$anchorScroll', '$state', '$window', '$location', function(AuthService, $rootScope, locale, $anchorScroll, $state, $window, $location) {
     AuthService.checkAndSetLogin().then(function() {
         locale.setLocale($rootScope.me.language);
-        $state.go('diary.list');
     }, function() {
         locale.setLocale('de-DE');
         $rootScope.me = null;
@@ -114,7 +113,7 @@ angular.module('mooddiary', [
 .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', 'restmodProvider', function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, $locationProvider, restmodProvider) {
     $locationProvider.html5Mode(true);
     $urlMatcherFactoryProvider.strictMode(false);
-    $urlRouterProvider.otherwise('/about');
+	$urlRouterProvider.otherwise('/about');
 
     restmodProvider.rebase('MoodDiaryApi');
 
