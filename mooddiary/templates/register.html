@@ -5,12 +5,15 @@
         <div class="col-md-6">
             <form class="form" novalidate>
                 <div class="form-group">
+                    <label for="username">Email</label>
                     <input name="username" class="form-control" ng-model="emailRegister" placeholder="Email">
                 </div>
                 <div class="form-group">
+                    <label for="password" i18n="common.password"></label>
                     <input name="password" type="password" class="form-control" ng-model="passwordRegister" i18n-attr="{placeholder: 'common.password'}">
                 </div>
                 <div class="form-group">
+                    <label for="password2" i18n="common.password_repeat"></label>
                     <input name="password2" type="password" class="form-control" ng-model="password2Register" i18n-attr="{placeholder: 'common.password_repeat'}">
                 </div>
                 <div class="alert alert-danger alert-dismissible" role="alert" ng-show="errorMessage">
