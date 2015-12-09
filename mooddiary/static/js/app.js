@@ -78,6 +78,7 @@ angular.module('mooddiary', [
         locale.setLocale($rootScope.me.language);
     }, function() {
         locale.setLocale('de-DE');
+        $rootScope.me = null;
     });
 
     moment().utc();
@@ -97,6 +98,7 @@ angular.module('mooddiary', [
     });
 
     $rootScope.$on('logout', function() {
+        $rootScope.me = null;
         $state.go('about').then(function() {
             $window.location.reload(true);
         });

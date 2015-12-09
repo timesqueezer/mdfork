@@ -10,13 +10,14 @@ angular.module('mooddiary.utils', [
                     $window.localStorage.token = data.token;
                     $window.localStorage.exp = JSON.parse(atob(data.token.split('.')[0])).exp;
                     $rootScope.loggedIn = true;
-                    $rootScope.me = Me.$fetch().$then(resolve);
+                    $rootScope.me = Me.$fetch().$then(resolve, reject);
                 }).error(function(data, status, headers, config) {
                     reject(data);
                 });
             });
         },
         logout: function() {
+            $rootScope.loggedIn = false;
             $window.localStorage.removeItem('token');
             $rootScope.$broadcast('logout');
         },
@@ -33,15 +34,15 @@ angular.module('mooddiary.utils', [
                         $rootScope.me = Me.$fetch().$then(function() {
                             resolve();
                         });
-                    } else { reject() }
-                } else { reject() }
+                    } else { reject(); }
+                } else { reject(); }
             });
         },
         register: function(email, pw, captcha) {
             var login = this.login;
             return $q(function(resolve, reject) {
                 $http.post('/api/users', {email: email, password: pw, captcha: captcha}).success(function(data) {
-                    login(email, pw).then(resolve);
+                    login(email, pw).then(resolve, reject);
                 }).error(function(data) {
                     reject(data);
                 })
